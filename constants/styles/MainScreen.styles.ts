@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
       width: "100%",
       padding: 12,
       borderRadius: 10,
-      borderColor: Colors.dark.tintDarker,
+      borderColor: Colors.dark.tintDarkerGreen,
       borderWidth: 3,
       alignItems: "center",
       height: 50,
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
       padding: 12,
       borderRadius: 10,
       height: 50,
-      backgroundColor: Colors.dark.tintDarker,
+      backgroundColor: Colors.dark.tintDarkerGreen,
       alignItems: "center",
     },
     buttonTextLight: {
