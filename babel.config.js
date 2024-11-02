@@ -5,6 +5,18 @@ module.exports = function (api) {
     sourceMaps: true,
     plugins: [
       '@babel/transform-react-jsx-source',
+      [
+        'module-resolver',
+        {
+          root: ['./'],
+          alias: {
+            '@': './',
+            '@components': './components',
+            '@utils': './utils',
+          },
+        },
+      ],
     ],
+    
   }
 };
