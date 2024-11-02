@@ -7,6 +7,8 @@ import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 
+import { useAuth } from '@clerk/clerk-expo';
+
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
@@ -15,7 +17,28 @@ function TabBarIcon(props: {
   return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
 }
 
+export const LogoutButton = () => {
+  const { signOut } = useAuth();
+
+  const doLogout = () => {
+    signOut();
+  };
+  const colorScheme = useColorScheme();
+
+  return (
+    <Pressable onPress={doLogout} style={{ marginRight: 10 }}>
+      <FontAwesome
+                    name="info-circle"
+                    size={25}
+                    color={Colors[colorScheme ?? 'light'].text}
+                  />
+    </Pressable>
+  );
+};
+
 export default function TabLayout() {
+  const { isSignedIn } = useAuth();
+
   const colorScheme = useColorScheme();
 
   return (
@@ -28,6 +51,7 @@ export default function TabLayout() {
       }}>
       <Tabs.Screen
         name="index"
+        redirect={!isSignedIn}
         options={{
           title: 'Tab One',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
@@ -49,6 +73,7 @@ export default function TabLayout() {
       />
       <Tabs.Screen
         name="two"
+        redirect={!isSignedIn}
         options={{
           title: 'Tab Two',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
