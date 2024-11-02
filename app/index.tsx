@@ -1,79 +1,41 @@
 import Container from "@/components/Container";
+import styles from "@/constants/styles/MainScreen.styles";
 import { Link } from "expo-router";
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, Image } from "react-native";
 
 const MainScreen = () => {
   return (
     <View style={styles.screen}>
-      <Container height={300}>
-        <Text style={styles.title}>ArtQuest</Text>
-        <Text style={styles.subtitle}>
-          Twój Kreatywny Rozwój na Wyciągnięcie Ręki
-        </Text>
-        <Text style={styles.description}>
-          Rozwijaj swoją kreatywność z pomocą AI
-        </Text>
-        <Link href="/sign-up" asChild>
-          <TouchableOpacity style={styles.buttonSignUp}>
-            <Text style={styles.buttonText}>Sign up</Text>
-          </TouchableOpacity>
-        </Link>
-        <Link href="/sign-in" asChild>
-          <TouchableOpacity style={styles.buttonSignIn}>
-            <Text style={styles.buttonText}>Sign in</Text>
-          </TouchableOpacity>
-        </Link>
+      <Container height={600}>
+        <View style={styles.contentContainer}>
+          <Image
+            source={require("@/assets/images/logo.png")}
+            style={styles.image}
+          />
+          <Text style={styles.title}>ArtQuest</Text>
+          <Text style={styles.subtitle}>
+            Your Creative Development at Your Fingertips
+          </Text>
+          <Text style={styles.description}>
+            Develop your creativity with the help of AI
+          </Text>
+        </View>
+        <View style={styles.buttonsContainer}>
+          <Link href="/sign-up" asChild>
+            <TouchableOpacity style={styles.buttonSignUp}>
+              <Text style={styles.buttonTextDark}>Sign up</Text>
+            </TouchableOpacity>
+          </Link>
+          <Link href="/sign-in" asChild>
+            <TouchableOpacity style={styles.buttonSignIn}>
+              <Text style={styles.buttonTextLight}>Sign in</Text>
+            </TouchableOpacity>
+          </Link>
+        </View>
       </Container>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#333",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#002F5A",
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#333",
-    textAlign: "center",
-    marginBottom: 5,
-  },
-  description: {
-    fontSize: 14,
-    color: "#666",
-    textAlign: "center",
-    marginBottom: 20,
-  },
-  buttonSignUp: {
-    width: "100%",
-    padding: 12,
-    borderRadius: 5,
-    borderColor: "#333",
-    borderWidth: 1,
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  buttonSignIn: {
-    width: "100%",
-    padding: 12,
-    borderRadius: 5,
-    backgroundColor: "#002F5A",
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-  },
-});
 
 export default MainScreen;

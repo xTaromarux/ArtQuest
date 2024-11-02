@@ -1,78 +1,200 @@
-import { useSignIn } from '@clerk/clerk-expo';
-import { Link } from 'expo-router';
-import React, { useState } from 'react';
-import { View, StyleSheet, TextInput, Button, Pressable, Text, Alert } from 'react-native';
-import Spinner from 'react-native-loading-spinner-overlay';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  StyleSheet,
+  Alert,
+} from "react-native";
+import Container from "@/components/Container";
+import { useSignIn } from "@clerk/clerk-expo";
+import * as Linking from "expo-linking";
+import { Link } from "expo-router";
 
-const Login = () => {
-  const { signIn, setActive, isLoaded } = useSignIn();
-
-  const [emailAddress, setEmailAddress] = useState('');
-  const [password, setPassword] = useState('');
+const SignInScreen: React.FC = () => {
+  const { isLoaded, signIn } = useSignIn();
+  const [emailAddress, setEmailAddress] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const onSignInPress = async () => {
-    if (!isLoaded) {
-      return;
-    }
+  const handleSignIn = async () => {
+    if (!isLoaded) return;
+
     setLoading(true);
     try {
-      const completeSignIn = await signIn.create({
+      const result = await signIn.create({
         identifier: emailAddress,
         password,
       });
 
-      // This indicates the user is signed in
-      await setActive({ session: completeSignIn.createdSessionId });
-    } catch (err: any) {
-      alert(err.errors[0].message);
+      if (result.status === "complete") {
+        Alert.alert("Sukces", "Zalogowano pomyślnie!");
+        // Możesz przekierować użytkownika do głównego ekranu aplikacji
+      } else {
+        Alert.alert("Weryfikacja", "Sprawdź swoją skrzynkę e-mail.");
+      }
+    } catch (error: any) {
+      Alert.alert(
+        "Błąd",
+        error.errors[0]?.message || "Wystąpił problem podczas logowania."
+      );
     } finally {
       setLoading(false);
     }
   };
 
+  const handleOAuthSignIn = async () => {
+    if (!signIn) return;
+
+    try {
+      await signIn.authenticateWithRedirect({
+        strategy: "oauth_google",
+        redirectUrl: Linking.createURL("/oauth-callback"),
+        redirectUrlComplete: Linking.createURL("/home"),
+      });
+    } catch (error: any) {
+      Alert.alert("Błąd", "Nie udało się zalogować przez Google.");
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <Spinner visible={loading} />
+    <View style={styles.screen}>
+      <Container height={500}>
+        <Text style={styles.title}>Sign in</Text>
+        <Text style={styles.subtitle}>to continue to Getting Started</Text>
 
-      <TextInput autoCapitalize="none" placeholder="simon@galaxies.dev" value={emailAddress} onChangeText={setEmailAddress} style={styles.inputField} />
-      <TextInput placeholder="password" value={password} onChangeText={setPassword} secureTextEntry style={styles.inputField} />
+        {/* Logowanie przez Google */}
+        <TouchableOpacity
+          style={styles.socialButton}
+          onPress={handleOAuthSignIn}
+        >
+          <Text style={styles.socialButtonText}>Continue with Google</Text>
+        </TouchableOpacity>
 
-      <Button onPress={onSignInPress} title="Login" color={'#6c47ff'}></Button>
+        <View style={styles.dividerContainer}>
+          <View style={styles.line} />
+          <Text style={styles.dividerText}>or</Text>
+          <View style={styles.line} />
+        </View>
 
-      <Link href="/reset" asChild>
-        <Pressable style={styles.button}>
-          <Text>Forgot password?</Text>
-        </Pressable>
-      </Link>
-      <Link href="/register" asChild>
-        <Pressable style={styles.button}>
-          <Text>Create Account</Text>
-        </Pressable>
-      </Link>
+        {/* Formularz logowania */}
+        <TextInput
+          style={styles.input}
+          placeholder="Email address"
+          value={emailAddress}
+          onChangeText={setEmailAddress}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+
+        <TouchableOpacity
+          style={styles.continueButton}
+          onPress={handleSignIn}
+          disabled={loading}
+        >
+          <Text style={styles.continueButtonText}>
+            {loading ? "LOADING..." : "CONTINUE"}
+          </Text>
+        </TouchableOpacity>
+
+        <Text style={styles.footerText}>
+          No account?
+          <Link href="/sign-up" asChild>
+            <Text style={styles.link}>Sign up</Text>
+          </Link>
+        </Text>
+      </Container>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
-    justifyContent: 'center',
-    padding: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#333",
   },
-  inputField: {
-    marginVertical: 4,
-    height: 50,
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#000",
+    marginBottom: 4,
+    textAlign: "center",
+  },
+  subtitle: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  socialButton: {
+    width: "100%",
+    padding: 12,
+    borderRadius: 5,
+    borderColor: "#333",
     borderWidth: 1,
-    borderColor: '#6c47ff',
-    borderRadius: 4,
-    padding: 10,
-    backgroundColor: '#fff',
+    alignItems: "center",
+    marginBottom: 10,
   },
-  button: {
-    margin: 8,
-    alignItems: 'center',
+  socialButtonText: {
+    color: "#333",
+    fontSize: 16,
+  },
+  dividerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 20,
+  },
+  line: {
+    flex: 1,
+    height: 1,
+    backgroundColor: "#ccc",
+  },
+  dividerText: {
+    marginHorizontal: 10,
+    color: "#666",
+  },
+  input: {
+    width: "100%",
+    borderWidth: 1,
+    borderColor: "#333",
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+    color: "#333",
+  },
+  continueButton: {
+    width: "100%",
+    padding: 12,
+    borderRadius: 5,
+    backgroundColor: "#002F5A",
+    alignItems: "center",
+    marginTop: 20,
+  },
+  continueButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  footerText: {
+    marginTop: 20,
+    color: "#666",
+    fontSize: 14,
+  },
+  link: {
+    color: "#002F5A",
+    fontWeight: "bold",
   },
 });
 
-export default Login;
+export default SignInScreen;
