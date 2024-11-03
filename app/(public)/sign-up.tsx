@@ -9,15 +9,14 @@ import {
   Image,
 } from "react-native";
 import Container from "@/components/Container";
-import { useSignUp, useSignIn } from "@clerk/clerk-expo";
+import { useSignUp } from "@clerk/clerk-expo";
 import * as Linking from "expo-linking";
 import Colors from "@/constants/Colors";
 import { Link } from "expo-router";
-import styles from "@/constants/styles/SignupScreen.styles";
+import styles from "@/constants/styles/SignUpScreen.styles";
 
 const SignUpScreen: React.FC = () => {
   const { isLoaded, signUp } = useSignUp();
-  const { signIn } = useSignIn();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [emailAddress, setEmailAddress] = useState("");
@@ -57,16 +56,16 @@ const SignUpScreen: React.FC = () => {
   const handleOAuthSignIn = async (
     provider: "oauth_github" | "oauth_google"
   ) => {
-    if (!signIn) return;
+    if (!signUp) return;
 
     try {
-      await signIn.authenticateWithRedirect({
+      await signUp.authenticateWithRedirect({
         strategy: provider,
-        redirectUrl: Linking.createURL("/oauth-callback"), // URL po kliknięciu opcji logowania
-        redirectUrlComplete: Linking.createURL("/home"), // URL po zakończeniu procesu logowania
+        redirectUrl: Linking.createURL("/oauth-callback"), // URL po kliknięciu opcji rejestracji
+        redirectUrlComplete: Linking.createURL("/home"), // URL po zakończeniu procesu rejestracji
       });
     } catch (error: any) {
-      Alert.alert("Błąd", "Nie udało się zalogować przez " + provider);
+      Alert.alert("Błąd", `Nie udało się zarejestrować przez ${provider === "oauth_google" ? "Google" : "GitHub"}.`);
     }
   };
 
@@ -80,10 +79,10 @@ const SignUpScreen: React.FC = () => {
           <Text style={styles.subtitle}>Continue with</Text>
         </View>
         <View style={styles.socialButtonsContainer}>
-          {/* Logowanie przez Google */}
+          {/* Rejestracja przez Google */}
           <TouchableOpacity
             style={[styles.socialButton, { marginRight: 5 }]}
-            onPress={() => handleOAuthSignIn("oauth_github")}
+            onPress={() => handleOAuthSignIn("oauth_google")}
           >
             <Image
               source={require("@/assets/images/google.png")}
@@ -92,10 +91,10 @@ const SignUpScreen: React.FC = () => {
             <Text style={styles.socialButtonText}>Google</Text>
           </TouchableOpacity>
 
-          {/* Logowanie przez Github */}
+          {/* Rejestracja przez Github */}
           <TouchableOpacity
             style={[styles.socialButton, { marginLeft: 5 }]}
-            onPress={() => handleOAuthSignIn("oauth_google")}
+            onPress={() => handleOAuthSignIn("oauth_github")}
           >
             <Image
               source={require("@/assets/images/github.png")}
@@ -114,13 +113,13 @@ const SignUpScreen: React.FC = () => {
         <View style={styles.inputRow}>
           <TextInput
             style={[styles.tintInput, { marginRight: 5 }]}
-            placeholder="Login"
+            placeholder="First name"
             value={firstName}
             onChangeText={setFirstName}
           />
           <TextInput
             style={[styles.tintInput, { marginLeft: 5 }]}
-            placeholder="Username"
+            placeholder="Last name"
             value={lastName}
             onChangeText={setLastName}
           />
