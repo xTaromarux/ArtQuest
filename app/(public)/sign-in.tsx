@@ -136,6 +136,11 @@ const SignInScreen: React.FC = () => {
             <Link href="/sign-up" asChild>
               <Text style={styles.link}> Sign up</Text>
             </Link>
+            <br />
+            Forgot your password?
+            <Link href="/reset" asChild>
+              <Text style={styles.link}> Reset it here</Text>
+            </Link>
           </Text>
         </View>
       </Container>
