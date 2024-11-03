@@ -1,198 +1,73 @@
-import { ActivityIndicator, Platform, StyleSheet } from "react-native";
-import { Text, View } from "@/components/Themed";
-// import WhiteBox from "@/components/WhiteBox";
-// import Line from "@/components/Line";
-// import Button from "@/components/Button";
-import { Image } from "expo-image";
-// import CompletionPercentage from "@/components/CompletionPercentage";
+import React from "react";
+import {
+  View,
+  Text,
+  Image,
+  Pressable,
+  ImageBackground,
+} from "react-native";
+import Colors from "@/constants/Colors";
+import ProgressBar from "@/components/ProgressBar";
+import { useUser } from "@clerk/clerk-expo";
+import Line from "@/components/Line";
+import Container from "@/components/Container";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Link } from "expo-router";
-import LogoutButton from "@/components/LogoutButton";
-// import { useFetch } from "@/scripts/useFetch";
+import styles from "@/constants/styles/screens/HomeScreen.styles";
 
-const user_id = "be72e28f-41af-4234-a112-0a0299ed7197";
-
-export default function ExerciseTab() {
-  // const { data: user, loading: userLoading, error: userError } = useFetch(`/api/users/${user_id}`);
-
-  const base_url = "https://bce9-178-43-255-119.ngrok-free.app";
-  const web_url = "http://localhost:8000";
-  const API_VALUE = Platform.OS === "web" ? web_url : base_url;
-
-  // if (userLoading) {
-  //   return (
-  //     <View style={styles.loaderContainer}>
-  //       <ActivityIndicator size="large" color="#FFFFFF" />
-  //     </View>
-  //   );
-  // }
-
-  // if (userError) {
-  //   return (
-  //     <View style={styles.errorContainer}>
-  //       <Text>Error: {userError}</Text>
-  //     </View>
-  //   );
-  // }
-
-  // if (!user) {
-  //   return (
-  //     <View style={styles.errorContainer}>
-  //       <Text>No user data found.</Text>
-  //     </View>
-  //   );
-  // }
+const HomeScreen: React.FC = () => {
+  const { user } = useUser(); // Pobieramy dane użytkownika
 
   return (
     <View style={styles.container}>
-            <LogoutButton />
+      <Text style={styles.greeting}>Hello, {user?.username || "User"}!</Text>
+      <Line width={100} style={{ marginVertical: 20 }} />
+      <Text style={styles.subtitle}>Pick up where you left off</Text>
 
-      <View style={{ flex: 2 }}>
-        {/* <Text style={styles.title}>Hello, {user.name}</Text> */}
-        {/* <Line />
-        <WhiteBox widthProp={70} padingProp={20} marginVerticalProp={20} /> */}
-      </View>
-      <View style={{ flex: 4 }}>
-        <Text style={[styles.titleLastCourse, { flex: 0.6 }]}>
-          Pick up where you left off
-        </Text>
-        <View
-          style={[
-            styles.containerLastCourse,
-            { flex: 5, backgroundColor: "white" },
-          ]}
+      <Container
+        height={400}
+        width={100}
+        style={{ marginVertical: 30, padding: 0, justifyContent: "flex-start" }}
+      >
+        <ImageBackground
+          source={{ uri: "../../assets/images/background_course_home.png" }} // URI obrazu tła
+          style={[styles.courseImageContainer, { width: `100%` }]}
+          imageStyle={{ resizeMode: "cover", borderRadius: 10 }} // Opcjonalne dopasowanie obrazu
         >
-          <View
-            style={[
-              styles.containerImage,
-              { flex: 2.5, backgroundColor: "white" },
-            ]}
-          >
-            <Image
-              source={API_VALUE + "/api/pictures/461fe346-4565-467a-82b2-e089f5a386dc"}
-              style={styles.image}
-            />
+          <Image
+            source={require("@/assets/images/Shapes.png")} // Ikona kursu
+            style={styles.courseImage}
+            resizeMode="contain"
+          />
+        </ImageBackground>
+        <Line width={90} backgroundColor={Colors.dark.text} />
+        <View style={styles.courseContentContainer}>
+          <View style={styles.courseInfo}>
+            <Text style={styles.levelText}>Level 1</Text>
+            <Text style={styles.courseTitle}>Basic Shapes</Text>
+            <ProgressBar progress={0.4} color={Colors.dark.tintLighterGreen} /> {/* 60% postępu */}
           </View>
-          <View style={[styles.containerLevel, { flex: 0.7 }]}>
-            <Text style={[styles.titleLevel, { flex: 0.6 }]}>Level 1</Text>
-          </View>
-          <View style={[styles.containerTitle, { flex: 0.6 }]}>
-            <Text style={[styles.titleTitle, { flex: 0.6 }]}>Basic Shapes</Text>
-          </View>
-          <View style={[styles.containerPercentage, { flex: 0.5 }]}>
-            {/* <CompletionPercentage widthProp={40} /> */}
-          </View>
-          <View style={[styles.containerContinue, { flex: 1 }]}>
-            <Link href={{ pathname: "/exercise" } as never} asChild>
-              {/* <Button
-                onPress={() => {}}
-                title="Continue"
-                height={44}
-                textColor="#FFFFFF"
-                color="#000000"
-                onLongPress={() => {
-                  // Handle button long-press event
-                }}
-                accessibilityLabel="Continue"
-              /> */}
+          <Pressable style={styles.continueButton}>
+            <Link href="/(auth)/exercise">
+              <Text style={styles.continueButtonText}>Continue</Text>
             </Link>
-          </View>
+          </Pressable>
         </View>
-      </View>
-      <View style={[styles.containerInspiration, { flex: 0.8 }]}>
-        <Link href={{ pathname: "/feed" } as never} asChild>
-          {/* <Button
-            onPress={() => {}}
-            title="Look for inspiration"
-            color="#FFFFFF"
-            textColor="#000"
-            height={50}
-            onLongPress={() => {
-              // Handle button long-press event
-            }}
-            accessibilityLabel="Look for inspiration"
-          /> */}
+      </Container>
+
+      <Pressable style={styles.inspirationButton}>
+        <Link href="/(auth)/feed/">
+          <Text style={styles.inspirationButtonText}>Look for inspiration</Text>
+          <MaterialCommunityIcons
+            style={styles.inspirationIcon}
+            name="clipboard-text-multiple-outline"
+            size={24}
+            color={Colors.dark.text}
+          />
         </Link>
-      </View>
-      {/* <Line /> */}
+      </Pressable>
     </View>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: "column",
-    paddingTop: 20,
-    paddingHorizontal: 20,
-  },
-  title: {
-    fontSize: 30,
-    marginVertical: 20,
-    fontWeight: "bold",
-  },
-  titleLastCourse: {
-    fontSize: 22,
-    marginVertical: 10,
-    fontWeight: "bold",
-  },
-  containerLastCourse: {
-    borderRadius: 20,
-    padding: 20,
-  },
-  containerImage: {
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 15,
-    borderColor: "black",
-    borderWidth: 2,
-    borderRadius: 20,
-  },
-  image: {
-    width: 140,
-    height: 140,
-    borderRadius: 10,
-  },
-  containerLevel: {
-    backgroundColor: "white",
-    alignItems: "flex-start",
-    justifyContent: "flex-end",
-  },
-  titleLevel: {
-    fontSize: 15,
-    color: "#FFD500",
-    fontWeight: "bold",
-  },
-  containerTitle: {
-    backgroundColor: "white",
-  },
-  titleTitle: {
-    color: "#000",
-    fontSize: 22,
-    fontWeight: "bold",
-  },
-  containerPercentage: {
-    backgroundColor: "white",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  containerContinue: {
-    backgroundColor: "white",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  containerInspiration: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  loaderContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-});
+export default HomeScreen;

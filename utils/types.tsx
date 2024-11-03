@@ -2,6 +2,8 @@ import { ReactNode } from 'react';
 
 export interface ContainerProps {
   height: number;
+  width: number;
+  style?: object;
   children: ReactNode;
 }
 
@@ -12,6 +14,17 @@ export type TabsParamList = {
   exercise: undefined;
   profile: undefined;
 };
+
+export type LineProps = {
+  width: number;
+  backgroundColor?: string;
+  style?: object;
+};
+
+export interface ProgressBarProps {
+  progress: number; 
+  color: string; 
+}
 
 
 export type UserType = {

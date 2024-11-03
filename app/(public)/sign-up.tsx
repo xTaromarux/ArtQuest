@@ -4,16 +4,14 @@ import {
   Text,
   TouchableOpacity,
   TextInput,
-  StyleSheet,
   Alert,
   Image,
 } from "react-native";
 import Container from "@/components/Container";
 import { useSignUp } from "@clerk/clerk-expo";
 import * as Linking from "expo-linking";
-import Colors from "@/constants/Colors";
 import { Link } from "expo-router";
-import styles from "@/constants/styles/SignUpScreen.styles";
+import styles from "@/constants/styles/screens/SignUpScreen.styles";
 
 const SignUpScreen: React.FC = () => {
   const { isLoaded, signUp } = useSignUp();
@@ -65,13 +63,16 @@ const SignUpScreen: React.FC = () => {
         redirectUrlComplete: Linking.createURL("/home"), // URL po zakończeniu procesu rejestracji
       });
     } catch (error: any) {
-      Alert.alert("Błąd", `Nie udało się zarejestrować przez ${provider === "oauth_google" ? "Google" : "GitHub"}.`);
+      Alert.alert(
+        "Błąd",
+        `Nie udało się zarejestrować przez ${provider === "oauth_google" ? "Google" : "GitHub"}.`
+      );
     }
   };
 
   return (
     <View style={styles.screen}>
-      <Container height={500}>
+      <Container height={500} width={80}>
         <View style={styles.textContainer}>
           <Text style={styles.title}>Create your account</Text>
         </View>

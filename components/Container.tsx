@@ -3,9 +3,9 @@ import { ContainerProps } from '@/utils/types';
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 
-const Container: React.FC<ContainerProps> = ({ height, children }) => {
+const Container: React.FC<ContainerProps> = ({ height, width, style, children }) => {
     return (
-      <View style={[styles.container, { height }]}>
+      <View style={[styles.container, { height },  { width: `${width}%` }, style]}>
         {children}
       </View>
     );
