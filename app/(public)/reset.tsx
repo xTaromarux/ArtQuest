@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, TextInput } from "react-native";
 import Container from "@/components/Container";
 import { Link } from "expo-router";
-import styles from "@/constants/styles/ResetScreen.styles";
+import styles from "@/constants/styles/screens/ResetScreen.styles";
 
 const PwReset = () => {
   const [emailAddress, setEmailAddress] = useState("");
@@ -46,7 +46,7 @@ const PwReset = () => {
 
   return (
     <View style={styles.screen}>
-      <Container height={350}>
+      <Container height={350} width={80}>
         <View style={styles.textContainer}>
           <Text style={styles.title}>Reset password</Text>
         </View>
