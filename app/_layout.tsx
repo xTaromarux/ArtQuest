@@ -48,7 +48,7 @@ const InitialLayout = () => {
     if (isSignedIn && !inTabsGroup) {
       router.replace("/home");
     } else if (!isSignedIn) {
-      router.replace("/login");
+      router.replace("/");
     }
   }, [isSignedIn]);
 
@@ -84,13 +84,11 @@ function RootLayoutNav() {
 
   return (
     <ClerkProvider publishableKey={publishableKey}>
-      <ClerkLoaded>
-        <ThemeProvider
-          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-        >
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <ClerkLoaded>
           <InitialLayout />
-        </ThemeProvider>
-      </ClerkLoaded>
+        </ClerkLoaded>
+      </ThemeProvider>
     </ClerkProvider>
   );
 }

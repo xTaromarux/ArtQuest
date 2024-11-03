@@ -1,12 +1,15 @@
-import { View, StyleSheet, TextInput, Button } from 'react-native';
-import React, { useState } from 'react';
-import { Stack } from 'expo-router';
-import { useSignIn } from '@clerk/clerk-expo';
+import { Stack } from "expo-router";
+import { useSignIn } from "@clerk/clerk-expo";
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, TextInput } from "react-native";
+import Container from "@/components/Container";
+import { Link } from "expo-router";
+import styles from "@/constants/styles/ResetScreen.styles";
 
 const PwReset = () => {
-  const [emailAddress, setEmailAddress] = useState('');
-  const [password, setPassword] = useState('');
-  const [code, setCode] = useState('');
+  const [emailAddress, setEmailAddress] = useState("");
+  const [password, setPassword] = useState("");
+  const [code, setCode] = useState("");
   const [successfulCreation, setSuccessfulCreation] = useState(false);
   const { signIn, setActive } = useSignIn();
 
@@ -14,7 +17,7 @@ const PwReset = () => {
   const onRequestReset = async () => {
     try {
       await signIn!.create({
-        strategy: 'reset_password_email_code',
+        strategy: "reset_password_email_code",
         identifier: emailAddress,
       });
       setSuccessfulCreation(true);
@@ -27,12 +30,12 @@ const PwReset = () => {
   const onReset = async () => {
     try {
       const result = await signIn!.attemptFirstFactor({
-        strategy: 'reset_password_email_code',
+        strategy: "reset_password_email_code",
         code,
         password,
       });
       console.log(result);
-      alert('Password reset successfully');
+      alert("Password reset successfully");
 
       // Set the user session active, which will log in the user automatically
       await setActive!({ session: result.createdSessionId });
@@ -42,49 +45,74 @@ const PwReset = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Stack.Screen options={{ headerBackVisible: !successfulCreation }} />
+    <View style={styles.screen}>
+      <Container height={350}>
+        <View style={styles.textContainer}>
+          <Text style={styles.title}>Reset password</Text>
+        </View>
+        <View style={styles.formContainer}>
+          <Stack.Screen options={{ headerBackVisible: !successfulCreation }} />
 
-      {!successfulCreation && (
-        <>
-          <TextInput autoCapitalize="none" placeholder="simon@galaxies.dev" value={emailAddress} onChangeText={setEmailAddress} style={styles.inputField} />
+          {!successfulCreation && (
+            <>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  autoCapitalize="none"
+                  placeholder="Email address"
+                  value={emailAddress}
+                  onChangeText={setEmailAddress}
+                  style={styles.input}
+                />
+              </View>
+            </>
+          )}
 
-          <Button onPress={onRequestReset} title="Send Reset Email" color={'#6c47ff'}></Button>
-        </>
-      )}
+          {successfulCreation && (
+            <>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  value={code}
+                  placeholder="Code..."
+                  style={styles.input}
+                  onChangeText={setCode}
+                />
+                <TextInput
+                  placeholder="New password"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                  style={styles.input}
+                />
+              </View>
+            </>
+          )}
 
-      {successfulCreation && (
-        <>
-          <View>
-            <TextInput value={code} placeholder="Code..." style={styles.inputField} onChangeText={setCode} />
-            <TextInput placeholder="New password" value={password} onChangeText={setPassword} secureTextEntry style={styles.inputField} />
-          </View>
-          <Button onPress={onReset} title="Set new Password" color={'#6c47ff'}></Button>
-        </>
-      )}
+          {!successfulCreation && (
+            <>
+              <TouchableOpacity style={styles.button} onPress={onRequestReset}>
+                <Text style={styles.buttonText}>Send Reset Email</Text>
+              </TouchableOpacity>
+            </>
+          )}
+
+          {successfulCreation && (
+            <>
+              <TouchableOpacity style={styles.button} onPress={onReset}>
+                <Text style={styles.buttonText}>Set new Password</Text>
+              </TouchableOpacity>
+            </>
+          )}
+
+          <Text style={styles.footerText}>
+            Remembered your password? <br />
+            <Link href="/sign-in" asChild>
+              <Text style={styles.link}>Go back to the login page.</Text>
+            </Link>
+          </Text>
+        </View>
+      </Container>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-  },
-  inputField: {
-    marginVertical: 4,
-    height: 50,
-    borderWidth: 1,
-    borderColor: '#6c47ff',
-    borderRadius: 4,
-    padding: 10,
-    backgroundColor: '#fff',
-  },
-  button: {
-    margin: 8,
-    alignItems: 'center',
-  },
-});
 
 export default PwReset;
