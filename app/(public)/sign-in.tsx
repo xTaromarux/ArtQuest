@@ -11,7 +11,7 @@ import Container from "@/components/Container";
 import { useSignIn } from "@clerk/clerk-expo";
 import * as Linking from "expo-linking";
 import { Link } from "expo-router";
-import styles from "@/constants/styles/SignInScreen.styles";
+import styles from "@/constants/styles/screens/SignInScreen.styles";
 
 const SignInScreen: React.FC = () => {
   const { isLoaded, signIn } = useSignIn();
@@ -66,14 +66,13 @@ const SignInScreen: React.FC = () => {
 
   return (
     <View style={styles.screen}>
-      <Container height={500}>
+      <Container height={500} width={80}>
         <View style={styles.textContainer}>
           <Text style={styles.title}>Sign in</Text>
           <Text style={styles.subtitle}>to continue to Getting Started</Text>
           <Text style={styles.subtitle}>Continue with</Text>
         </View>
         <View style={styles.socialButtonsContainer}>
-          {/* Logowanie przez Google */}
           <TouchableOpacity
             style={[styles.socialButton, { marginRight: 5 }]}
             onPress={() => handleOAuthSignIn("oauth_google")}
@@ -85,7 +84,6 @@ const SignInScreen: React.FC = () => {
             <Text style={styles.socialButtonText}>Google</Text>
           </TouchableOpacity>
 
-          {/* Logowanie przez Github */}
           <TouchableOpacity
             style={[styles.socialButton, { marginLeft: 5 }]}
             onPress={() => handleOAuthSignIn("oauth_github")}
@@ -103,7 +101,6 @@ const SignInScreen: React.FC = () => {
           <View style={styles.line} />
         </View>
         <View style={styles.formContainer}>
-          {/* Formularz logowania */}
           <TextInput
             style={styles.input}
             placeholder="Email address/Login"

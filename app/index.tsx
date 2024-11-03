@@ -1,5 +1,5 @@
 import Container from "@/components/Container";
-import styles from "@/constants/styles/MainScreen.styles";
+import styles from "@/constants/styles/screens/MainScreen.styles";
 import { Link } from "expo-router";
 import React from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";

@@ -27,27 +27,27 @@ const AuthLayout: FC = () => {
       <Tab.Screen
         name="home"
         component={HomeScreen}
-        options={{ title: "Home" }}
+        options={{ headerShown: false }}
       />
       <Tab.Screen
         name="feed"
         component={FeedScreen}
-        options={{ title: "Discover" }}
+        options={{ headerShown: false }}
       />
       <Tab.Screen
         name="courses"
         component={CoursesScreen}
-        options={{ title: "Courses" }}
+        options={{ headerShown: false }}
       />
       <Tab.Screen
         name="exercise"
         component={ExerciseScreen}
-        options={{ title: "Exercise" }}
+        options={{ headerShown: false }}
       />
       <Tab.Screen
         name="profile"
         component={ProfileScreen}
-        options={{ title: "Profile" }}
+        options={{ headerShown: false }}
       />
     </Tab.Navigator>
   );
