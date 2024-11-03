@@ -4,6 +4,7 @@ module.exports = function (api) {
     presets: ['babel-preset-expo'],
     sourceMaps: true,
     plugins: [
+      'react-native-reanimated/plugin',
       '@babel/transform-react-jsx-source',
       [
         'module-resolver',
