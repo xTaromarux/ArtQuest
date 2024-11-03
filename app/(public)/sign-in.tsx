@@ -11,7 +11,7 @@ import Container from "@/components/Container";
 import { useSignIn } from "@clerk/clerk-expo";
 import * as Linking from "expo-linking";
 import { Link } from "expo-router";
-import styles from "@/constants/styles/SigninScreen.styles copy";
+import styles from "@/constants/styles/SignInScreen.styles";
 
 const SignInScreen: React.FC = () => {
   const { isLoaded, signIn } = useSignIn();
