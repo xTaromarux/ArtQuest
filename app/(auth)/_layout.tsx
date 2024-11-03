@@ -1,65 +1,55 @@
-import React from "react";
-import { Tabs } from "expo-router";
-import Ionicons from '@expo/vector-icons/Ionicons';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import React, { FC } from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import HomeScreen from "./home";
+import FeedScreen from "./feed";
+import CoursesScreen from "./courses";
+import ExerciseScreen from "./exercise";
+import ProfileScreen from "./profile";
+import { TabsParamList } from "@/utils/types";
+import CustomBottomTab from "@/components/CustomBottomTab";
 
-const AuthLayout = () => {
+const Tab = createBottomTabNavigator<TabsParamList>();
+
+const AuthLayout: FC = () => {
   return (
-    <Tabs
+    <Tab.Navigator
+      tabBar={(props) => <CustomBottomTab {...props} />}
       screenOptions={{
-        tabBarStyle: {
-          backgroundColor: "#6c47ff",
-        },
         tabBarActiveTintColor: "#fff",
         tabBarInactiveTintColor: "#d1c4e9",
+        tabBarStyle: {
+          backgroundColor: "red",
+          borderTopWidth: 0,
+        },
       }}
     >
-      <Tabs.Screen
+      
+      <Tab.Screen
         name="home"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home-outline" size={size} color={color} />
-          ),
-        }}
+        component={HomeScreen}
+        options={{ title: "Home" }}
       />
-      <Tabs.Screen
-        name="discover"
-        options={{
-          title: "Discover",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="search" size={size} color={color} />
-          ),
-        }}
+      <Tab.Screen
+        name="feed"
+        component={FeedScreen}
+        options={{ title: "Discover" }}
       />
-      <Tabs.Screen
+      <Tab.Screen
         name="courses"
-        options={{
-          title: "Courses",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="clipboard-search-outline" size={size} color={color} />
-          ),
-        }}
+        component={CoursesScreen}
+        options={{ title: "Courses" }}
       />
-      <Tabs.Screen
+      <Tab.Screen
         name="exercise"
-        options={{
-          title: "Exercise",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="clipboard-text-play-outline" size={size} color={color} />
-          ),
-        }}
+        component={ExerciseScreen}
+        options={{ title: "Exercise" }}
       />
-      <Tabs.Screen
+      <Tab.Screen
         name="profile"
-        options={{
-          title: "Profile",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-circle-outline" size={size} color={color} />
-          ),
-        }}
+        component={ProfileScreen}
+        options={{ title: "Profile" }}
       />
-    </Tabs>
+    </Tab.Navigator>
   );
 };
 

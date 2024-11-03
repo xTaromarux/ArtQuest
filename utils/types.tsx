@@ -5,7 +5,13 @@ export interface ContainerProps {
   children: ReactNode;
 }
 
-
+export type TabsParamList = {
+  home: undefined;
+  feed: undefined;
+  courses: undefined;
+  exercise: undefined;
+  profile: undefined;
+};
 
 
 export type UserType = {
