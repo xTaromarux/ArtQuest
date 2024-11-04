@@ -5,24 +5,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.dark.background,
-    padding: 20,
     paddingTop: 40,
-    paddingBottom: 85,
+    paddingBottom: 40,
   },
   header: {
     fontSize: 34,
     fontWeight: "bold",
     color: Colors.light.text,
     marginBottom: 15,
+    paddingHorizontal: 20,
   },
   sectionTitle: {
     fontSize: 25,
     fontWeight: "bold",
     color: Colors.light.text,
     marginBottom: 20,
+    paddingHorizontal: 20
   },
   listContainer: {
-    paddingBottom: 20,
+    paddingHorizontal: 20,
   },
   courseCard: {
     flexDirection: "row",
@@ -38,7 +39,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   iconContainer: {
-    width: 50,
+    width: 60,
     height: 50,
     display: "flex",
     flexDirection: "row",
@@ -51,10 +52,11 @@ const styles = StyleSheet.create({
     width: 5,
     borderRadius: 10,
     height: "100%",
+    marginRight: 10
   },
   icon: {
-    width: 50,
-    height: 50,
+    width: 45,
+    height: 45,
   },
   courseInfo: {
     flex: 1,
@@ -68,14 +70,54 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#666",
   },
-  infoIconContainer:{
+  infoIconContainer: {
     borderWidth: 2,
     borderRadius: 10,
     padding: 5,
     width: 40,
     justifyContent: "center",
     alignItems: "center",
-    height: 40
+    height: 40,
+  },
+  modalHeader: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+  },
+
+  modalContent: {
+    padding: 16,
+  },
+  iconModalContainer: {
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalIcon: {
+    width: 150,
+    height: 150,
+  },
+  titleModalContainer: {
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 32,
+    fontWeight: "bold",
+  },
+  textModalContainer: {
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "flex-start",
+    paddingHorizontal: 20, 
+    marginVertical: 10
+  },
+  modalText:{
+    fontSize: 15,
   }
 });
 

@@ -11,6 +11,7 @@ import "react-native-reanimated";
 import { Slot, useRouter, useSegments } from "expo-router";
 import { ClerkProvider, ClerkLoaded, useAuth } from "@clerk/clerk-expo";
 import { useColorScheme } from "@/components/useColorScheme";
+import { PortalProvider } from "@gorhom/portal";
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 if (!publishableKey) {
@@ -85,7 +86,9 @@ function RootLayoutNav() {
     <ClerkProvider publishableKey={publishableKey}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <ClerkLoaded>
-          <InitialLayout />
+          <PortalProvider>
+            <InitialLayout />
+          </PortalProvider>
         </ClerkLoaded>
       </ThemeProvider>
     </ClerkProvider>

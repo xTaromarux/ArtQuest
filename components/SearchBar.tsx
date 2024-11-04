@@ -5,12 +5,13 @@ import styles from "@/constants/styles/components/SearchBar.style";
 
 interface SearchBarProps {
   value: string;
+  style?: object;
   onChangeText: (text: string) => void;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ value, onChangeText }) => {
+const SearchBar: React.FC<SearchBarProps> = ({ value, onChangeText, style }) => {
   return (
-    <View style={styles.searchContainer}>
+    <View style={[styles.searchContainer, style]}>
       <TextInput
         selectionColor="transparent"
         underlineColorAndroid="transparent"
