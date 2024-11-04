@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, FlatList, Image } from "react-native";
 import Colors from "@/constants/Colors";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import SearchBar from "@/components/SearchBar"; // Importujemy komponent SearchBar
+import SearchBar from "@/components/SearchBar";
 import Line from "@/components/Line";
 import styles from "@/constants/styles/screens/CoursesScreen.styles";
 
