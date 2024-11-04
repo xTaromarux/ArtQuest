@@ -1,14 +1,16 @@
-import React from "react";
-import { View, Text, StyleSheet, TextInput, FlatList, Image } from "react-native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, FlatList, Image } from "react-native";
 import Colors from "@/constants/Colors";
-import { Ionicons } from "@expo/vector-icons";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import SearchBar from "@/components/SearchBar"; // Importujemy komponent SearchBar
+import Line from "@/components/Line";
 
 const courses = [
   {
     id: "1",
     title: "Lines",
     description: "Lorem ipsum dolor sit amet",
-    icon: require("@/assets/images/lines.png"), // Zastąp odpowiednim plikiem obrazu
+    icon: require("@/assets/images/lines.png"),
     color: "#FF6B6B",
   },
   {
@@ -63,37 +65,44 @@ const courses = [
 ];
 
 const CourseListScreen: React.FC = () => {
-  const renderCourseItem = ({ item }: { item: typeof courses[0] }) => (
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Filtrowanie kursów na podstawie zapytania
+  const filteredCourses = courses.filter((course) =>
+    course.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const renderCourseItem = ({ item }: { item: (typeof courses)[0] }) => (
     <View style={styles.courseCard}>
-      <View style={[styles.iconContainer, { backgroundColor: item.color }]}>
+      <View style={[styles.iconContainer]}>
+        <View style={[styles.iconBar, { backgroundColor: item.color }]}></View>
         <Image source={item.icon} style={styles.icon} />
       </View>
       <View style={styles.courseInfo}>
         <Text style={styles.courseTitle}>{item.title}</Text>
         <Text style={styles.courseDescription}>{item.description}</Text>
       </View>
-      {/* <Ionicons name="md-arrow-forward" size={24} color="#333" /> */}
+      <View style={[styles.infoIconContainer, { borderColor: item.color }]}>
+        <AntDesign name="book" size={24} color="black" />{" "}
+      </View>
     </View>
   );
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Browse all courses</Text>
-      
-      {/* Pasek wyszukiwania */}
-      <View style={styles.searchContainer}>
-        <TextInput placeholder="Search" style={styles.searchInput} />
-        {/* <Ionicons name="md-search" size={20} color="#333" style={styles.searchIcon} /> */}
-      </View>
 
-      <View style={styles.divider} />
+      {/* Pasek wyszukiwania */}
+      <SearchBar value={searchQuery} onChangeText={setSearchQuery} />
+
+      <Line width={100} style={{ marginVertical: 20 }} />
 
       {/* Tytuł sekcji */}
       <Text style={styles.sectionTitle}>Basic path</Text>
 
       {/* Lista kursów */}
       <FlatList
-        data={courses}
+        data={filteredCourses}
         renderItem={renderCourseItem}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
@@ -109,40 +118,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.dark.background,
     padding: 20,
+    paddingTop: 40,
+    paddingBottom: 85,
   },
   header: {
-    fontSize: 24,
+    fontSize: 34,
     fontWeight: "bold",
     color: Colors.light.text,
     marginBottom: 15,
-  },
-  searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    marginBottom: 10,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 16,
-    color: "#333",
-  },
-  searchIcon: {
-    marginLeft: 8,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: "#ccc",
-    marginVertical: 10,
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: 25,
     fontWeight: "bold",
     color: Colors.light.text,
-    marginBottom: 15,
+    marginBottom: 20,
   },
   listContainer: {
     paddingBottom: 20,
@@ -151,10 +140,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: Colors.light.background,
-    padding: 15,
+    padding: 10,
     borderRadius: 10,
     marginBottom: 10,
-    shadowColor: "#000",
+    shadowColor: Colors.dark.text,
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 1 },
     shadowRadius: 3,
@@ -163,14 +152,21 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 50,
     height: 50,
+    display: "flex",
+    flexDirection: "row",
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 15,
   },
+  iconBar: {
+    width: 5,
+    borderRadius: 10,
+    height: "100%",
+  },
   icon: {
-    width: 30,
-    height: 30,
+    width: 50,
+    height: 50,
   },
   courseInfo: {
     flex: 1,
@@ -184,4 +180,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#666",
   },
+  infoIconContainer:{
+    borderWidth: 2,
+    borderRadius: 10,
+    padding: 5,
+    width: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    height: 40
+  }
 });
