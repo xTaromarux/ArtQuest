@@ -35,7 +35,7 @@ const HomeScreen: React.FC = () => {
           imageStyle={{ resizeMode: "cover", borderRadius: 10 }} // Opcjonalne dopasowanie obrazu
         >
           <Image
-            source={require("@/assets/images/Shapes.png")} // Ikona kursu
+            source={require("@/assets/images/shapes.png")} // Ikona kursu
             style={styles.courseImage}
             resizeMode="contain"
           />
