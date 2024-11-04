@@ -4,6 +4,7 @@ import Colors from "@/constants/Colors";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import SearchBar from "@/components/SearchBar"; // Importujemy komponent SearchBar
 import Line from "@/components/Line";
+import styles from "@/constants/styles/screens/CoursesScreen.styles";
 
 const courses = [
   {
@@ -67,7 +68,6 @@ const courses = [
 const CourseListScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Filtrowanie kursów na podstawie zapytania
   const filteredCourses = courses.filter((course) =>
     course.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -83,7 +83,7 @@ const CourseListScreen: React.FC = () => {
         <Text style={styles.courseDescription}>{item.description}</Text>
       </View>
       <View style={[styles.infoIconContainer, { borderColor: item.color }]}>
-        <AntDesign name="book" size={24} color="black" />{" "}
+        <AntDesign name="book" size={24} color="black" />
       </View>
     </View>
   );
@@ -92,15 +92,12 @@ const CourseListScreen: React.FC = () => {
     <View style={styles.container}>
       <Text style={styles.header}>Browse all courses</Text>
 
-      {/* Pasek wyszukiwania */}
       <SearchBar value={searchQuery} onChangeText={setSearchQuery} />
 
       <Line width={100} style={{ marginVertical: 20 }} />
 
-      {/* Tytuł sekcji */}
       <Text style={styles.sectionTitle}>Basic path</Text>
 
-      {/* Lista kursów */}
       <FlatList
         data={filteredCourses}
         renderItem={renderCourseItem}
@@ -112,81 +109,3 @@ const CourseListScreen: React.FC = () => {
 };
 
 export default CourseListScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.dark.background,
-    padding: 20,
-    paddingTop: 40,
-    paddingBottom: 85,
-  },
-  header: {
-    fontSize: 34,
-    fontWeight: "bold",
-    color: Colors.light.text,
-    marginBottom: 15,
-  },
-  sectionTitle: {
-    fontSize: 25,
-    fontWeight: "bold",
-    color: Colors.light.text,
-    marginBottom: 20,
-  },
-  listContainer: {
-    paddingBottom: 20,
-  },
-  courseCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: Colors.light.background,
-    padding: 10,
-    borderRadius: 10,
-    marginBottom: 10,
-    shadowColor: Colors.dark.text,
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 1 },
-    shadowRadius: 3,
-    elevation: 2,
-  },
-  iconContainer: {
-    width: 50,
-    height: 50,
-    display: "flex",
-    flexDirection: "row",
-    borderRadius: 8,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 15,
-  },
-  iconBar: {
-    width: 5,
-    borderRadius: 10,
-    height: "100%",
-  },
-  icon: {
-    width: 50,
-    height: 50,
-  },
-  courseInfo: {
-    flex: 1,
-  },
-  courseTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: Colors.dark.text,
-  },
-  courseDescription: {
-    fontSize: 14,
-    color: "#666",
-  },
-  infoIconContainer:{
-    borderWidth: 2,
-    borderRadius: 10,
-    padding: 5,
-    width: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    height: 40
-  }
-});
