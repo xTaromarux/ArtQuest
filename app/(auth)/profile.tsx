@@ -1,12 +1,19 @@
 import React from "react";
-import { View } from "react-native";
+import { Dimensions, KeyboardAvoidingView, Platform, useWindowDimensions, View } from "react-native";
 import styles from "@/constants/styles/screens/CoursesScreen.styles";
 
 const ExerciseScreen: React.FC = () => {
+  const height = Dimensions.get('screen').height;
+
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={[styles.container, {height: height}]}
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS == "ios" ? 0 : 20}
+      enabled={Platform.OS === "ios" ? true : false}
+    >
       
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
