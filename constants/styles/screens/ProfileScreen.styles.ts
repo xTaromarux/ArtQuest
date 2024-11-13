@@ -5,25 +5,43 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.dark.background,
   },
+  backgroundImage: {
+    width: "100%",
+    justifyContent: "flex-end",
+    alignItems: "flex-end"
+  },
+
   contentContainer: {
     paddingHorizontal: 20
   },
-  profileHeaderBackground:{
-    // height: 160
-  },
   profileHeader: {
     alignItems: "flex-start",
-    height: 253,
+    height: 220,
     justifyContent: "flex-end",
     marginBottom: 20,
   },
-  avatar: {
+  avatarContainer: {
     width: 110,
     height: 110,
     backgroundColor: Colors.light.background,
+    justifyContent: "center",
+    alignItems: "center",
     borderWidth: 3,
     borderRadius: 60,
     marginBottom: 10,
+  },
+  avatar: {
+    width: 90,
+    height: 90,
+  },
+  userInfoContainer:{
+    display: "flex",
+    flexDirection: "row",
+    width: "100%"
+  },
+  userContainer:{
+    width: "65%",
+    height: "100%"
   },
   userName: {
     fontSize: 20,
@@ -35,19 +53,27 @@ const styles = StyleSheet.create({
     color: "#A5A5A5",
   },
   joinDate: {
-    fontSize: 12,
+    marginTop: 10,
+    fontSize: 14,
     color: "#A5A5A5",
     marginBottom: 10,
   },
+  editProfileContainer:{
+    width: "35%",
+    height: "100%"
+  },
   editProfileButton: {
-    backgroundColor: "#4A90E2",
-    paddingVertical: 6,
-    paddingHorizontal: 16,
-    borderRadius: 5,
+    height: 35,
+    borderWidth: 3,
+    backgroundColor: Colors.light.background,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
   },
   editProfileButtonText: {
-    color: "#FFFFFF",
-    fontSize: 14,
+    color: Colors.dark.text,
+    fontSize: 15,
+    fontWeight: "bold"
   },
   sectionContainer: {
     marginBottom: 20,
@@ -55,48 +81,62 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#FFFFFF",
+    color: Colors.light.background,
     marginBottom: 10,
   },
   statsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "space-between",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.light.background,
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: 10,
     padding: 10,
   },
   statItem: {
-    width: "45%",
-    backgroundColor: "#F9F9F9",
+    width: "46.5%",
+    backgroundColor: Colors.light.background,
+    borderWidth: 3,
     borderRadius: 10,
     padding: 10,
+    margin: 5,
+    flexDirection: "row",
     alignItems: "center",
-    marginVertical: 5,
+  },
+  statIcon: {
+    marginRight: 5,
+  },
+  statTextContainer: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "space-between",
   },
   statValue: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#333",
+    color: Colors.dark.text,
   },
   statLabel: {
     fontSize: 12,
     color: "#666",
   },
   achievementsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.light.background,
     borderRadius: 10,
     padding: 10,
   },
   achievementItem: {
-    width: "30%",
+    width: 150,
+    borderRightWidth: 3,
     alignItems: "center",
+    justifyContent: "center",
+    borderRightColor: Colors.dark.tintDarkGreen
   },
-
-
-
+  achievementIcon: {
+    width: 120,
+    height: 120,
+    margin: 10
+  },
   infoIconContainer: {
     borderWidth: 2,
     borderRadius: 10,
