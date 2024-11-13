@@ -26,6 +26,16 @@ export interface ProgressBarProps {
   color: string; 
 }
 
+export interface Course {
+  id: string;
+  title: string;
+  description: string;
+  descriptionLongNo1: string;
+  descriptionLongNo2: string;
+  icon: any;
+  color: string;
+}
+
 
 export type UserType = {
   id: string;

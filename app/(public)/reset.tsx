@@ -1,7 +1,16 @@
 import { Stack } from "expo-router";
 import { useSignIn } from "@clerk/clerk-expo";
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  useWindowDimensions,
+  Dimensions,
+} from "react-native";
 import Container from "@/components/Container";
 import { Link } from "expo-router";
 import styles from "@/constants/styles/screens/ResetScreen.styles";
@@ -12,8 +21,9 @@ const PwReset = () => {
   const [code, setCode] = useState("");
   const [successfulCreation, setSuccessfulCreation] = useState(false);
   const { signIn, setActive } = useSignIn();
+  const height = Dimensions.get('screen').height;
 
-  // Request a passowrd reset code by email
+  // Request a password reset code by email
   const onRequestReset = async () => {
     try {
       await signIn!.create({
@@ -45,7 +55,12 @@ const PwReset = () => {
   };
 
   return (
-    <View style={styles.screen}>
+    <KeyboardAvoidingView
+      style={[styles.screen, {height: height}]}
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS == "ios" ? 0 : 20}
+      enabled={Platform.OS === "ios" ? true : false}
+    >
       <Container height={350} width={80}>
         <View style={styles.textContainer}>
           <Text style={styles.title}>Reset password</Text>
@@ -104,14 +119,14 @@ const PwReset = () => {
           )}
 
           <Text style={styles.footerText}>
-            Remembered your password? <br />
+            Remembered your password? {"\n"}
             <Link href="/sign-in" asChild>
               <Text style={styles.link}>Go back to the login page.</Text>
             </Link>
           </Text>
         </View>
       </Container>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

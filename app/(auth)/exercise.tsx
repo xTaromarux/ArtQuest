@@ -1,198 +1,80 @@
-import { ActivityIndicator, Platform, StyleSheet } from "react-native";
-import { Text, View } from "@/components/Themed";
-// import WhiteBox from "@/components/WhiteBox";
-// import Line from "@/components/Line";
-// import Button from "@/components/Button";
-import { Image } from "expo-image";
-// import CompletionPercentage from "@/components/CompletionPercentage";
+import React from "react";
+import {
+  View,
+  Text,
+  Image,
+  ImageBackground,
+  StyleSheet,
+  Pressable,
+  useWindowDimensions,
+  Dimensions,
+  KeyboardAvoidingView,
+  Platform,
+  FlatList,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import ProgressBar from "@/components/ProgressBar";
+import Colors from "@/constants/Colors";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import styles from "@/constants/styles/screens/ExerciseScreen.styles";
 import { Link } from "expo-router";
-import LogoutButton from "@/components/LogoutButton";
-// import { useFetch } from "@/scripts/useFetch";
+import PathItem from "@/components/PathItem";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-const user_id = "be72e28f-41af-4234-a112-0a0299ed7197";
+type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
 
-export default function ExerciseTab() {
-  // const { data: user, loading: userLoading, error: userError } = useFetch(`/api/users/${user_id}`);
-
-  const base_url = "https://bce9-178-43-255-119.ngrok-free.app";
-  const web_url = "http://localhost:8000";
-  const API_VALUE = Platform.OS === "web" ? web_url : base_url;
-
-  // if (userLoading) {
-  //   return (
-  //     <View style={styles.loaderContainer}>
-  //       <ActivityIndicator size="large" color="#FFFFFF" />
-  //     </View>
-  //   );
-  // }
-
-  // if (userError) {
-  //   return (
-  //     <View style={styles.errorContainer}>
-  //       <Text>Error: {userError}</Text>
-  //     </View>
-  //   );
-  // }
-
-  // if (!user) {
-  //   return (
-  //     <View style={styles.errorContainer}>
-  //       <Text>No user data found.</Text>
-  //     </View>
-  //   );
-  // }
+const ExerciseScreen: React.FC = () => {
+  const pathItems = [
+    { id: "1", label: "Lorem ipsum", icon: "star" as IconName, position: 2 },
+    { id: "2", label: "Lorem ipsum", icon: "play" as IconName, position: 4 },
+    { id: "3", label: "Lorem ipsum", icon: "play" as IconName, position: 8 },
+    { id: "4", label: "Lorem ipsum", icon: "play" as IconName, position: 12 },
+  ];
+  const height = Dimensions.get("screen").height;
+  const grid = Array(12)
+    .fill(null)
+    .map((_, index) => {
+      const item = pathItems.find((i) => i.position === index + 1);
+      return item ? (
+        <View key={`item-${item.id}`} style={styles.pathItemWrapper}>
+          <PathItem icon={item.icon} title={item.label} />
+        </View>
+      ) : (
+        <View key={`empty-${index}`} style={styles.emptyCell} />
+      );
+    });
 
   return (
-    <View style={styles.container}>
-            <LogoutButton />
-
-      <View style={{ flex: 2 }}>
-        {/* <Text style={styles.title}>Hello, {user.name}</Text> */}
-        {/* <Line />
-        <WhiteBox widthProp={70} padingProp={20} marginVerticalProp={20} /> */}
-      </View>
-      <View style={{ flex: 4 }}>
-        <Text style={[styles.titleLastCourse, { flex: 0.6 }]}>
-          Pick up where you left off
-        </Text>
-        <View
-          style={[
-            styles.containerLastCourse,
-            { flex: 5, backgroundColor: "white" },
-          ]}
-        >
-          <View
-            style={[
-              styles.containerImage,
-              { flex: 2.5, backgroundColor: "white" },
-            ]}
-          >
-            <Image
-              source={API_VALUE + "/api/pictures/461fe346-4565-467a-82b2-e089f5a386dc"}
-              style={styles.image}
-            />
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <KeyboardAvoidingView
+        style={[styles.container, { height }]}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        enabled={Platform.OS === "ios"}
+      >
+        {/* Course Card at the Top */}
+        <View style={styles.courseCard}>
+          <View style={styles.courseInfoContainer}>
+            <Text style={styles.courseTitle}>Lorem ipsum</Text>
+            <Text style={styles.courseSubtitle}>Lorem ipsum • Level 1</Text>
+            <ProgressBar progress={0.6} color={Colors.dark.tintLighterGreen} />
           </View>
-          <View style={[styles.containerLevel, { flex: 0.7 }]}>
-            <Text style={[styles.titleLevel, { flex: 0.6 }]}>Level 1</Text>
-          </View>
-          <View style={[styles.containerTitle, { flex: 0.6 }]}>
-            <Text style={[styles.titleTitle, { flex: 0.6 }]}>Basic Shapes</Text>
-          </View>
-          <View style={[styles.containerPercentage, { flex: 0.5 }]}>
-            {/* <CompletionPercentage widthProp={40} /> */}
-          </View>
-          <View style={[styles.containerContinue, { flex: 1 }]}>
-            <Link href={{ pathname: "/exercise" } as never} asChild>
-              {/* <Button
-                onPress={() => {}}
-                title="Continue"
-                height={44}
-                textColor="#FFFFFF"
-                color="#000000"
-                onLongPress={() => {
-                  // Handle button long-press event
-                }}
-                accessibilityLabel="Continue"
-              /> */}
-            </Link>
-          </View>
+          <Link href="/home" asChild>
+            <View style={styles.infoIconContainer}>
+              <MaterialCommunityIcons name="book" size={24} color="black" />
+            </View>
+          </Link>
         </View>
-      </View>
-      <View style={[styles.containerInspiration, { flex: 0.8 }]}>
-        <Link href={{ pathname: "/feed" } as never} asChild>
-          {/* <Button
-            onPress={() => {}}
-            title="Look for inspiration"
-            color="#FFFFFF"
-            textColor="#000"
-            height={50}
-            onLongPress={() => {
-              // Handle button long-press event
-            }}
-            accessibilityLabel="Look for inspiration"
-          /> */}
-        </Link>
-      </View>
-      {/* <Line /> */}
-    </View>
+        <ImageBackground
+          source={require("@/assets/images/background_pattern.png")}
+          style={[styles.fullPathContainer]}
+        >
+          <View style={styles.gridContainer}>{grid}</View>
+        </ImageBackground>
+        <View style={{ height: 90, width: "100%" }} />
+      </KeyboardAvoidingView>
+    </GestureHandlerRootView>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: "column",
-    paddingTop: 20,
-    paddingHorizontal: 20,
-  },
-  title: {
-    fontSize: 30,
-    marginVertical: 20,
-    fontWeight: "bold",
-  },
-  titleLastCourse: {
-    fontSize: 22,
-    marginVertical: 10,
-    fontWeight: "bold",
-  },
-  containerLastCourse: {
-    borderRadius: 20,
-    padding: 20,
-  },
-  containerImage: {
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 15,
-    borderColor: "black",
-    borderWidth: 2,
-    borderRadius: 20,
-  },
-  image: {
-    width: 140,
-    height: 140,
-    borderRadius: 10,
-  },
-  containerLevel: {
-    backgroundColor: "white",
-    alignItems: "flex-start",
-    justifyContent: "flex-end",
-  },
-  titleLevel: {
-    fontSize: 15,
-    color: "#FFD500",
-    fontWeight: "bold",
-  },
-  containerTitle: {
-    backgroundColor: "white",
-  },
-  titleTitle: {
-    color: "#000",
-    fontSize: 22,
-    fontWeight: "bold",
-  },
-  containerPercentage: {
-    backgroundColor: "white",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  containerContinue: {
-    backgroundColor: "white",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  containerInspiration: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  loaderContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-});
+export default ExerciseScreen;

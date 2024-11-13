@@ -6,11 +6,15 @@ import {
   TextInput,
   Alert,
   Image,
+  KeyboardAvoidingView,
+  Platform,
+  useWindowDimensions,
+  Dimensions,
 } from "react-native";
 import Container from "@/components/Container";
 import { useSignIn } from "@clerk/clerk-expo";
 import * as Linking from "expo-linking";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import styles from "@/constants/styles/screens/SignInScreen.styles";
 
 const SignInScreen: React.FC = () => {
@@ -18,6 +22,8 @@ const SignInScreen: React.FC = () => {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const height = Dimensions.get('screen').height;
+  const router = useRouter();
 
   const handleSignIn = async () => {
     if (!isLoaded) return;
@@ -31,7 +37,7 @@ const SignInScreen: React.FC = () => {
 
       if (result.status === "complete") {
         Alert.alert("Sukces", "Zalogowano pomyślnie!");
-        // Możesz przekierować użytkownika do głównego ekranu aplikacji
+        router.replace("/home");
       } else {
         Alert.alert("Weryfikacja", "Sprawdź swoją skrzynkę e-mail.");
       }
@@ -65,7 +71,12 @@ const SignInScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.screen}>
+    <KeyboardAvoidingView
+      style={[styles.screen, {height: height}]}
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS == "ios" ? 0 : 20}
+      enabled={Platform.OS === "ios" ? true : false}
+    >
       <Container height={500} width={80}>
         <View style={styles.textContainer}>
           <Text style={styles.title}>Sign in</Text>
@@ -133,7 +144,7 @@ const SignInScreen: React.FC = () => {
             <Link href="/sign-up" asChild>
               <Text style={styles.link}> Sign up</Text>
             </Link>
-            <br />
+            {"\n"}
             Forgot your password?
             <Link href="/reset" asChild>
               <Text style={styles.link}> Reset it here</Text>
@@ -141,7 +152,7 @@ const SignInScreen: React.FC = () => {
           </Text>
         </View>
       </Container>
-    </View>
+      </KeyboardAvoidingView>
   );
 };
 
