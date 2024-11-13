@@ -15,7 +15,11 @@ const AchievementsSection: React.FC = () => {
       <Text style={styles.sectionTitle}>Achievements</Text>
       <ScrollView horizontal={true} style={styles.achievementsContainer}>
         {achievements.map((source, index) => (
-          <AchievementItem key={index} source={source} />
+          <AchievementItem
+            key={index}
+            source={source}
+            style={index === achievements.length - 1 ? { borderRightWidth: 0 } : {}}
+          />
         ))}
       </ScrollView>
     </View>

@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   },
   modalText:{
     fontSize: 15,
-  }
+  },
   });
 
   export default styles;

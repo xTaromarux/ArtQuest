@@ -158,6 +158,15 @@ const styles = StyleSheet.create({
   modalContent: {
     padding: 16,
   },
+  input: {
+    width: "100%",
+    borderWidth: 3,
+    borderColor: Colors.dark.tintDarkerGreen,
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+    color: Colors.dark.text,
+  },
   iconModalContainer: {
     width: "100%",
     justifyContent: "center",
@@ -185,7 +194,68 @@ const styles = StyleSheet.create({
   },
   modalText:{
     fontSize: 15,
-  }
+  },
+  inputContainer: {
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 5,
+    color: "#333",
+  },
+  inputGroupContainer:{
+    flexDirection: "row",
+  },
+  imagePickerContainer: {
+    marginTop: 20,
+    alignItems: "center",
+  },
+  imagePickerButton: {
+    backgroundColor: "#007BFF",
+    padding: 10,
+    borderRadius: 5,
+  },
+  imagePickerButtonText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  image: {
+    width: 200,
+    height: 200,
+    borderRadius: 10,
+    marginTop: 10,
+  },
+  buttonsContainer: {
+    width: "100%",
+    height: "19%",
+  },
+  buttonSignUp: {
+    width: "100%",
+    padding: 12,
+    borderRadius: 10,
+    borderColor: Colors.dark.tintDarkerGreen,
+    borderWidth: 3,
+    alignItems: "center",
+    height: 50,
+    marginBottom: 10,
+  },
+  buttonSignIn: {
+    width: "100%",
+    padding: 12,
+    borderRadius: 10,
+    height: 50,
+    backgroundColor: Colors.dark.tintDarkerGreen,
+    alignItems: "center",
+  },
+  buttonTextDark: {
+    color: Colors.dark.text,
+    fontSize: 16,
+  },
+  buttonTextLight: {
+    color: Colors.light.text,
+    fontSize: 16,
+  },
 });
 
 export default styles;
