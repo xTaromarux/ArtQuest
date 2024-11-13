@@ -17,6 +17,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import SearchBar from "@/components/SearchBar";
 import Line from "@/components/Line";
 import styles from "@/constants/styles/screens/CoursesScreen.styles";
+import stylesModal from "@/constants/styles/components/Modal.style";
 import { Portal } from "@gorhom/portal";
 import Feather from "@expo/vector-icons/Feather";
 import { Course } from "@/utils/types";
@@ -103,10 +104,11 @@ const courses = [
 ];
 
 const CourseListScreen: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const modalizeRef = useRef<Modalize>(null);
+  const modalizeRef = useRef<Modalize>(null); // <- Problem
   const height = Dimensions.get("screen").height;
   const MODAL_HEIGHT = height - 170;
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
 
   const onOpen = (course: Course) => {
@@ -180,27 +182,27 @@ const CourseListScreen: React.FC = () => {
             dragToss={0.1}
             ref={modalizeRef}
             HeaderComponent={
-              <View style={styles.modalHeader}>
+              <View style={stylesModal.modalHeader}>
                 <Pressable onPress={onClose}>
                   <Feather name="x" size={24} color="black" />
                 </Pressable>
               </View>
             }
           >
-            <View style={styles.modalContent}>
+            <View style={stylesModal.modalContent}>
               {selectedCourse && (
                 <>
-                  <View style={styles.iconModalContainer}>
-                    <Image source={selectedCourse.icon} style={styles.modalIcon} />
+                  <View style={stylesModal.iconModalContainer}>
+                    <Image source={selectedCourse.icon} style={stylesModal.modalIcon} />
                   </View>
-                  <View style={styles.titleModalContainer}>
-                    <Text style={styles.modalTitle}>{selectedCourse.title}</Text>
+                  <View style={stylesModal.titleModalContainer}>
+                    <Text style={stylesModal.modalTitle}>{selectedCourse.title}</Text>
                   </View>
-                  <View style={styles.textModalContainer}>
-                    <Text style={[styles.modalText, { marginBottom: 20 }]}>
+                  <View style={stylesModal.textModalContainer}>
+                    <Text style={[stylesModal.modalText, { marginBottom: 20 }]}>
                       {selectedCourse.descriptionLongNo1}
                     </Text>
-                    <Text style={styles.modalText}>
+                    <Text style={stylesModal.modalText}>
                       {selectedCourse.descriptionLongNo2}
                     </Text>
                   </View>
