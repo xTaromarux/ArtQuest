@@ -1,6 +1,7 @@
 import React from "react";
 import { Dimensions, KeyboardAvoidingView, Platform, useWindowDimensions, View } from "react-native";
 import styles from "@/constants/styles/screens/CoursesScreen.styles";
+import LogoutButton from "@/components/LogoutButton";
 
 const ExerciseScreen: React.FC = () => {
   const height = Dimensions.get('screen').height;
@@ -12,6 +13,7 @@ const ExerciseScreen: React.FC = () => {
       keyboardVerticalOffset={Platform.OS == "ios" ? 0 : 20}
       enabled={Platform.OS === "ios" ? true : false}
     >
+      <LogoutButton />
       
     </KeyboardAvoidingView>
   );
