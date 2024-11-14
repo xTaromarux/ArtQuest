@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
   },
 
   modalContent: {
-    padding: 16,
+    padding: 20,
   },
   iconModalContainer: {
     width: "100%",

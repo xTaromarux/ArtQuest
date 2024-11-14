@@ -11,9 +11,9 @@ import {
   Platform,
 } from "react-native";
 import { Image } from "expo-image";
-// import { useFetch, usePut } from "@/scripts/useFetch";
 import ExitLessonButton from "@/components/ExitLessonButton";
 import SendTweetButton from "@/components/SendTweetButton";
+import { useFetch, usePut } from "@/scripts/useFetch";
 
 export default function TweetScreen() {
   const { id, post } = useGlobalSearchParams();
@@ -28,13 +28,13 @@ export default function TweetScreen() {
   const web_url = "http://localhost:8000";
   const API_VALUE = Platform.OS === "web" ? web_url : base_url;
   
-  // const {
-  //   data: user,
-  //   loading: userLoading,
-  //   error: userError,
-  // } = useFetch(`/api/users/${user_id}`);
+  const {
+    data: user,
+    loading: userLoading,
+    error: userError,
+  } = useFetch(`/api/users/${user_id}`);
   
-  // const { putData, loading: putLoading, error: putError } = usePut(`/api/posts/${id}`);
+  const { putData, loading: putLoading, error: putError } = usePut(`/api/posts/${id}`);
 
   const onTweetPress = async () => {
     const formData = new FormData();
@@ -42,14 +42,14 @@ export default function TweetScreen() {
     formData.append('description', text);
     formData.append('user_id', user_id);
 
-    // try {
-    //   await putData(formData);
-    //   console.warn("Updating the tweet: ", text);
-    //   setText("");
-    //   router.back();
-    // } catch (err) {
-    //   console.error("Failed to update the tweet:", err);
-    // }
+    try {
+      await putData(formData);
+      console.warn("Updating the tweet: ", text);
+      setText("");
+      router.back();
+    } catch (err) {
+      console.error("Failed to update the tweet:", err);
+    }
   };
 
   if (!tweet) {
@@ -60,21 +60,21 @@ export default function TweetScreen() {
     );
   }
 
-  // if (userLoading) {
-  //   return (
-  //     <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-  //       <ActivityIndicator size="large" color="#FFFFFF" />
-  //     </SafeAreaView>
-  //   );
-  // }
+  if (userLoading) {
+    return (
+      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#FFFFFF" />
+      </SafeAreaView>
+    );
+  }
 
-  // if (userError) {
-  //   return (
-  //     <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-  //       <Text>Error: {userError}</Text>
-  //     </SafeAreaView>
-  //   );
-  // }
+  if (userError) {
+    return (
+      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Error: {userError}</Text>
+      </SafeAreaView>
+    );
+  }
 
   const avatarUrl = API_VALUE + "/api/users/" + user_id + "/avatar";
 
@@ -99,8 +99,7 @@ export default function TweetScreen() {
               iconName={"paper-plane"}
               onPress={onTweetPress}
               onLongPress={undefined}
-              // disabled={putLoading}
-              disabled={false}
+              disabled={putLoading}
               activeOpacity={undefined}
             />
           </View>
@@ -118,8 +117,8 @@ export default function TweetScreen() {
                     paddingLeft: 5,
                   }}
                 >
-                  {/* <Text style={styles.name}>{user?.name}</Text>
-                  <Text style={styles.username}>· {user?.login}</Text> */}
+                  <Text style={styles.name}>{user?.name}</Text>
+                  <Text style={styles.username}>· {user?.login}</Text>
                 </View>
                 <TextInput
                   value={text}

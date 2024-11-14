@@ -18,6 +18,7 @@ import { Portal } from "@gorhom/portal";
 import Feather from "@expo/vector-icons/Feather";
 import ProfileHeader from "@/components/ProfileHeader";
 import StatisticsSection from "@/components/StatisticsSection";
+import CenteredModal from "@/components/CenteredModal"; // Import CenteredModal here
 import AchievementsSection from "@/components/AchievementsSection";
 import LogoutButton from "@/components/LogoutButton";
 import LabeledTextInput from "@/components/LabeledTextInput";
@@ -33,6 +34,7 @@ const ExerciseScreen: React.FC = () => {
   const [nickname, setNickname] = useState("");
   const [password, setPassword] = useState("");
   const [image, setImage] = useState<string | null>(null);
+  const [isModalVisible, setModalVisible] = useState(false);
 
   const onOpen = () => {
     modalizeRef.current?.open();
@@ -42,9 +44,13 @@ const ExerciseScreen: React.FC = () => {
     modalizeRef.current?.close();
   };
 
+  const onCloseAndSave = () => {
+    modalizeRef.current?.close();
+  };
+
   const pickImage = async () => {
-    // Zapytaj o pozwolenie na dostęp do galerii
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (permissionResult.granted === false) {
       Alert.alert("Permission to access gallery is required!");
@@ -61,6 +67,15 @@ const ExerciseScreen: React.FC = () => {
     if (!result.canceled) {
       setImage(result.assets[0].uri);
     }
+  };
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
+  const handleDeleteAccount = () => {
+    console.log("Account deleted");
+    toggleModal();
   };
 
   return (
@@ -102,20 +117,31 @@ const ExerciseScreen: React.FC = () => {
           >
             <View style={stylesModal.modalContent}>
               <View style={styles.inputGroupContainer}>
-              <View style={styles.imagePickerContainer}>
-                <Pressable onPress={pickImage} style={styles.imagePickerButton}>
-                  <Text  style={styles.imagePickerButtonText}>Pick an image</Text>
-                </Pressable>
-                {image && <Image source={{ uri: image }} style={styles.image} />}
+                <View style={styles.imagePickerContainer}>
+                  <Pressable
+                    onPress={pickImage}
+                    style={styles.imagePickerButton}
+                  >
+                    {image ? (
+                      <Image source={{ uri: image }} style={styles.avatar} />
+                    ) : (
+                      <Image
+                        source={require("@/assets/images/avatar_default.png")}
+                        style={styles.avatar}
+                      />
+                    )}
+                  </Pressable>
+                  <Text style={styles.profileLabel}>Edit profile</Text>
+                </View>
+                <LabeledTextInput
+                  label="Nickname"
+                  style={{ marginLeft: 20, bottom: 15 }}
+                  value={nickname}
+                  onChangeText={setNickname}
+                  placeholder="Enter your nickname"
+                />
               </View>
-              <LabeledTextInput
-                label="Nickname"
-                value={nickname}
-                onChangeText={setNickname}
-                placeholder="Enter your nickaname"
-              />
-              </View>
-              
+
               <LabeledTextInput
                 label="Email Address"
                 value={emailAddress}
@@ -128,21 +154,29 @@ const ExerciseScreen: React.FC = () => {
                 onChangeText={setPassword}
                 placeholder="Enter password"
               />
+
+              <TouchableOpacity
+                style={styles.buttonDelete}
+                onPress={toggleModal}
+              >
+                <Text style={styles.buttonTextLight}>Delete account</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.buttonSave}
+                onPress={onCloseAndSave}
+              >
+                <Text style={styles.buttonTextDark}>Save</Text>
+              </TouchableOpacity>
             </View>
-            <View style={styles.buttonsContainer}>
-          <Link href="/sign-up" asChild>
-            <TouchableOpacity style={styles.buttonSignUp}>
-              <Text style={styles.buttonTextDark}>Sign up</Text>
-            </TouchableOpacity>
-          </Link>
-          <Link href="/sign-in" asChild>
-            <TouchableOpacity style={styles.buttonSignIn}>
-              <Text style={styles.buttonTextLight}>Sign in</Text>
-            </TouchableOpacity>
-          </Link>
-        </View>
           </Modalize>
         </Portal>
+
+        <CenteredModal
+          isVisible={isModalVisible}
+          title="Are you sure you want to delete your account?"
+          onConfirm={handleDeleteAccount}
+          onCancel={toggleModal}
+        />
       </KeyboardAvoidingView>
     </GestureHandlerRootView>
   );

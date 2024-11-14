@@ -50,6 +50,7 @@
     "react-native-fluidbottomnavigation": "^1.2.2",
     "react-native-gesture-handler": "~2.16.1",
     "react-native-loading-spinner-overlay": "^3.0.1",
+    "react-native-modal": "^13.0.1",
     "react-native-modalize": "^2.1.1",
     "react-native-pager-view": "^6.4.1",
     "react-native-reanimated": "~3.10.1",

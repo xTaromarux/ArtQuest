@@ -1,3 +1,4 @@
+import Colors from "@/constants/Colors";
 import React from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
 
@@ -6,11 +7,12 @@ interface LabeledTextInputProps {
     value: string;
     onChangeText: (text: string) => void;
     placeholder?: string;
+    style?: object;
   }
 
-  const LabeledTextInput: React.FC<LabeledTextInputProps> = ({ label, value, onChangeText, placeholder }) => {
+  const LabeledTextInput: React.FC<LabeledTextInputProps> = ({ label, value, onChangeText, placeholder, style }) => {
     return (
-    <View style={styles.inputContainer}>
+    <View style={[styles.inputContainer, style]}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
         style={styles.input}
@@ -29,14 +31,14 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    marginBottom: 5,
+    marginBottom: 2,
     color: "#333",
   },
   input: {
     width: "100%",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
+    borderWidth: 3,
+    borderColor: Colors.dark.background,
+    borderRadius: 10,
     padding: 10,
     color: "#333",
   },

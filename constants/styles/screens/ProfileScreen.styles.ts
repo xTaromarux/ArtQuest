@@ -204,17 +204,28 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     color: "#333",
   },
+  profileLabel: {
+    fontSize: 14,
+    marginBottom: 2,
+    color: "#333",
+  },
   inputGroupContainer:{
+    alignItems: "center",
     flexDirection: "row",
   },
   imagePickerContainer: {
-    marginTop: 20,
+    marginVertical: 20,
     alignItems: "center",
   },
   imagePickerButton: {
-    backgroundColor: "#007BFF",
-    padding: 10,
-    borderRadius: 5,
+    width: 110,
+    height: 110,
+    backgroundColor: Colors.light.background,
+    borderColor: Colors.dark.background,
+    borderWidth: 3,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 60,
   },
   imagePickerButtonText: {
     color: "#fff",
@@ -230,31 +241,35 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "19%",
   },
-  buttonSignUp: {
+  buttonSave: {
     width: "100%",
-    padding: 12,
+    padding: 8,
     borderRadius: 10,
     borderColor: Colors.dark.tintDarkerGreen,
     borderWidth: 3,
     alignItems: "center",
     height: 50,
     marginBottom: 10,
+    marginTop: 100,
   },
-  buttonSignIn: {
+  buttonDelete: {
     width: "100%",
     padding: 12,
     borderRadius: 10,
     height: 50,
+    marginTop: 25,
     backgroundColor: Colors.dark.tintDarkerGreen,
     alignItems: "center",
   },
   buttonTextDark: {
     color: Colors.dark.text,
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: "bold",
   },
   buttonTextLight: {
     color: Colors.light.text,
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });
 
