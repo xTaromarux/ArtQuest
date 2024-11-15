@@ -110,7 +110,7 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.dark.background,
-    padding: 10,
+    paddingTop: 10,
     margin: 20,
     borderRadius: 10,
     marginVertical: 8,
