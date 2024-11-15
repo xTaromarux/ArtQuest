@@ -7,6 +7,7 @@ import IconButton from "./IconButton";
 import ConfirmationModal from "./ConfirmationModal";
 import Menu, { MenuItem } from "./PopupMenu";
 import { TweetType } from "@/utils/types";
+import Colors from "@/constants/Colors";
 
 type TweetProp = {
   tweet: TweetType;
@@ -35,8 +36,9 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
 
   const handleEdit = () => {
     router.push({
-      pathname: `/(auth)/feed/tweet/${tweet.id}`,
+      pathname: "/(auth)/feed/tweet/[id]",
       params: {
+        id: tweet.id,
         post: JSON.stringify(tweet),
       },
     });
@@ -47,9 +49,16 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-          <Image source={{ uri: avatarUrl }} style={styles.userImage} />
+          <View style={styles.userImageContainer}>
+            <Image
+              // source={{ uri: avatarUrl }}
+              source={require("@/assets/images/avatar_default.png")}
+              style={styles.userImage}
+            />
+          </View>
           <View style={styles.userInfo}>
             <Text style={styles.name}>{tweet.user.name}</Text>
+            <Text>•</Text>
             <Text style={styles.username}>@{tweet.user.login}</Text>
           </View>
           <Menu
@@ -76,10 +85,9 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
         )}
 
         {/* Description */}
-        <Text style={styles.content}>{tweet.Description}</Text>
 
-        {/* Footer */}
         <View style={styles.footer}>
+          <Text style={styles.content}>{tweet.Description}</Text>
           <IconButton
             icon="heart"
             solid={false}
@@ -101,44 +109,60 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: Colors.dark.background,
     padding: 10,
-    backgroundColor: "#1F1F1F",
+    margin: 20,
     borderRadius: 10,
     marginVertical: 8,
   },
   header: {
+    backgroundColor: Colors.dark.background,
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
+    justifyContent: "center",
+  },
+  userImageContainer: {
+    width: 50,
+    height: 50,
+    backgroundColor: Colors.light.background,
+    borderRadius: 100,
+    padding: 10,
+    justifyContent: "center",
+    alignItems: "center",
   },
   userImage: {
     width: 40,
     height: 40,
-    borderRadius: 20,
-    marginRight: 10,
+    borderRadius: 100,
   },
   userInfo: {
+    backgroundColor: Colors.dark.background,
     flex: 1,
+    flexDirection: "row",
   },
   name: {
-    color: "#FFFFFF",
+    color: Colors.light.text,
     fontWeight: "bold",
+    marginLeft: 20,
+    marginRight: 10,
   },
   username: {
     color: "gray",
+    marginLeft: 10,
   },
   menu: {
     marginLeft: "auto",
   },
   content: {
-    color: "#FFFFFF",
-    marginTop: 10,
+    width: "100%",
+    color: Colors.light.text,
+    height: "100%",
     fontSize: 14,
   },
   imageWrapper: {
     width: "100%",
     aspectRatio: 1,
-    borderRadius: 15,
+    borderRadius: 10,
     overflow: "hidden",
     backgroundColor: "#333",
     marginTop: 10,
@@ -149,6 +173,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   footer: {
+    backgroundColor: Colors.dark.background,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-end",

@@ -10,7 +10,7 @@ type IconButtonProps = {
 
 const IconButton = ({ icon, text, color, solid }: IconButtonProps) => {
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+    <View style={{ flexDirection: 'column', alignItems: 'center' }}>
       <FontAwesome5 name={icon} size={18} color={color} solid={solid} />
       <Text style={{ fontSize: 12, color: 'gray' }}>{text}</Text>
     </View>

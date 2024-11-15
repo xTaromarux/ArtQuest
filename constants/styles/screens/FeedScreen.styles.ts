@@ -4,8 +4,7 @@ import Colors from "../../Colors";
 const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.dark.background,
-    paddingTop: 40,
-    paddingBottom: 40,
+    paddingBottom: 90,
   },
   loaderContainer: {
     flex: 1,

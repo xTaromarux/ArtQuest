@@ -78,7 +78,6 @@ const ExerciseScreen: React.FC = () => {
     >
       <FlatList
         data={tweets}
-        style={{ backgroundColor: "#1F1F1F" }}
         renderItem={({ item }) => <Tweet tweet={item} onDelete={fetchTweets} />}
         keyExtractor={(item) => item.id}
         refreshControl={
