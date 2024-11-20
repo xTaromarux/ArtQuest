@@ -11,7 +11,7 @@ export type TabsParamList = {
   home: undefined;
   feed: undefined;
   courses: undefined;
-  exercise: undefined;
+  exercises: undefined;
   profile: undefined;
 };
 

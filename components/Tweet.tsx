@@ -8,6 +8,7 @@ import ConfirmationModal from "./ConfirmationModal";
 import Menu, { MenuItem } from "./PopupMenu";
 import { TweetType } from "@/utils/types";
 import Colors from "@/constants/Colors";
+import TweetFooter from "./TweetFooter";
 
 type TweetProp = {
   tweet: TweetType;
@@ -47,11 +48,9 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
   return (
     <>
       <View style={styles.container}>
-        {/* Header */}
         <View style={styles.header}>
           <View style={styles.userImageContainer}>
             <Image
-              // source={{ uri: avatarUrl }}
               source={require("@/assets/images/avatar_default.png")}
               style={styles.userImage}
             />
@@ -77,24 +76,13 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
           </Menu>
         </View>
 
-        {/* Main Content */}
         {tweet.image_url && (
           <View style={styles.imageWrapper}>
             <Image source={{ uri: imageUrl }} style={styles.image} />
           </View>
         )}
+      <TweetFooter tweet={tweet} />
 
-        {/* Description */}
-
-        <View style={styles.footer}>
-          <Text style={styles.content}>{tweet.Description}</Text>
-          <IconButton
-            icon="heart"
-            solid={false}
-            color="white"
-            text={tweet.numberOfLikes || 0}
-          />
-        </View>
       </View>
 
       <ConfirmationModal

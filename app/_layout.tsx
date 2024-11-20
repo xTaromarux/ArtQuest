@@ -11,7 +11,7 @@ import "react-native-reanimated";
 import { Slot, useRouter, useSegments } from "expo-router";
 import { ClerkProvider, ClerkLoaded, useAuth } from "@clerk/clerk-expo";
 import { useColorScheme } from "@/components/useColorScheme";
-import { PortalProvider } from "@gorhom/portal";
+import { PortalHost, PortalProvider } from "@gorhom/portal";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { enableScreens } from "react-native-screens";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -37,7 +37,10 @@ SplashScreen.preventAutoHideAsync();
 
 const useOfflineAuth = () => {
   const { isLoaded, isSignedIn, userId, getToken } = useAuth();
-  const [offlineAuth, setOfflineAuth] = useState<null | { isSignedIn: boolean; token: string }>(null);
+  const [offlineAuth, setOfflineAuth] = useState<null | {
+    isSignedIn: boolean;
+    token: string;
+  }>(null);
 
   useEffect(() => {
     const loadOfflineAuth = async () => {
@@ -169,6 +172,7 @@ function RootLayoutNav() {
           value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
         >
           <PortalProvider>
+            <PortalHost name="menu" />
             <InitialLayout />
           </PortalProvider>
         </ThemeProvider>
@@ -184,6 +188,7 @@ function RootLayoutNav() {
         >
           <ClerkLoaded>
             <PortalProvider>
+              <PortalHost name="menu" />
               <InitialLayout />
             </PortalProvider>
           </ClerkLoaded>

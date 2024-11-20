@@ -11,10 +11,14 @@ import {
   useWindowDimensions,
   Dimensions,
   Pressable,
+  ImageBackground,
 } from "react-native";
 import Container from "@/components/Container";
 import styles from "@/constants/styles/screens/NewPostScreen.styles";
 import * as ImagePicker from "expo-image-picker";
+import { Link } from "expo-router";
+import { Feather } from "@expo/vector-icons";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 const NewPost: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -51,24 +55,46 @@ const NewPost: React.FC = () => {
     >
       <Container height={780} width={90}>
         <View style={styles.formContainer}>
+          <View style={styles.header}>
+            <Link href="/feed" asChild>
+              <Pressable>
+                <Feather name="x" size={24} color="black" />
+              </Pressable>
+            </Link>
+          </View>
+          <View style={styles.newPostLabelContainer}>
+            <Text style={styles.newPostLabel}>New Post</Text>
+          </View>
+
           <View style={styles.imagePickerContainer}>
             <Pressable onPress={pickImage} style={styles.imagePickerButton}>
               {image ? (
-                <Image source={{ uri: image }} style={styles.avatar} />
-              ) : (
                 <Image
-                  source={require("@/assets/images/avatar_default.png")}
+                  source={{ uri: image }}
                   style={styles.avatar}
+                  resizeMode="contain"
                 />
+              ) : (
+                <>
+                  <View style={styles.importIcon}>
+                    <FontAwesome name="download" size={24} color="black" />
+                  </View>
+                  <View style={styles.importImage}>
+                    <Image
+                      source={require("@/assets/images/noImage.png")}
+                      style={styles.noImage}
+                      resizeMode="contain"
+                    />
+                  </View>
+                </>
               )}
             </Pressable>
-            <Text style={styles.profileLabel}>Edit profile</Text>
           </View>
 
           <TextInput
+            multiline
             style={styles.input}
             placeholder="Description"
-            secureTextEntry
           />
 
           <TouchableOpacity style={styles.continueButton} disabled={loading}>

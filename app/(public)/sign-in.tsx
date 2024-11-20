@@ -8,7 +8,6 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
-  useWindowDimensions,
   Dimensions,
 } from "react-native";
 import Container from "@/components/Container";
@@ -22,7 +21,7 @@ const SignInScreen: React.FC = () => {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const height = Dimensions.get('screen').height;
+  const height = Dimensions.get("screen").height;
   const router = useRouter();
 
   const handleSignIn = async () => {
@@ -54,13 +53,17 @@ const SignInScreen: React.FC = () => {
   const handleOAuthSignIn = async (
     provider: "oauth_google" | "oauth_github"
   ) => {
-    if (!signIn) return;
+    if (!isLoaded || !signIn) return;
 
     try {
+      const redirectUrl = Linking.createURL("/oauth-callback");
+      const completeUrl = Linking.createURL("/home");
+
+      // Użycie tej samej funkcji dla mobilnych i webowych aplikacji
       await signIn.authenticateWithRedirect({
         strategy: provider,
-        redirectUrl: Linking.createURL("/oauth-callback"),
-        redirectUrlComplete: Linking.createURL("/home"),
+        redirectUrl,
+        redirectUrlComplete: completeUrl,
       });
     } catch (error: any) {
       Alert.alert(
@@ -72,7 +75,7 @@ const SignInScreen: React.FC = () => {
 
   return (
     <KeyboardAvoidingView
-      style={[styles.screen, {height: height}]}
+      style={[styles.screen, { height: height }]}
       behavior={Platform.OS == "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS == "ios" ? 0 : 20}
       enabled={Platform.OS === "ios" ? true : false}
@@ -103,7 +106,7 @@ const SignInScreen: React.FC = () => {
               source={require("@/assets/images/github.png")}
               style={styles.image}
             />
-            <Text style={styles.socialButtonText}>Github</Text>
+            <Text style={styles.socialButtonText}>GitHub</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.dividerContainer}>
@@ -152,7 +155,7 @@ const SignInScreen: React.FC = () => {
           </Text>
         </View>
       </Container>
-      </KeyboardAvoidingView>
+    </KeyboardAvoidingView>
   );
 };
 
