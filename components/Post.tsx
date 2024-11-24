@@ -8,6 +8,7 @@ import Menu, { MenuItem } from "./PopupMenu";
 import { TweetType } from "@/utils/types";
 import Colors from "@/constants/Colors";
 import TweetFooter from "./TweetFooter";
+import Line from "./Line";
 
 type TweetProp = {
   tweet: TweetType;
@@ -16,7 +17,7 @@ type TweetProp = {
 
 const user_id = "be72e28f-41af-4234-a112-0a0299ed7197";
 
-const Tweet = ({ tweet, onDelete }: TweetProp) => {
+const Post = ({ tweet, onDelete }: TweetProp) => {
   const [modalVisible, setModalVisible] = useState(false);
   const base_url = "https://bce9-178-43-255-119.ngrok-free.app";
   const web_url = "http://localhost:8000";
@@ -44,18 +45,8 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
     });
   };
 
-  const handlePostPress = () => {
-    router.push({
-      pathname: `../../tweet/[id]`,
-      params: {
-        id: tweet.id,
-        post: JSON.stringify(tweet),
-      }
-    });  };
-
   return (
     <>
-      <Pressable style={styles.container} onPress={handlePostPress}>
         <View style={styles.header}>
           <View style={styles.userImageContainer}>
             <Image
@@ -86,7 +77,7 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
           </View>
         )}
         <TweetFooter tweet={tweet} />
-      </Pressable>
+        <Line width={100} backgroundColor={Colors.light.background} style={{marginVertical: 10, opacity: 0.5,}} />
 
       <ConfirmationModal
         visible={modalVisible}
@@ -143,7 +134,6 @@ const styles = StyleSheet.create({
   },
   menu: {
     marginLeft: "auto",
-    borderRadius: 10
   },
   content: {
     width: "100%",
@@ -173,4 +163,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Tweet;
+export default Post;

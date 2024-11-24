@@ -18,7 +18,7 @@ const TweetFooter: React.FC<{ tweet: TweetType }> = ({ tweet }) => {
 
   return (
     <View style={styles.footer}>
-      <Text style={styles.content}>{tweet.Description}</Text>
+      <Text style={styles.content}>{tweet.description}</Text>
       <IconButton
         icon="heart"
         solid={isLiked} 

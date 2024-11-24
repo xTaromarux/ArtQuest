@@ -42,7 +42,7 @@ const ExerciseScreen: React.FC = () => {
   const tweets: TweetType[] = [
     {
       id: "1",
-      Description: "This is a static tweet 1",
+      description: "This is a static tweet 1",
       user: user1,
       createdAt: new Date().toISOString(),
       image_url:
@@ -54,7 +54,7 @@ const ExerciseScreen: React.FC = () => {
     },
     {
       id: "2",
-      Description: "Another tweet example",
+      description: "Another tweet example",
       user: user2,
       createdAt: new Date().toISOString(),
       image_url:
@@ -66,7 +66,7 @@ const ExerciseScreen: React.FC = () => {
     },
     {
       id: "3",
-      Description: "Another tweet example",
+      description: "Another tweet example",
       user: user2,
       createdAt: new Date().toISOString(),
       image_url:

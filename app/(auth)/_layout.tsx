@@ -5,10 +5,10 @@ import { createStackNavigator, CardStyleInterpolators, TransitionSpecs } from "@
 import HomeScreen from "./home";
 import FeedScreen from "./feed";
 import CoursesScreen from "./courses";
-import ExerciseScreen from "./exercises/index";
 import ProfileScreen from "./profile";
 import { TabsParamList } from "@/utils/types";
 import CustomBottomTab from "@/components/CustomBottomTab";
+import ExerciseScreen from "./exercises";
 
 const Tab = createBottomTabNavigator<TabsParamList>();
 const Stack = createStackNavigator();
