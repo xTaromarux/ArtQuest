@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Image, StyleSheet, Pressable, Platform } from "react-native";
 import { Text, View } from "./Themed";
-import { Entypo } from "@expo/vector-icons";
+import { AntDesign, Entypo } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import ConfirmationModal from "./ConfirmationModal";
 import Menu, { MenuItem } from "./PopupMenu";
@@ -77,13 +77,17 @@ const Post = ({ tweet, onDelete }: TweetProp) => {
           </View>
         )}
         <TweetFooter tweet={tweet} />
-        <Line width={100} backgroundColor={Colors.light.background} style={{marginVertical: 10, opacity: 0.5,}} />
+        <Line width={100} backgroundColor={Colors.light.background} style={{marginVertical: 10, opacity: 0.5 }} />
 
       <ConfirmationModal
-        visible={modalVisible}
+        isVisible={modalVisible}
         onConfirm={() => {}}
         onCancel={handleCancelDelete}
-        message="Are you sure you want to delete this post?"
+        title="Are you sure you want to delete this post?"
+        IconComponent={AntDesign} 
+        iconName="exclamationcircleo" 
+        iconSize={40} 
+        iconColor={Colors.dark.background}
       />
     </>
   );

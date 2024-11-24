@@ -8,6 +8,7 @@ import Menu, { MenuItem } from "./PopupMenu";
 import { TweetType } from "@/utils/types";
 import Colors from "@/constants/Colors";
 import TweetFooter from "./TweetFooter";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 type TweetProp = {
   tweet: TweetType;
@@ -50,8 +51,9 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
       params: {
         id: tweet.id,
         post: JSON.stringify(tweet),
-      }
-    });  };
+      },
+    });
+  };
 
   return (
     <>
@@ -89,10 +91,14 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
       </Pressable>
 
       <ConfirmationModal
-        visible={modalVisible}
+        isVisible={modalVisible}
         onConfirm={() => {}}
         onCancel={handleCancelDelete}
-        message="Are you sure you want to delete this post?"
+        title="Are you sure you want to delete this post?"
+        IconComponent={AntDesign} 
+        iconName="exclamationcircleo" 
+        iconSize={40} 
+        iconColor={Colors.dark.background} 
       />
     </>
   );
@@ -143,7 +149,7 @@ const styles = StyleSheet.create({
   },
   menu: {
     marginLeft: "auto",
-    borderRadius: 10
+    borderRadius: 10,
   },
   content: {
     width: "100%",

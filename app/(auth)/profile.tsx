@@ -18,13 +18,14 @@ import { Portal } from "@gorhom/portal";
 import Feather from "@expo/vector-icons/Feather";
 import ProfileHeader from "@/components/ProfileHeader";
 import StatisticsSection from "@/components/StatisticsSection";
-import CenteredModal from "@/components/CenteredModal"; // Import CenteredModal here
+import ConfirmationModal from "@/components/ConfirmationModal";
 import AchievementsSection from "@/components/AchievementsSection";
 import LogoutButton from "@/components/LogoutButton";
 import LabeledTextInput from "@/components/LabeledTextInput";
 import * as ImagePicker from "expo-image-picker";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 const ExerciseScreen: React.FC = () => {
   const modalizeRef = useRef<Modalize>(null);
@@ -171,11 +172,15 @@ const ExerciseScreen: React.FC = () => {
           </Modalize>
         </Portal>
 
-        <CenteredModal
+        <ConfirmationModal
           isVisible={isModalVisible}
           title="Are you sure you want to delete your account?"
           onConfirm={handleDeleteAccount}
           onCancel={toggleModal}
+          IconComponent={MaterialCommunityIcons} 
+          iconName="emoticon-sad-outline" 
+          iconSize={50} 
+          iconColor="black"
         />
       </KeyboardAvoidingView>
     </GestureHandlerRootView>
