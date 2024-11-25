@@ -27,7 +27,7 @@ const BottomTabIcon: React.FC<BottomTabIconProps> = ({ route, isFocused, color, 
       iconNameMaterialCommunity = isFocused ? 'clipboard-search' : 'clipboard-search-outline';
       IconComponent = MaterialCommunityIcons;
       return <IconComponent name={iconNameMaterialCommunity} size={size} color={color} />;
-    case 'exercise':
+    case 'exercises':
       iconNameMaterialCommunity = isFocused ? 'clipboard-text-play' : 'clipboard-text-play-outline';
       IconComponent = MaterialCommunityIcons;
       return <IconComponent name={iconNameMaterialCommunity} size={size} color={color} />;

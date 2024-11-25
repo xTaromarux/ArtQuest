@@ -16,16 +16,16 @@ import { useUser } from "@clerk/clerk-expo";
 import Line from "@/components/Line";
 import Container from "@/components/Container";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import styles from "@/constants/styles/screens/HomeScreen.styles";
 
 const HomeScreen: React.FC = () => {
   const { user } = useUser(); // Pobieramy dane użytkownika
-  const height = Dimensions.get('screen').height;
+  const height = Dimensions.get("screen").height;
 
   return (
     <KeyboardAvoidingView
-      style={[styles.container, {height: height }]}
+      style={[styles.container, { height: height }]}
       behavior={Platform.OS == "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS == "ios" ? 0 : 20}
       enabled={Platform.OS === "ios" ? true : false}
@@ -57,11 +57,14 @@ const HomeScreen: React.FC = () => {
             <Text style={styles.courseTitle}>Basic Shapes</Text>
             <ProgressBar progress={0.4} color={Colors.dark.tintLighterGreen} />
           </View>
-          <Link href="/(auth)/exercise" asChild>
-            <Pressable style={styles.continueButton}>
-              <Text style={styles.continueButtonText}>Continue</Text>
-            </Pressable>
-          </Link>
+          <Pressable
+            onPress={() => {
+              router.push("/exercises");
+            }}
+            style={styles.continueButton}
+          >
+            <Text style={styles.continueButtonText}>Continue</Text>
+          </Pressable>
         </View>
       </Container>
 

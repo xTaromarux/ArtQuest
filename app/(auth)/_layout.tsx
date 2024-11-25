@@ -5,10 +5,10 @@ import { createStackNavigator, CardStyleInterpolators, TransitionSpecs } from "@
 import HomeScreen from "./home";
 import FeedScreen from "./feed";
 import CoursesScreen from "./courses";
-import ExerciseScreen from "./exercise";
 import ProfileScreen from "./profile";
 import { TabsParamList } from "@/utils/types";
 import CustomBottomTab from "@/components/CustomBottomTab";
+import ExerciseScreen from "./exercises";
 
 const Tab = createBottomTabNavigator<TabsParamList>();
 const Stack = createStackNavigator();
@@ -56,7 +56,7 @@ const CoursesStack = () => (
 
 const ExerciseStack = () => (
   <Stack.Navigator screenOptions={getScreenOptions()}>
-    <Stack.Screen name="Exercise" component={ExerciseScreen} />
+    <Stack.Screen name="Exercises" component={ExerciseScreen} />
   </Stack.Navigator>
 );
 
@@ -82,7 +82,7 @@ const AuthLayout: FC = () => {
       <Tab.Screen name="home" component={HomeStack} options={{ headerShown: false }} />
       <Tab.Screen name="feed" component={FeedStack} options={{ headerShown: false }} />
       <Tab.Screen name="courses" component={CoursesStack} options={{ headerShown: false }} />
-      <Tab.Screen name="exercise" component={ExerciseStack} options={{ headerShown: false }} />
+      <Tab.Screen name="exercises" component={ExerciseStack} options={{ headerShown: false }} />
       <Tab.Screen name="profile" component={ProfileStack} options={{ headerShown: false }} />
     </Tab.Navigator>
   );

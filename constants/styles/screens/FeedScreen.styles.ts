@@ -4,8 +4,7 @@ import Colors from "../../Colors";
 const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.dark.background,
-    paddingTop: 40,
-    paddingBottom: 40,
+    paddingBottom: 90,
   },
   loaderContainer: {
     flex: 1,
@@ -14,20 +13,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#1F1F1F",
   },
   floatingButton: {
-    backgroundColor: "#1C9BF0",
-    borderRadius: 25,
-    padding: 15,
+    backgroundColor: Colors.light.background,
+    borderRadius: 100,
+    width: 70,
+    height: 70,
     position: "absolute",
-    right: 15,
-    bottom: 15,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    right: 20,
+    bottom: 100,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 3,
+    borderColor: Colors.dark.background,
     overflow: "hidden",
   },
   mainContainer: {

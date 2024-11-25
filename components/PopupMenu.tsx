@@ -46,7 +46,7 @@ const Menu = ({ trigger, children }: any) => {
       backgroundColor: "white",
       alignSelf: "flex-start",
       width: layoutWidth * 0.5,
-      borderRadius: 13,
+      borderRadius: 10,
       shadowColor: "#000",
       shadowOffset: {
         width: 0,

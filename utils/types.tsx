@@ -11,7 +11,7 @@ export type TabsParamList = {
   home: undefined;
   feed: undefined;
   courses: undefined;
-  exercise: undefined;
+  exercises: undefined;
   profile: undefined;
 };
 
@@ -46,7 +46,7 @@ export type UserType = {
 
 export type TweetType = {
   id: string;
-  Description: string;
+  description: string;
   user: UserType;
   createdAt: string;
   image_url?: string;
@@ -54,6 +54,15 @@ export type TweetType = {
   numberOfRetweets?: number;
   numberOfLikes?: number;
   impressions?: number;
+};
+
+export type CommentType = {
+  id: string;
+  content: string;
+  user: UserType; 
+  createdAt: string; 
+  parentId?: string; 
+  likes?: number; 
 };
 
 export type ContentType = {
