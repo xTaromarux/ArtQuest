@@ -77,7 +77,7 @@ const Post = ({ tweet, onDelete }: TweetProp) => {
           </View>
         )}
         <TweetFooter tweet={tweet} />
-        <Line width={100} backgroundColor={Colors.light.background} style={{marginVertical: 10, opacity: 0.5 }} />
+        <Line width={100} backgroundColor={Colors.light.background} style={{marginTop: 10, marginBottom: 20, opacity: 0.5 }} />
 
       <ConfirmationModal
         isVisible={modalVisible}
