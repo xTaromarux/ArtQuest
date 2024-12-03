@@ -6,12 +6,15 @@ import Animated, {
     useAnimatedStyle,
     withTiming,
   } from "react-native-reanimated";
+import { router } from "expo-router";
+import { Exercise } from "@/utils/types";
 interface PathItemProps {
   icon: keyof typeof MaterialCommunityIcons.glyphMap;
   title: string;
+  exercise: Exercise;
 }
 
-const PathItem: React.FC<PathItemProps> = ({ icon, title }) => {
+const PathItem: React.FC<PathItemProps> = ({ icon, title, exercise }) => {
     const [clicked, setClicked] = useState(false);
     const platformTopOfTheTopPosition = useSharedValue({ top: -8, right: 9 });
   
@@ -30,7 +33,15 @@ const PathItem: React.FC<PathItemProps> = ({ icon, title }) => {
     }));
   
     const handlePress = () => {
-      setClicked((prev) => !prev);
+      // setClicked((prev) => !prev);
+      setClicked(true);
+      router.push({
+        pathname: `../../exercise/[id]`,
+        params: {
+          id: exercise.id,
+          exercise: JSON.stringify(exercise),
+        },
+      });
     };
 
   return (
