@@ -28,9 +28,10 @@ const ExerciseScreen: React.FC = () => {
     {
       id: "1",
       template: 1,
-      next_view_id: null,
-      previous_view_id: "2",
+      next_view_id:  "2",
+      previous_view_id: null,
       ai_part: false,
+      percentage: 0.2,
       description: [
         "Lorem ipsum dolor sit amet, consectetur ",
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ",

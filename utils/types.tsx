@@ -44,6 +44,7 @@ export interface Exercise {
   ai_part: boolean;
   description: string[];
   picture: string[];
+  percentage: number;
 }
 
 export type UserType = {
