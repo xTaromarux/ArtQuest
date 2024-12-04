@@ -13,7 +13,7 @@ import ProgressBar from "@/components/ProgressBar";
 import Colors from "@/constants/Colors";
 import { AntDesign, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import styles from "@/constants/styles/screens/ExerciseScreen.styles";
-import { Link } from "expo-router";
+import { Link, useGlobalSearchParams } from "expo-router";
 import PathItem from "@/components/PathItem";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Modalize } from "react-native-modalize";
@@ -24,7 +24,26 @@ import { Portal } from "@gorhom/portal";
 type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
 
 const ExerciseScreen: React.FC = () => {
-  const exercise = [
+  const { id, exercise } = useGlobalSearchParams();
+  
+  let courseDetails = {
+    id: "1",
+    label: "Lines",
+    shortDesc: "Lorem ipsum dolor sit amet",
+    level: 1,
+    percentage: 0.2,
+    color: "#FF6B6B",
+  };
+  
+  if (typeof exercise === "string") {
+    try {
+      courseDetails = JSON.parse(exercise);
+    } catch (error) {
+      console.error("Nie udało się sparsować danych:", error);
+    }
+  }
+
+  const view = [
     {
       id: "1",
       template: 1,
@@ -60,14 +79,7 @@ const ExerciseScreen: React.FC = () => {
     color: "#FF6B6B",
   };
 
-  const courseDetails = {
-    id: "1",
-    label: "Lines",
-    shortDesc: "Lorem ipsum dolor sit amet",
-    level: 1,
-    percentage: 0.2,
-    color: "#FF6B6B",
-  };
+
 
   const height = Dimensions.get("screen").height;
   const MODAL_HEIGHT = height - 170;
@@ -78,7 +90,7 @@ const ExerciseScreen: React.FC = () => {
       const item = pathItems.find((i) => i.position === index + 1);
       return item ? (
         <View key={`item-${item.id}`} style={styles.pathItemWrapper}>
-          <PathItem icon={item.icon} title={item.label} exercise={exercise[0]} />
+          <PathItem icon={item.icon} title={item.label} exercise={view[0]} />
         </View>
       ) : (
         <View key={`empty-${index}`} style={styles.emptyCell} />
@@ -114,9 +126,9 @@ const ExerciseScreen: React.FC = () => {
             ></View>
           </View>
           <View style={styles.courseInfoContainer}>
-            <Text style={styles.courseTitle}>{courseDetails.label}</Text>
+            <Text style={styles.courseTitle}>{exercise && exercise.label ? exercise.label : courseDetails.label}</Text>
             <Text style={styles.courseSubtitle}>
-              {courseDetails.shortDesc} • Level {courseDetails.level}
+              {exercise && exercise.shortDesc ? exercise.shortDesc : courseDetails.shortDesc} • Level {exercise && exercise.level ? exercise.level : courseDetails.level}
             </Text>
             <ProgressBar
               progress={courseDetails.percentage}

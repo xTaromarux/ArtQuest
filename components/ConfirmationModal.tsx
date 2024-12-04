@@ -13,6 +13,7 @@ interface ConfirmationModal {
   iconName: string; 
   iconSize?: number; 
   iconColor?: string;
+  acceptText?: string;
 }
 
 const CenteredModal: React.FC<ConfirmationModal> = ({
@@ -24,6 +25,7 @@ const CenteredModal: React.FC<ConfirmationModal> = ({
   iconName,
   iconSize = 50,
   iconColor = "black",
+  acceptText
 }) => {
   return (
     <Modal
@@ -47,7 +49,7 @@ const CenteredModal: React.FC<ConfirmationModal> = ({
             style={[styles.button, styles.yesButton]}
             onPress={onConfirm}
           >
-            <Text style={styles.yesButtonText}>Delete</Text>
+            <Text style={styles.yesButtonText}>{acceptText}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.button, styles.noButton]}

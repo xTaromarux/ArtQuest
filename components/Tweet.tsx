@@ -99,6 +99,7 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
         iconName="exclamationcircleo" 
         iconSize={40} 
         iconColor={Colors.dark.background} 
+        acceptText="Delete"
       />
     </>
   );

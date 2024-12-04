@@ -21,7 +21,9 @@ import stylesModal from "@/constants/styles/components/Modal.style";
 import { Portal } from "@gorhom/portal";
 import Feather from "@expo/vector-icons/Feather";
 import { Course } from "@/utils/types";
-
+import ConfirmationModal from "@/components/ConfirmationModal";
+import Colors from "@/constants/Colors";
+import { router } from "expo-router";
 
 const courses = [
   {
@@ -103,11 +105,21 @@ const courses = [
   },
 ];
 
+const exerciseDetails = {
+  id: "7",
+  label: "Basic Anatomy",
+  shortDesc: "Lorem ipsum dolor sit amet",
+  level: 4,
+  percentage: 0.2,
+  color: "#FF914D",
+};
+
 const CourseListScreen: React.FC = () => {
   const modalizeRef = useRef<Modalize>(null); // <- Problem
   const height = Dimensions.get("screen").height;
   const MODAL_HEIGHT = height - 170;
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [modalVisible, setModalVisible] = useState(false);
 
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
 
@@ -126,23 +138,45 @@ const CourseListScreen: React.FC = () => {
     course.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const handleOpen = () => {
+    setModalVisible(true);
+  };
+
+  const handleCancel = () => {
+    setModalVisible(false);
+  };
+
+  const handleAccept = () => {
+    setModalVisible(false);
+    router.push({
+      pathname: `../exercises`,
+      params: {
+        id: "2",
+        exercise: JSON.stringify(exerciseDetails),
+      },
+    });
+  };
+
   const renderCourseItem = ({ item }: { item: Course }) => (
-    <View style={styles.courseCard}>
-      <View style={[styles.iconContainer]}>
-        <View style={[styles.iconBar, { backgroundColor: item.color }]} />
-        <Image source={item.icon} style={styles.icon} />
-      </View>
-      <View style={styles.courseInfo}>
-        <Text style={styles.courseTitle}>{item.title}</Text>
-        <Text style={styles.courseDescription}>{item.description}</Text>
-      </View>
-      <Pressable
-        style={[styles.infoIconContainer, { borderColor: item.color }]}
-        onPress={() => onOpen(item)} // Pass `item` directly, without any synthetic event
-      >
-        <AntDesign name="book" size={24} color="black" />
-      </Pressable>
-    </View>
+    <Pressable
+      style={styles.courseCard}
+      onPress={handleOpen}
+    >
+        <View style={[styles.iconContainer]}>
+          <View style={[styles.iconBar, { backgroundColor: item.color }]} />
+          <Image source={item.icon} style={styles.icon} />
+        </View>
+        <View style={styles.courseInfo}>
+          <Text style={styles.courseTitle}>{item.title}</Text>
+          <Text style={styles.courseDescription}>{item.description}</Text>
+        </View>
+        <Pressable
+          style={[styles.infoIconContainer, { borderColor: item.color }]}
+          onPress={() => onOpen(item)} // Pass `item` directly, without any synthetic event
+        >
+          <AntDesign name="book" size={24} color="black" />
+        </Pressable>
+    </Pressable>
   );
 
   return (
@@ -193,10 +227,15 @@ const CourseListScreen: React.FC = () => {
               {selectedCourse && (
                 <>
                   <View style={stylesModal.iconModalContainer}>
-                    <Image source={selectedCourse.icon} style={stylesModal.modalIcon} />
+                    <Image
+                      source={selectedCourse.icon}
+                      style={stylesModal.modalIcon}
+                    />
                   </View>
                   <View style={stylesModal.titleModalContainer}>
-                    <Text style={stylesModal.modalTitle}>{selectedCourse.title}</Text>
+                    <Text style={stylesModal.modalTitle}>
+                      {selectedCourse.title}
+                    </Text>
                   </View>
                   <View style={stylesModal.textModalContainer}>
                     <Text style={[stylesModal.modalText, { marginBottom: 20 }]}>
@@ -212,6 +251,17 @@ const CourseListScreen: React.FC = () => {
           </Modalize>
         </Portal>
       </KeyboardAvoidingView>
+      <ConfirmationModal
+        isVisible={modalVisible}
+        onConfirm={handleAccept}
+        onCancel={handleCancel}
+        title="Are you sure you want to change you exercise?"
+        IconComponent={AntDesign}
+        iconName="exclamationcircleo"
+        iconSize={40}
+        iconColor={Colors.dark.background}
+        acceptText="Change"
+      />
     </GestureHandlerRootView>
   );
 };

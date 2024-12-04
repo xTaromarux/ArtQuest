@@ -181,6 +181,7 @@ const ExerciseScreen: React.FC = () => {
           iconName="emoticon-sad-outline" 
           iconSize={50} 
           iconColor="black"
+          acceptText="Delete"
         />
       </KeyboardAvoidingView>
     </GestureHandlerRootView>
