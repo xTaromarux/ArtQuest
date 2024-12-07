@@ -47,7 +47,7 @@ const ExerciseScreen: React.FC = () => {
     {
       id: "1",
       template: 1,
-      next_view_id:  "2",
+      next_view_id: "2",
       previous_view_id: null,
       ai_part: false,
       percentage: 0.2,
@@ -56,7 +56,13 @@ const ExerciseScreen: React.FC = () => {
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ",
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut euismod nunc id.",
       ],
-      picture: [require("@/assets/images/lines.png")],
+      picture: [
+        require("@/assets/images/LessonNo1_No1.png"),
+        require("@/assets/images/LessonNo1_No2.png"),
+        require("@/assets/images/LessonNo1_No3.png"),
+        require("@/assets/images/LessonNo1_No4.png"),
+        require("@/assets/images/LessonNo1_No5.png"),
+      ],
     },
   ];
 
@@ -126,9 +132,9 @@ const ExerciseScreen: React.FC = () => {
             ></View>
           </View>
           <View style={styles.courseInfoContainer}>
-            <Text style={styles.courseTitle}>{exercise && exercise.label ? exercise.label : courseDetails.label}</Text>
+            <Text style={styles.courseTitle}>{courseDetails.label}</Text>
             <Text style={styles.courseSubtitle}>
-              {exercise && exercise.shortDesc ? exercise.shortDesc : courseDetails.shortDesc} • Level {exercise && exercise.level ? exercise.level : courseDetails.level}
+              {courseDetails.shortDesc} • Level {courseDetails.level}
             </Text>
             <ProgressBar
               progress={courseDetails.percentage}
