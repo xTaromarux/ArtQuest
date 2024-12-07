@@ -1,6 +1,8 @@
-import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, Alert } from 'react-native';
-import { useAuth } from '@clerk/clerk-expo';
+import React from "react";
+import { TouchableOpacity, Text, StyleSheet, Alert } from "react-native";
+import { useAuth } from "@clerk/clerk-expo";
+import Colors from "@/constants/Colors";
+import MaterialIcons from "@expo/vector-icons/build/MaterialIcons";
 
 const LogoutButton: React.FC = () => {
   const { signOut } = useAuth();
@@ -8,30 +10,36 @@ const LogoutButton: React.FC = () => {
   const handleLogout = async () => {
     try {
       await signOut();
-      Alert.alert('Wylogowano', 'Zostałeś pomyślnie wylogowany.');
+      Alert.alert("Wylogowano", "Zostałeś pomyślnie wylogowany.");
     } catch (error: any) {
-      Alert.alert('Błąd', 'Wystąpił problem podczas wylogowywania.');
+      Alert.alert("Błąd", "Wystąpił problem podczas wylogowywania.");
     }
   };
 
   return (
-    <TouchableOpacity style={styles.button} onPress={handleLogout}>
-      <Text style={styles.buttonText}>Wyloguj się</Text>
+    <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+      <MaterialIcons
+        name="logout"
+        size={25}
+        color={Colors.dark.tintDarkerGreen}
+      />
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
-  button: {
-    padding: 12,
-    borderRadius: 5,
-    backgroundColor: '#002F5A',
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+  logoutButton:{
+    width: 45,
+    height: 45,
+    marginTop: 10,
+    marginRight: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingLeft: 5,
+    backgroundColor: Colors.light.background,
+    borderColor: Colors.dark.background,
+    borderWidth: 3,
+    borderRadius: 60
   },
 });
 

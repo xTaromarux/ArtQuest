@@ -5,6 +5,10 @@ import {
   Image,
   Pressable,
   ImageBackground,
+  useWindowDimensions,
+  Platform,
+  KeyboardAvoidingView,
+  Dimensions,
 } from "react-native";
 import Colors from "@/constants/Colors";
 import ProgressBar from "@/components/ProgressBar";
@@ -12,14 +16,20 @@ import { useUser } from "@clerk/clerk-expo";
 import Line from "@/components/Line";
 import Container from "@/components/Container";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import styles from "@/constants/styles/screens/HomeScreen.styles";
 
 const HomeScreen: React.FC = () => {
   const { user } = useUser(); // Pobieramy dane użytkownika
+  const height = Dimensions.get("screen").height;
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={[styles.container, { height: height }]}
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS == "ios" ? 0 : 20}
+      enabled={Platform.OS === "ios" ? true : false}
+    >
       <Text style={styles.greeting}>Hello, {user?.username || "User"}!</Text>
       <Line width={100} style={{ marginVertical: 20 }} />
       <Text style={styles.subtitle}>Pick up where you left off</Text>
@@ -30,12 +40,12 @@ const HomeScreen: React.FC = () => {
         style={{ marginVertical: 30, padding: 0, justifyContent: "flex-start" }}
       >
         <ImageBackground
-          source={{ uri: "../../assets/images/background_course_home.png" }} // URI obrazu tła
+          source={require("@/assets/images/background_course_home.png")} // Poprawiona ścieżka obrazu
           style={[styles.courseImageContainer, { width: `100%` }]}
           imageStyle={{ resizeMode: "cover", borderRadius: 10 }} // Opcjonalne dopasowanie obrazu
         >
           <Image
-            source={require("@/assets/images/Shapes.png")} // Ikona kursu
+            source={require("@/assets/images/shapes.png")} // Ikona kursu
             style={styles.courseImage}
             resizeMode="contain"
           />
@@ -45,18 +55,21 @@ const HomeScreen: React.FC = () => {
           <View style={styles.courseInfo}>
             <Text style={styles.levelText}>Level 1</Text>
             <Text style={styles.courseTitle}>Basic Shapes</Text>
-            <ProgressBar progress={0.4} color={Colors.dark.tintLighterGreen} /> {/* 60% postępu */}
+            <ProgressBar progress={0.4} color={Colors.dark.tintLighterGreen} />
           </View>
-          <Pressable style={styles.continueButton}>
-            <Link href="/(auth)/exercise">
-              <Text style={styles.continueButtonText}>Continue</Text>
-            </Link>
+          <Pressable
+            onPress={() => {
+              router.push("/exercises");
+            }}
+            style={styles.continueButton}
+          >
+            <Text style={styles.continueButtonText}>Continue</Text>
           </Pressable>
         </View>
       </Container>
 
-      <Pressable style={styles.inspirationButton}>
-        <Link href="/(auth)/feed/">
+      <Link href="/(auth)/feed" asChild>
+        <Pressable style={styles.inspirationButton}>
           <Text style={styles.inspirationButtonText}>Look for inspiration</Text>
           <MaterialCommunityIcons
             style={styles.inspirationIcon}
@@ -64,9 +77,9 @@ const HomeScreen: React.FC = () => {
             size={24}
             color={Colors.dark.text}
           />
-        </Link>
-      </Pressable>
-    </View>
+        </Pressable>
+      </Link>
+    </KeyboardAvoidingView>
   );
 };
 

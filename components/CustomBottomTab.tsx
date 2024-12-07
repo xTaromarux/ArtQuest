@@ -1,17 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Pressable,
-  StyleSheet,
   Text,
   View,
   useWindowDimensions,
 } from "react-native";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import Animated, {
-  useAnimatedStyle,
-  withSpring,
-  runOnJS,
-} from "react-native-reanimated";
+import Animated, { useAnimatedStyle, withSpring } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BottomTabIcon from "./BottomTabIcon";
 import Line from "./Line";

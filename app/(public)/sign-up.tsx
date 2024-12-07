@@ -6,6 +6,10 @@ import {
   TextInput,
   Alert,
   Image,
+  useWindowDimensions,
+  KeyboardAvoidingView,
+  Platform,
+  Dimensions,
 } from "react-native";
 import Container from "@/components/Container";
 import { useSignUp } from "@clerk/clerk-expo";
@@ -20,6 +24,7 @@ const SignUpScreen: React.FC = () => {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const height = Dimensions.get('screen').height;
 
   const handleSignUp = async () => {
     if (!isLoaded) return;
@@ -71,7 +76,12 @@ const SignUpScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.screen}>
+    <KeyboardAvoidingView
+      style={[styles.screen, {height: height}]}
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS == "ios" ? 0 : 20}
+      enabled={Platform.OS === "ios" ? true : false}
+    >
       <Container height={500} width={80}>
         <View style={styles.textContainer}>
           <Text style={styles.title}>Create your account</Text>
@@ -161,7 +171,7 @@ const SignUpScreen: React.FC = () => {
           </Text>
         </View>
       </Container>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

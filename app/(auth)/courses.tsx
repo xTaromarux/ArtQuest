@@ -1,198 +1,269 @@
-import { ActivityIndicator, Platform, StyleSheet } from "react-native";
-import { Text, View } from "@/components/Themed";
-// import WhiteBox from "@/components/WhiteBox";
-// import Line from "@/components/Line";
-// import Button from "@/components/Button";
-import { Image } from "expo-image";
-// import CompletionPercentage from "@/components/CompletionPercentage";
-import { Link } from "expo-router";
-import LogoutButton from "@/components/LogoutButton";
-// import { useFetch } from "@/scripts/useFetch";
+import React, { useRef, useState } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  Image,
+  Pressable,
+  useWindowDimensions,
+  KeyboardAvoidingView,
+  Platform,
+  Dimensions,
+  GestureResponderEvent,
+} from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Modalize } from "react-native-modalize";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import SearchBar from "@/components/SearchBar";
+import Line from "@/components/Line";
+import styles from "@/constants/styles/screens/CoursesScreen.styles";
+import stylesModal from "@/constants/styles/components/Modal.style";
+import { Portal } from "@gorhom/portal";
+import Feather from "@expo/vector-icons/Feather";
+import { Course } from "@/utils/types";
+import ConfirmationModal from "@/components/ConfirmationModal";
+import Colors from "@/constants/Colors";
+import { router } from "expo-router";
 
-const user_id = "be72e28f-41af-4234-a112-0a0299ed7197";
+const courses = [
+  {
+    id: "1",
+    title: "Lines",
+    description: "Lorem ipsum dolor sit amet",
+    descriptionLongNo1:
+      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. ",
+    descriptionLongNo2:
+      "It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
+    icon: require("@/assets/images/lines.png"),
+    color: "#FF6B6B",
+  },
+  {
+    id: "2",
+    title: "Basic Shapes",
+    description: "Lorem ipsum dolor sit amet",
+    descriptionLongNo1:
+      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. ",
+    descriptionLongNo2:
+      "It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
+    icon: require("@/assets/images/shapes.png"),
+    color: "#845EC2",
+  },
+  {
+    id: "3",
+    title: "3D Vision",
+    description: "Lorem ipsum dolor sit amet",
+    descriptionLongNo1:
+      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. ",
+    descriptionLongNo2:
+      "It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
+    icon: require("@/assets/images/vision.png"),
+    color: "#4B9FDE",
+  },
+  {
+    id: "4",
+    title: "Light and Shading",
+    description: "Lorem ipsum dolor sit amet",
+    descriptionLongNo1:
+      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. ",
+    descriptionLongNo2:
+      "It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
+    icon: require("@/assets/images/shading.png"),
+    color: "#00C9A7",
+  },
+  {
+    id: "5",
+    title: "Perspective",
+    description: "Lorem ipsum dolor sit amet",
+    descriptionLongNo1:
+      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. ",
+    descriptionLongNo2:
+      "It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
+    icon: require("@/assets/images/perspective.png"),
+    color: "#FFD93D",
+  },
+  {
+    id: "6",
+    title: "Basic Anatomy",
+    description: "Lorem ipsum dolor sit amet",
+    descriptionLongNo1:
+      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. ",
+    descriptionLongNo2:
+      "It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
+    icon: require("@/assets/images/anatomy.png"),
+    color: "#FF914D",
+  },
+  {
+    id: "7",
+    title: "Basic Anatomy",
+    description: "Lorem ipsum dolor sit amet",
+    descriptionLongNo1:
+      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. ",
+    descriptionLongNo2:
+      "It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
+    icon: require("@/assets/images/anatomy.png"),
+    color: "#FF914D",
+  },
+];
 
-export default function ExerciseTab() {
-  // const { data: user, loading: userLoading, error: userError } = useFetch(`/api/users/${user_id}`);
+const exerciseDetails = {
+  id: "7",
+  label: "Basic Anatomy",
+  shortDesc: "Lorem ipsum dolor sit amet",
+  level: 4,
+  percentage: 0.2,
+  color: "#FF914D",
+};
 
-  const base_url = "https://bce9-178-43-255-119.ngrok-free.app";
-  const web_url = "http://localhost:8000";
-  const API_VALUE = Platform.OS === "web" ? web_url : base_url;
+const CourseListScreen: React.FC = () => {
+  const modalizeRef = useRef<Modalize>(null); // <- Problem
+  const height = Dimensions.get("screen").height;
+  const MODAL_HEIGHT = height - 170;
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [modalVisible, setModalVisible] = useState(false);
 
-  // if (userLoading) {
-  //   return (
-  //     <View style={styles.loaderContainer}>
-  //       <ActivityIndicator size="large" color="#FFFFFF" />
-  //     </View>
-  //   );
-  // }
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
 
-  // if (userError) {
-  //   return (
-  //     <View style={styles.errorContainer}>
-  //       <Text>Error: {userError}</Text>
-  //     </View>
-  //   );
-  // }
+  const onOpen = (course: Course) => {
+    // Directly pass the course object, avoiding any reference to the synthetic event
+    setSelectedCourse(course);
+    modalizeRef.current?.open();
+  };
 
-  // if (!user) {
-  //   return (
-  //     <View style={styles.errorContainer}>
-  //       <Text>No user data found.</Text>
-  //     </View>
-  //   );
-  // }
+  const onClose = () => {
+    modalizeRef.current?.close();
+    setSelectedCourse(null);
+  };
+
+  const filteredCourses = courses.filter((course) =>
+    course.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleOpen = () => {
+    setModalVisible(true);
+  };
+
+  const handleCancel = () => {
+    setModalVisible(false);
+  };
+
+  const handleAccept = () => {
+    setModalVisible(false);
+    router.push({
+      pathname: `../exercises`,
+      params: {
+        id: "2",
+        exercise: JSON.stringify(exerciseDetails),
+      },
+    });
+  };
+
+  const renderCourseItem = ({ item }: { item: Course }) => (
+    <Pressable
+      style={styles.courseCard}
+      onPress={handleOpen}
+    >
+        <View style={[styles.iconContainer]}>
+          <View style={[styles.iconBar, { backgroundColor: item.color }]} />
+          <Image source={item.icon} style={styles.icon} />
+        </View>
+        <View style={styles.courseInfo}>
+          <Text style={styles.courseTitle}>{item.title}</Text>
+          <Text style={styles.courseDescription}>{item.description}</Text>
+        </View>
+        <Pressable
+          style={[styles.infoIconContainer, { borderColor: item.color }]}
+          onPress={() => onOpen(item)} // Pass `item` directly, without any synthetic event
+        >
+          <AntDesign name="book" size={24} color="black" />
+        </Pressable>
+    </Pressable>
+  );
 
   return (
-    <View style={styles.container}>
-            <LogoutButton />
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <KeyboardAvoidingView
+        style={[styles.container, { height }]}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        enabled={Platform.OS === "ios"}
+      >
+        <Text style={styles.header}>Browse all courses</Text>
 
-      <View style={{ flex: 2 }}>
-        {/* <Text style={styles.title}>Hello, {user.name}</Text> */}
-        {/* <Line />
-        <WhiteBox widthProp={70} padingProp={20} marginVerticalProp={20} /> */}
-      </View>
-      <View style={{ flex: 4 }}>
-        <Text style={[styles.titleLastCourse, { flex: 0.6 }]}>
-          Pick up where you left off
-        </Text>
-        <View
-          style={[
-            styles.containerLastCourse,
-            { flex: 5, backgroundColor: "white" },
-          ]}
-        >
-          <View
-            style={[
-              styles.containerImage,
-              { flex: 2.5, backgroundColor: "white" },
-            ]}
-          >
-            <Image
-              source={API_VALUE + "/api/pictures/461fe346-4565-467a-82b2-e089f5a386dc"}
-              style={styles.image}
-            />
-          </View>
-          <View style={[styles.containerLevel, { flex: 0.7 }]}>
-            <Text style={[styles.titleLevel, { flex: 0.6 }]}>Level 1</Text>
-          </View>
-          <View style={[styles.containerTitle, { flex: 0.6 }]}>
-            <Text style={[styles.titleTitle, { flex: 0.6 }]}>Basic Shapes</Text>
-          </View>
-          <View style={[styles.containerPercentage, { flex: 0.5 }]}>
-            {/* <CompletionPercentage widthProp={40} /> */}
-          </View>
-          <View style={[styles.containerContinue, { flex: 1 }]}>
-            <Link href={{ pathname: "/exercise" } as never} asChild>
-              {/* <Button
-                onPress={() => {}}
-                title="Continue"
-                height={44}
-                textColor="#FFFFFF"
-                color="#000000"
-                onLongPress={() => {
-                  // Handle button long-press event
-                }}
-                accessibilityLabel="Continue"
-              /> */}
-            </Link>
-          </View>
+        <SearchBar
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          style={{ marginHorizontal: 20 }}
+        />
+
+        <View style={{ paddingHorizontal: 20 }}>
+          <Line width={100} style={{ marginVertical: 10 }} />
         </View>
-      </View>
-      <View style={[styles.containerInspiration, { flex: 0.8 }]}>
-        <Link href={{ pathname: "/feed" } as never} asChild>
-          {/* <Button
-            onPress={() => {}}
-            title="Look for inspiration"
-            color="#FFFFFF"
-            textColor="#000"
-            height={50}
-            onLongPress={() => {
-              // Handle button long-press event
-            }}
-            accessibilityLabel="Look for inspiration"
-          /> */}
-        </Link>
-      </View>
-      {/* <Line /> */}
-    </View>
-  );
-}
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: "column",
-    paddingTop: 20,
-    paddingHorizontal: 20,
-  },
-  title: {
-    fontSize: 30,
-    marginVertical: 20,
-    fontWeight: "bold",
-  },
-  titleLastCourse: {
-    fontSize: 22,
-    marginVertical: 10,
-    fontWeight: "bold",
-  },
-  containerLastCourse: {
-    borderRadius: 20,
-    padding: 20,
-  },
-  containerImage: {
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 15,
-    borderColor: "black",
-    borderWidth: 2,
-    borderRadius: 20,
-  },
-  image: {
-    width: 140,
-    height: 140,
-    borderRadius: 10,
-  },
-  containerLevel: {
-    backgroundColor: "white",
-    alignItems: "flex-start",
-    justifyContent: "flex-end",
-  },
-  titleLevel: {
-    fontSize: 15,
-    color: "#FFD500",
-    fontWeight: "bold",
-  },
-  containerTitle: {
-    backgroundColor: "white",
-  },
-  titleTitle: {
-    color: "#000",
-    fontSize: 22,
-    fontWeight: "bold",
-  },
-  containerPercentage: {
-    backgroundColor: "white",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  containerContinue: {
-    backgroundColor: "white",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  containerInspiration: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  loaderContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-});
+        <Text style={styles.sectionTitle}>Basic path</Text>
+        <FlatList
+          data={filteredCourses}
+          renderItem={renderCourseItem}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContainer}
+        />
+        <View style={{ height: 60 }} />
+
+        <Portal>
+          <Modalize
+            modalHeight={MODAL_HEIGHT}
+            snapPoint={MODAL_HEIGHT}
+            velocity={0.8}
+            dragToss={0.1}
+            ref={modalizeRef}
+            HeaderComponent={
+              <View style={stylesModal.modalHeader}>
+                <Pressable onPress={onClose}>
+                  <Feather name="x" size={24} color="black" />
+                </Pressable>
+              </View>
+            }
+          >
+            <View style={stylesModal.modalContent}>
+              {selectedCourse && (
+                <>
+                  <View style={stylesModal.iconModalContainer}>
+                    <Image
+                      source={selectedCourse.icon}
+                      style={stylesModal.modalIcon}
+                    />
+                  </View>
+                  <View style={stylesModal.titleModalContainer}>
+                    <Text style={stylesModal.modalTitle}>
+                      {selectedCourse.title}
+                    </Text>
+                  </View>
+                  <View style={stylesModal.textModalContainer}>
+                    <Text style={[stylesModal.modalText, { marginBottom: 20 }]}>
+                      {selectedCourse.descriptionLongNo1}
+                    </Text>
+                    <Text style={stylesModal.modalText}>
+                      {selectedCourse.descriptionLongNo2}
+                    </Text>
+                  </View>
+                </>
+              )}
+            </View>
+          </Modalize>
+        </Portal>
+      </KeyboardAvoidingView>
+      <ConfirmationModal
+        isVisible={modalVisible}
+        onConfirm={handleAccept}
+        onCancel={handleCancel}
+        title="Are you sure you want to change you exercise?"
+        IconComponent={AntDesign}
+        iconName="exclamationcircleo"
+        iconSize={40}
+        iconColor={Colors.dark.background}
+        acceptText="Change"
+      />
+    </GestureHandlerRootView>
+  );
+};
+
+export default CourseListScreen;

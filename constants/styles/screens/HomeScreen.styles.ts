@@ -3,7 +3,6 @@ import Colors from "../../Colors";
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: Colors.dark.background,
     paddingHorizontal: 20,
     paddingBottom: 20,
@@ -21,13 +20,14 @@ const styles = StyleSheet.create({
   },
   courseImageContainer: {
     borderRadius: 10,
+    paddingTop: 30,
     justifyContent: "center",
     alignItems: "center",
   },
   courseImage: {
-    width: 194,
-    height: 194,
-    marginBottom: 10,
+    width: 154,
+    height: 154,
+    marginBottom: 20,
   },
   courseContentContainer: {
     justifyContent: "flex-start",

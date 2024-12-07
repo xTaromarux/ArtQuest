@@ -7,7 +7,7 @@ import { View, Text, TouchableOpacity, Image } from "react-native";
 const MainScreen = () => {
   return (
     <View style={styles.screen}>
-      <Container height={600}>
+      <Container height={600} width={80}>
         <View style={styles.contentContainer}>
           <Image
             source={require("@/assets/images/logo.png")}

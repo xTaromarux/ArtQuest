@@ -1,169 +1,191 @@
-import React, { useState } from 'react';
-import EditScreenInfo from "@/components/EditScreenInfo";
-import { StyleSheet, ActivityIndicator, Platform } from "react-native";
-import { Text, View } from "@/components/Themed";
-// import WhiteBox from "@/components/WhiteBox";
-import { Image } from 'expo-image';
-import Line from '@/components/Line';
-// import { useFetch } from "@/scripts/useFetch";
+import React, { useRef, useState } from "react";
+import {
+  Dimensions,
+  KeyboardAvoidingView,
+  Platform,
+  View,
+  ImageBackground,
+  Text,
+  Pressable,
+  Alert,
+  TouchableOpacity,
+} from "react-native";
+import styles from "@/constants/styles/screens/ProfileScreen.styles";
+import stylesModal from "@/constants/styles/components/Modal.style";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Modalize } from "react-native-modalize";
+import { Portal } from "@gorhom/portal";
+import Feather from "@expo/vector-icons/Feather";
+import ProfileHeader from "@/components/ProfileHeader";
+import StatisticsSection from "@/components/StatisticsSection";
+import ConfirmationModal from "@/components/ConfirmationModal";
+import AchievementsSection from "@/components/AchievementsSection";
+import LogoutButton from "@/components/LogoutButton";
+import LabeledTextInput from "@/components/LabeledTextInput";
+import * as ImagePicker from "expo-image-picker";
+import { Image } from "expo-image";
+import { Link } from "expo-router";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
-const user_id = "be72e28f-41af-4234-a112-0a0299ed7197";
+const ExerciseScreen: React.FC = () => {
+  const modalizeRef = useRef<Modalize>(null);
+  const height = Dimensions.get("screen").height;
+  const MODAL_HEIGHT = height - 130;
+  const [emailAddress, setEmailAddress] = useState("");
+  const [nickname, setNickname] = useState("");
+  const [password, setPassword] = useState("");
+  const [image, setImage] = useState<string | null>(null);
+  const [isModalVisible, setModalVisible] = useState(false);
 
-export default function TabTwoScreen() {
-  // const { data: user, loading: userLoading, error: userError } = useFetch(`/api/users/${user_id}`);
-  const base_url = "https://bce9-178-43-255-119.ngrok-free.app";
-  const web_url = "http://localhost:8000";
-  const API_VALUE = Platform.OS === "web" ? web_url : base_url;
-  // if (userLoading) {
-  //   return (
-  //     <View style={styles.loaderContainer}>
-  //       <ActivityIndicator size="large" color="#FFFFFF" />
-  //     </View>
-  //   );
-  // }
+  const onOpen = () => {
+    modalizeRef.current?.open();
+  };
 
-  // if (userError) {
-  //   return (
-  //     <View style={styles.errorContainer}>
-  //       <Text>Error: {userError}</Text>
-  //     </View>
-  //   );
-  // }
+  const onClose = () => {
+    modalizeRef.current?.close();
+  };
 
-  // if (!user) {
-  //   return (
-  //     <View style={styles.errorContainer}>
-  //       <Text>No user data found.</Text>
-  //     </View>
-  //   );
-  // }
-  const avatarUrl = API_VALUE + "/api/users/" + user_id + "/avatar";
+  const onCloseAndSave = () => {
+    modalizeRef.current?.close();
+  };
 
+  const pickImage = async () => {
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      Alert.alert("Permission to access gallery is required!");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
+  const handleDeleteAccount = () => {
+    console.log("Account deleted");
+    toggleModal();
+  };
 
   return (
-    <View style={styles.container}>
-      <View style={{ flex: 1.9 }}>
-        <View style={styles.backgroundContainer}>
-          <Image 
-            source={API_VALUE + "/api/pictures/e9dc3335-0f08-4275-949d-d848caecb192"}  
-            style={[styles.backgroundImage]} />
-          <View style={styles.imageContainer}>
-            <Image 
-              source={avatarUrl}  
-              style={[styles.image]} />
-          </View>
-        </View>
-        <View style={styles.descContainer}>
-          <View style={styles.userNameContainer}>
-            {/* <Text style={styles.userName}>{user.name}</Text> */}
-          </View>
-          <View style={styles.userTagContainer}>
-            {/* <Text style={styles.userTag}>@{user.login}</Text> */}
-          </View>
-          <View style={styles.userDateContainer}>
-            <Text style={styles.userDate}>Joined {new Date().toLocaleDateString()}</Text>
-          </View>
-          <Line />
-        </View>
-      </View>
-      <View style={{ flex: 4, paddingHorizontal: 20 }}>
-        <View style={{ flex: 1.4 }}>
-          <Text style={styles.title}>Statistics</Text>
-          {/* <WhiteBox widthProp={100} padingProp={20} marginVerticalProp={20} /> */}
-        </View>
-        <View style={{ flex: 2 }}>
-          <Text style={styles.title}>Achievements</Text>
-          {/* <WhiteBox widthProp={100} padingProp={20} marginVerticalProp={20} /> */}
-        </View>
-        <Line />
-      </View>
-    </View>
-  );
-}
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <KeyboardAvoidingView
+        style={[styles.container, { height }]}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        enabled={Platform.OS === "ios"}
+      >
+        <ImageBackground
+          source={require("@/assets/images/profile_background.png")}
+          style={styles.backgroundImage}
+          imageStyle={{ resizeMode: "cover" }}
+        >
+          <LogoutButton />
+        </ImageBackground>
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: "column",
-  },
-  loaderContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  backgroundContainer: {
-    backgroundColor: "white",
-    width: "100%",
-    height: "60%",
-  },
-  imageContainer: {
-    backgroundColor: "white",
-    width: 100,
-    height: 100,
-    borderWidth: 3,
-    paddingTop: 3,
-    borderColor: "black",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 100,
-    marginTop: 60,
-    marginLeft: 20,
-  },
-  descContainer: {
-    paddingTop: 20,
-    paddingHorizontal: 20,
-    backgroundColor: "transparent",
-    width: "100%",
-    height: "40%",
-    alignItems: "center",
-    justifyContent: "flex-end",
-  },
-  userNameContainer: {
-    width: "100%",
-    height: "32%",
-    backgroundColor: "transparent",
-    marginBottom: 3,
-  },
-  userTagContainer: {
-    width: "100%",
-    height: "32%",
-    backgroundColor: "transparent",
-  },
-  userDateContainer: {
-    width: "100%",
-    height: "32%",
-    backgroundColor: "transparent",
-    marginBottom: 5,
-  },
-  userName: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  userTag: {
-    fontSize: 12,
-    fontWeight: "bold",
-  },
-  userDate: {
-    fontSize: 13,
-    fontWeight: "bold",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  backgroundImage: {
-    width: "100%",
-    height: "100%",
-    position: "absolute",
-  },
-  image: {
-    width: 80,
-    height: 80,
-  },
-});
+        <View style={styles.contentContainer}>
+          <ProfileHeader onOpen={onOpen} />
+          <StatisticsSection />
+          <AchievementsSection />
+        </View>
+
+        <Portal>
+          <Modalize
+            modalHeight={MODAL_HEIGHT}
+            snapPoint={MODAL_HEIGHT}
+            velocity={0.8}
+            dragToss={0.1}
+            ref={modalizeRef}
+            HeaderComponent={
+              <View style={stylesModal.modalHeader}>
+                <Pressable onPress={onClose}>
+                  <Feather name="x" size={24} color="black" />
+                </Pressable>
+              </View>
+            }
+          >
+            <View style={stylesModal.modalContent}>
+              <View style={styles.inputGroupContainer}>
+                <View style={styles.imagePickerContainer}>
+                  <Pressable
+                    onPress={pickImage}
+                    style={styles.imagePickerButton}
+                  >
+                    {image ? (
+                      <Image source={{ uri: image }} style={styles.avatar} />
+                    ) : (
+                      <Image
+                        source={require("@/assets/images/avatar_default.png")}
+                        style={styles.avatar}
+                      />
+                    )}
+                  </Pressable>
+                  <Text style={styles.profileLabel}>Edit profile</Text>
+                </View>
+                <LabeledTextInput
+                  label="Nickname"
+                  style={{ marginLeft: 20, bottom: 15 }}
+                  value={nickname}
+                  onChangeText={setNickname}
+                  placeholder="Enter your nickname"
+                />
+              </View>
+
+              <LabeledTextInput
+                label="Email Address"
+                value={emailAddress}
+                onChangeText={setEmailAddress}
+                placeholder="Enter your email"
+              />
+              <LabeledTextInput
+                label="Password"
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Enter password"
+              />
+
+              <TouchableOpacity
+                style={styles.buttonDelete}
+                onPress={toggleModal}
+              >
+                <Text style={styles.buttonTextLight}>Delete account</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.buttonSave}
+                onPress={onCloseAndSave}
+              >
+                <Text style={styles.buttonTextDark}>Save</Text>
+              </TouchableOpacity>
+            </View>
+          </Modalize>
+        </Portal>
+
+        <ConfirmationModal
+          isVisible={isModalVisible}
+          title="Are you sure you want to delete your account?"
+          onConfirm={handleDeleteAccount}
+          onCancel={toggleModal}
+          IconComponent={MaterialCommunityIcons} 
+          iconName="emoticon-sad-outline" 
+          iconSize={50} 
+          iconColor="black"
+          acceptText="Delete"
+        />
+      </KeyboardAvoidingView>
+    </GestureHandlerRootView>
+  );
+};
+
+export default ExerciseScreen;

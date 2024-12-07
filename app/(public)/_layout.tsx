@@ -13,12 +13,6 @@ const PublicLayout = () => {
       }}
     >
       <Stack.Screen
-        name="index"
-        options={{
-          headerShown: false
-        }}
-      ></Stack.Screen>
-      <Stack.Screen
         name="sign-in"
         options={{
           headerShown: false
@@ -26,12 +20,6 @@ const PublicLayout = () => {
       ></Stack.Screen>
       <Stack.Screen
         name="sign-up"
-        options={{
-          headerShown: false
-        }}
-      ></Stack.Screen>
-      <Stack.Screen
-        name="register"
         options={{
           headerShown: false
         }}

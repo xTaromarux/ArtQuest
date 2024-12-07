@@ -13,15 +13,13 @@ import {
 import { Portal } from "@gorhom/portal";
 import useKeyboardHeight from "./useKeyboardHeight";
 
-const { width: layoutWidth, height: layoutHeight } = Dimensions.get("window");
-
 const isIOS = Platform.OS === "ios";
 
 const Menu = ({ trigger, children }: any) => {
   const triggerWrapperRef: any = useRef(null);
   const itemsWrapperRef: any = useRef(null);
   const [menuVisible, setMenuVisible] = useState(false);
-
+  const { width: layoutWidth, height: layoutHeight } = Dimensions.get("window");
   const [triggerDimensions, setTriggerDimensions] = useState({
     top: 0,
     left: 0,
@@ -48,7 +46,7 @@ const Menu = ({ trigger, children }: any) => {
       backgroundColor: "white",
       alignSelf: "flex-start",
       width: layoutWidth * 0.5,
-      borderRadius: 13,
+      borderRadius: 10,
       shadowColor: "#000",
       shadowOffset: {
         width: 0,
@@ -87,7 +85,6 @@ const Menu = ({ trigger, children }: any) => {
       }),
     },
   });
-  const fadeAnim = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
 
   const calculateDimensions = () => {
     triggerWrapperRef?.current?.measureInWindow((x: any, y: any, width: any, height: any) => {
@@ -124,7 +121,6 @@ const Menu = ({ trigger, children }: any) => {
 
     left =
       triggerDimensions.left - modalDimensions.width + triggerDimensions.width;
-    // if the popup is outside the screen from the left
     if (triggerDimensions.left - modalDimensions.width < 0)
       left = triggerDimensions.left;
 
@@ -139,15 +135,14 @@ const Menu = ({ trigger, children }: any) => {
       else top = initialTriggerTop;
     } else {
       const initialTriggerTop =
-        triggerDimensions.top +
-        triggerDimensions.height;
+        triggerDimensions.top + triggerDimensions.height;
 
       top =
         initialTriggerTop + modalDimensions.height >
         layoutHeight - keyboardHeight
           ? initialTriggerTop -
-            triggerDimensions.height -
-            modalDimensions.height
+          triggerDimensions.height -
+          modalDimensions.height
           : initialTriggerTop;
     }
 
@@ -179,7 +174,6 @@ const Menu = ({ trigger, children }: any) => {
               collapsable={false}
               ref={itemsWrapperRef}
             >
-              {/* pass the closeModal to children prop  */}
               {Array.isArray(children)
                 ? children.map((childrenItem) => {
                     return React.cloneElement(childrenItem, {

@@ -6,11 +6,19 @@ import {
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "react-native-reanimated";
 import { Slot, useRouter, useSegments } from "expo-router";
 import { ClerkProvider, ClerkLoaded, useAuth } from "@clerk/clerk-expo";
 import { useColorScheme } from "@/components/useColorScheme";
+import { PortalHost, PortalProvider } from "@gorhom/portal";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { enableScreens } from "react-native-screens";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import NetInfo from "@react-native-community/netinfo";
+import { View, Text } from "react-native";
+
+enableScreens();
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 if (!publishableKey) {
@@ -19,37 +27,105 @@ if (!publishableKey) {
   );
 }
 
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from "expo-router";
+export { ErrorBoundary } from "expo-router";
 
 export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
   initialRouteName: "(auth)",
 };
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-const InitialLayout = () => {
-  const { isLoaded, isSignedIn } = useAuth();
-  const segments = useSegments();
-  const router = useRouter();
+const useOfflineAuth = () => {
+  const { isLoaded, isSignedIn, userId, getToken } = useAuth();
+  const [offlineAuth, setOfflineAuth] = useState<null | {
+    isSignedIn: boolean;
+    token: string;
+  }>(null);
 
   useEffect(() => {
-    if (!isLoaded) return;
+    const loadOfflineAuth = async () => {
+      try {
+        const savedAuth = await AsyncStorage.getItem("auth");
+        if (savedAuth) {
+          setOfflineAuth(JSON.parse(savedAuth));
+        }
+      } catch (error) {
+        console.error("Error loading offline auth data:", error);
+      }
+    };
 
-    const inTabsGroup = segments[0] === "(auth)";
+    if (!isLoaded) {
+      loadOfflineAuth();
+    }
+  }, [isLoaded]);
 
-    console.log("User changed: ", isSignedIn);
+  useEffect(() => {
+    const saveAuth = async () => {
+      if (isLoaded && isSignedIn) {
+        try {
+          const token = await getToken();
+          await AsyncStorage.setItem(
+            "auth",
+            JSON.stringify({ userId, isSignedIn, token })
+          );
+        } catch (error) {
+          console.error("Error saving auth data:", error);
+        }
+      } else {
+        await AsyncStorage.removeItem("auth");
+      }
+    };
 
-    if (isSignedIn && !inTabsGroup) {
+    saveAuth();
+  }, [isLoaded, isSignedIn, userId]);
+
+  return { isLoaded, isSignedIn, offlineAuth };
+};
+
+const InitialLayout = () => {
+  const { isLoaded, isSignedIn, offlineAuth } = useOfflineAuth();
+  const segments = useSegments();
+  const router = useRouter();
+  const [isOffline, setIsOffline] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      setIsOffline(!state.isConnected);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (!isLoaded && offlineAuth) {
+      router.replace("/home");
+    } else if (!isLoaded) {
+      return;
+    }
+
+    const isAuthRoute = segments[0] === "(auth)";
+    if (isSignedIn && !isAuthRoute) {
       router.replace("/home");
     } else if (!isSignedIn) {
       router.replace("/");
     }
-  }, [isSignedIn]);
+  }, [isSignedIn, offlineAuth]);
+
+  if (!isLoaded && !offlineAuth) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>Ładowanie danych...</Text>
+      </View>
+    );
+  }
+
+  if (isOffline && offlineAuth) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>Jesteś offline. Korzystasz z zapisanych danych.</Text>
+      </View>
+    );
+  }
 
   return <Slot />;
 };
@@ -60,7 +136,6 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error;
   }, [error]);
@@ -80,14 +155,45 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
+  const [isOffline, setIsOffline] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      setIsOffline(!state.isConnected);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  if (isOffline) {
+    return (
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <ThemeProvider
+          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
+          <PortalProvider>
+            <PortalHost name="menu" />
+            <InitialLayout />
+          </PortalProvider>
+        </ThemeProvider>
+      </GestureHandlerRootView>
+    );
+  }
 
   return (
-    <ClerkProvider publishableKey={publishableKey}>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <ClerkLoaded>
-          <InitialLayout />
-        </ClerkLoaded>
-      </ThemeProvider>
-    </ClerkProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ClerkProvider publishableKey={publishableKey}>
+        <ThemeProvider
+          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
+          <ClerkLoaded>
+            <PortalProvider>
+              <PortalHost name="menu" />
+              <InitialLayout />
+            </PortalProvider>
+          </ClerkLoaded>
+        </ThemeProvider>
+      </ClerkProvider>
+    </GestureHandlerRootView>
   );
 }
