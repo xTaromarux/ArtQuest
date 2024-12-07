@@ -16,31 +16,46 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: Colors.light.background,
-    paddingHorizontal: 20,
-    paddingBottom:20,
-    paddingTop: 40,
+    paddingHorizontal: 15,
+    paddingBottom:10,
+    paddingTop: 10,
     borderRadius: 10,
     borderTopEndRadius: 0,
     borderTopStartRadius: 0,
     width: "100%",
   },
+  barContainer:{
+    height: "100%",
+    marginRight: 15
+  },
+  bar:{
+    width: 8,
+    height: 91,
+    borderRadius: 10
+  },
   courseInfoContainer: {
     flex: 1,
   },
   courseTitle: {
-    fontSize: 16,
+    fontSize: 26,
     fontWeight: "bold",
     color: Colors.dark.text,
   },
   courseSubtitle: {
-    fontSize: 12,
+    fontSize: 14,
     color: Colors.dark.text,
-    marginVertical: 5,
+    marginBottom: 10,
   },
   infoIconContainer: {
-    borderColor: "#845EC2",
-    borderWidth: 2,
+    paddingTop: 15,
+    height: "100%",
+    width: 40,
+  },
+  infoIcon: {
     padding: 5,
+    borderWidth: 2,
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: 10,
   },
   gridContainer: {
