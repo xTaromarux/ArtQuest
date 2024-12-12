@@ -31,6 +31,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: "transparent",
   },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: Colors.dark.background,
+  },
+  errorText: {
+    color: Colors.light.text,
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  retryText: {
+    color: Colors.light.tint,
+    fontSize: 16,
+    textDecorationLine: "underline",
+  },
+  
 });
 
 export default styles;

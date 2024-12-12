@@ -1,6 +1,7 @@
 {
   "name": "artquest",
   "main": "expo-router/entry",
+  "proxy": "https://5980-178-43-247-13.ngrok-free.app",
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",

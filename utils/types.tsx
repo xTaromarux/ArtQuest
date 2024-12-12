@@ -51,17 +51,16 @@ export type UserType = {
   id: string;
   login: string;
   name: string;
-  avatar_url?: string;
+  picture_url?: string;
 };
 
 export type TweetType = {
   id: string;
   description: string;
-  user: UserType;
-  createdAt: string;
-  image_url?: string;
-  numberOfComments?: number;
-  numberOfRetweets?: number;
-  numberOfLikes?: number;
-  impressions?: number;
+  date_added: string;
+  date_updated: string;
+  picture_url?: string;
+  reactions?: number;
+  user_name?: string;
+  login?: string;
 };

@@ -29,42 +29,27 @@ const TweetDetails: React.FC = () => {
   const [tweet, setTweet] = useState<TweetType>({
     id: "",
     description: "",
-    user: {
-      id: "",
-      login: "",
-      name: "",
-      avatar_url: "",
-    },
-    createdAt: "",
-    image_url: "",
-    numberOfComments: 0,
-    numberOfRetweets: 0,
-    numberOfLikes: 0,
-    impressions: 0,
+    date_added: "",
+    date_updated: "",
+    picture_url: "",
+    reactions: 0,
+    user_name: "",
+    login: ""
   });
 
   useEffect(() => {
     if (typeof post === "string") {
       try {
         const parsedPost = JSON.parse(post);
-
-        const user: UserType = {
-          id: parsedPost.user.id,
-          login: parsedPost.user.login,
-          name: parsedPost.user.name,
-          avatar_url: parsedPost.user.avatar_url,
-        };
-
         const tweetData: TweetType = {
           id: parsedPost.id,
           description: parsedPost.description,
-          user: user,
-          createdAt: parsedPost.createdAt,
-          image_url: parsedPost.image_url,
-          numberOfComments: parsedPost.numberOfComments,
-          numberOfRetweets: parsedPost.numberOfRetweets,
-          numberOfLikes: parsedPost.numberOfLikes,
-          impressions: parsedPost.impressions,
+          date_added: parsedPost.date_added,
+          date_updated: parsedPost.date_updated,
+          picture_url: parsedPost.picture_url,
+          reactions: parsedPost.reactions,
+          user_name: parsedPost.user_name,
+          login: parsedPost.login
         };
 
         setTweet(tweetData);
