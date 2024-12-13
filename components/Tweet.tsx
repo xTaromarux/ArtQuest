@@ -9,6 +9,7 @@ import { TweetType } from "@/utils/types";
 import Colors from "@/constants/Colors";
 import TweetFooter from "./TweetFooter";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { generateRandomString } from "@/scripts/generateId";
 
 type TweetProp = {
   tweet: TweetType;
@@ -22,8 +23,8 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
   const base_url = "https://bce9-178-43-255-119.ngrok-free.app";
   const web_url = "http://localhost:8000";
   const API_VALUE = Platform.OS === "web" ? web_url : base_url;
-  const picture_url = API_VALUE + "/api" + tweet.picture_url;
-  const imageUrl = API_VALUE + "/api" + tweet.picture_url;
+  const picture_url = tweet.picture_url;
+  const imageUrl = tweet.picture_url;
 
   const router = useRouter();
 
@@ -49,7 +50,7 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
     router.push({
       pathname: `../../tweet/[id]`,
       params: {
-        id: tweet.id,
+        post_id: tweet.id,
         post: JSON.stringify(tweet),
       },
     });

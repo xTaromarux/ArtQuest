@@ -22,8 +22,8 @@ const Post = ({ tweet, onDelete }: TweetProp) => {
   const base_url = "https://bce9-178-43-255-119.ngrok-free.app";
   const web_url = "http://localhost:8000";
   const API_VALUE = Platform.OS === "web" ? web_url : base_url;
-  const avatarUrl = API_VALUE + "/api" + tweet.user.avatar_url;
-  const imageUrl = API_VALUE + "/api" + tweet.image_url;
+  const avatarUrl = tweet.picture_url;
+  const imageUrl = tweet.picture_url;
 
   const router = useRouter();
 
@@ -55,9 +55,9 @@ const Post = ({ tweet, onDelete }: TweetProp) => {
             />
           </View>
           <View style={styles.userInfo}>
-            <Text style={styles.name}>{tweet.user.name}</Text>
+            <Text style={styles.name}>{tweet.user_name}</Text>
             <Text>•</Text>
-            <Text style={styles.username}>@{tweet.user.login}</Text>
+            <Text style={styles.username}>@{tweet.login}</Text>
           </View>
           <Menu
             style={styles.menu}
@@ -71,7 +71,7 @@ const Post = ({ tweet, onDelete }: TweetProp) => {
           </Menu>
         </View>
 
-        {tweet.image_url && (
+        {tweet.picture_url && (
           <View style={styles.imageWrapper}>
             <Image source={{ uri: imageUrl }} style={styles.image} />
           </View>

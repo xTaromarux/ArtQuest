@@ -92,6 +92,7 @@ const EditPost: React.FC = () => {
           <TextInput
             multiline
             style={styles.input}
+            value={""}
             placeholder="Description"
           />
 

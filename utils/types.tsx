@@ -50,7 +50,9 @@ export interface Exercise {
 export type UserType = {
   id: string;
   login: string;
-  name: string;
+  mail: string;
+  user_name: string;
+  created_date: string;
   picture_url?: string;
 };
 
@@ -61,6 +63,17 @@ export type TweetType = {
   date_updated: string;
   picture_url?: string;
   reactions?: number;
+  user_picture_url?: string;
   user_name?: string;
   login?: string;
 };
+
+export interface Comment {
+  id: string;
+  description: string;
+  reactions: number;
+  user_id: string;
+  post_id: string;
+  date_added: string;
+  date_updated: string;
+}

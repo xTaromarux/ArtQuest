@@ -5,7 +5,7 @@ import { TweetType } from "@/utils/types";
 
 const TweetFooter: React.FC<{ tweet: TweetType }> = ({ tweet }) => {
   const [isLiked, setIsLiked] = useState(false);
-  const [likes, setLikes] = useState(tweet.numberOfLikes || 0);
+  const [likes, setLikes] = useState(tweet.reactions || 0);
 
   const handleLike = () => {
     if (isLiked) {

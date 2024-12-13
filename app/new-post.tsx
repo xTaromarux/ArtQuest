@@ -8,22 +8,24 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
-  useWindowDimensions,
   Dimensions,
   Pressable,
-  ImageBackground,
 } from "react-native";
 import Container from "@/components/Container";
 import styles from "@/constants/styles/screens/NewPostScreen.styles";
 import * as ImagePicker from "expo-image-picker";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import * as FileSystem from "expo-file-system";
+import API_BASE_URL from "@/utils/config";
 
 const NewPost: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const height = Dimensions.get("screen").height;
   const [image, setImage] = useState<string | null>(null);
+  const [description, setDescription] = useState<string>("");
+  const router = useRouter();
 
   const pickImage = async () => {
     const permissionResult =
@@ -45,6 +47,59 @@ const NewPost: React.FC = () => {
       setImage(result.assets[0].uri);
     }
   };
+
+  const handleSubmit = async () => {
+    if (!description.trim() || !image) {
+      Alert.alert("Please provide a description and select an image.");
+      return;
+    }
+  
+    setLoading(true);
+  
+    try {
+      const formData = new FormData();
+      formData.append("description", description);
+      formData.append("reactions", "0");
+      formData.append("user_id", "e65cad91-1dfd-4469-abfc-3f3b65ca4efb");
+  
+      if (Platform.OS === "web") {
+        const response = await fetch(image);
+        const blob = await response.blob();
+        formData.append("picture", blob, "image.jpg");
+      } else {
+        const fileBase64 = await FileSystem.readAsStringAsync(image, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+        formData.append("picture", `data:image/jpeg;base64,${fileBase64}`);
+      }
+  
+      // Debugowanie formData
+      for (let pair of formData.entries()) {
+        console.log(`${pair[0]}: ${pair[1]}`);
+      }
+  
+      const response = await fetch(`${API_BASE_URL}/api/add_post`, {
+        method: "POST",
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Server response:", errorText);
+        throw new Error("Failed to save post. Please try again.");
+      }
+  
+      Alert.alert("Post saved successfully!");
+      router.push("/feed");
+    } catch (error) {
+      console.error(error);
+      Alert.alert("An error occurred while saving the post.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  
 
   return (
     <KeyboardAvoidingView
@@ -95,9 +150,15 @@ const NewPost: React.FC = () => {
             multiline
             style={styles.input}
             placeholder="Description"
+            value={description}
+            onChangeText={setDescription}
           />
 
-          <TouchableOpacity style={styles.continueButton} disabled={loading}>
+          <TouchableOpacity
+            style={styles.continueButton}
+            disabled={loading}
+            onPress={handleSubmit}
+          >
             <Text style={styles.continueButtonText}>
               {loading ? "LOADING..." : "SAVE"}
             </Text>

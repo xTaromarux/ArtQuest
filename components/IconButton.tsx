@@ -44,7 +44,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   text: {
-    marginLeft: 5,
     color: "#FFFFFF",
     fontSize: 14,
   },
