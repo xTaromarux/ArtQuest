@@ -9,13 +9,16 @@ import {
 import { Image } from "expo-image";
 import { Feather } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
+import { Exercise } from "@/utils/types";
 
 const Template3 = ({
   description,
   picture,
+  handlePress
 }: {
   description: string[];
   picture: any[];
+  handlePress: () => Promise<void>;
 }) => (
   <View style={styles.container}>
     {/* Pierwszy wiersz */}
@@ -64,7 +67,7 @@ const Template3 = ({
 
     {/* Piąty wiersz */}
     <View style={[styles.row, { flex: 0.5 }]}>
-      <TouchableOpacity style={styles.button} onPress={() => {}}>
+      <TouchableOpacity  style={styles.button} onPress={handlePress}>
         <Text style={styles.buttonTextDark}>Make picture</Text>
         <Feather name="camera" size={22} color={Colors.dark.tintDarkerGreen} style={{marginHorizontal: 10}} />
       </TouchableOpacity>

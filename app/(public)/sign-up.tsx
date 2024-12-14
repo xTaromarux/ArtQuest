@@ -10,10 +10,10 @@ import {
   KeyboardAvoidingView,
   Platform,
   Dimensions,
+  Linking,
 } from "react-native";
 import Container from "@/components/Container";
 import { useSignUp } from "@clerk/clerk-expo";
-import * as Linking from "expo-linking";
 import { Link } from "expo-router";
 import styles from "@/constants/styles/screens/SignUpScreen.styles";
 
@@ -24,7 +24,7 @@ const SignUpScreen: React.FC = () => {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const height = Dimensions.get('screen').height;
+  const height = Dimensions.get("screen").height;
 
   const handleSignUp = async () => {
     if (!isLoaded) return;
@@ -62,10 +62,14 @@ const SignUpScreen: React.FC = () => {
     if (!signUp) return;
 
     try {
+      // Ręczna konstrukcja schematów URL
+      const redirectUrl = "myapp://oauth-callback"; // Zamień "myapp" na swój schemat
+      const completeUrl = "myapp://home";
+
       await signUp.authenticateWithRedirect({
         strategy: provider,
-        redirectUrl: Linking.createURL("/oauth-callback"), // URL po kliknięciu opcji rejestracji
-        redirectUrlComplete: Linking.createURL("/home"), // URL po zakończeniu procesu rejestracji
+        redirectUrl,
+        redirectUrlComplete: completeUrl,
       });
     } catch (error: any) {
       Alert.alert(
@@ -77,7 +81,7 @@ const SignUpScreen: React.FC = () => {
 
   return (
     <KeyboardAvoidingView
-      style={[styles.screen, {height: height}]}
+      style={[styles.screen, { height: height }]}
       behavior={Platform.OS == "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS == "ios" ? 0 : 20}
       enabled={Platform.OS === "ios" ? true : false}

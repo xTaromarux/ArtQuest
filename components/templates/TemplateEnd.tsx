@@ -8,9 +8,11 @@ import Colors from "@/constants/Colors";
 const TemplateEnd = ({
   description,
   picture,
+  handlePress
 }: {
   description: string[];
   picture: any[];
+  handlePress: any[];
 }) => (
   <View style={styles.container}>
     {/* Pierwszy wiersz */}

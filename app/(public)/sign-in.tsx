@@ -9,10 +9,10 @@ import {
   KeyboardAvoidingView,
   Platform,
   Dimensions,
+  Linking,
 } from "react-native";
 import Container from "@/components/Container";
 import { useSignIn } from "@clerk/clerk-expo";
-import * as Linking from "expo-linking";
 import { Link, useRouter } from "expo-router";
 import styles from "@/constants/styles/screens/SignInScreen.styles";
 
@@ -54,12 +54,12 @@ const SignInScreen: React.FC = () => {
     provider: "oauth_google" | "oauth_github"
   ) => {
     if (!isLoaded || !signIn) return;
-
+  
     try {
-      const redirectUrl = Linking.createURL("/oauth-callback");
-      const completeUrl = Linking.createURL("/home");
-
-      // Użycie tej samej funkcji dla mobilnych i webowych aplikacji
+      // Konstrukcja adresów URL
+      const redirectUrl = "myapp://oauth-callback"; // Zamień "myapp" na schemat Twojej aplikacji
+      const completeUrl = "myapp://home";
+  
       await signIn.authenticateWithRedirect({
         strategy: provider,
         redirectUrl,
@@ -71,7 +71,7 @@ const SignInScreen: React.FC = () => {
         `Nie udało się zalogować przez ${provider === "oauth_google" ? "Google" : "GitHub"}.`
       );
     }
-  };
+  };  
 
   return (
     <KeyboardAvoidingView

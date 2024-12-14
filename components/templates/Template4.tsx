@@ -6,15 +6,17 @@ import { Feather } from "@expo/vector-icons";
 const Template4 = ({
   description,
   picture,
+  handlePress
 }: {
   description: string[];
   picture: any[];
+  handlePress: any[];
 }) => (
   <View style={styles.container}>
     {/* Pierwszy wiersz */}
     <View style={[styles.row]}>
       <View style={[styles.textContainer, { width: "100%" }]}>
-        <Text style={styles.text}>{description[1]}</Text>
+        <Text style={styles.text}>{description[0]}</Text>
         <View style={styles.iconContainer}>
           <Pressable onPress={() => {}}>
             <Feather name="info" size={20} color="black" />

@@ -6,9 +6,11 @@ import { Feather } from "@expo/vector-icons";
 const Template1 = ({
   description,
   picture,
+  handlePress
 }: {
   description: string[];
   picture: any[];
+  handlePress: any[];
 }) => (
   <View style={styles.container}>
     {/* Pierwszy wiersz */}
