@@ -197,8 +197,7 @@ const SignUpScreen: React.FC = () => {
         console.log("Verification successful!");
         setModalVisible(false);
 
-        // Przekierowanie po sukcesie
-        const completeUrl = "http://localhost:8081/home"; // Twój docelowy URL
+        const completeUrl = "http://localhost:8081/home"; 
         router.replace(completeUrl);
       } else {
         throw new Error("Verification failed. Please try again.");
