@@ -101,7 +101,7 @@ const TweetDetails: React.FC = () => {
     async (user_id: string) => {
       if (users[user_id]) return; // Jeśli użytkownik już istnieje w stanie, pomiń
       try {
-        const response = await fetch(`${API_BASE_URL}/api/user/${user_id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/user/${user_id}/details`, {
           headers: {
             "ngrok-skip-browser-warning": "true",
             "User-Agent": "CustomAgent",
@@ -188,7 +188,9 @@ const TweetDetails: React.FC = () => {
         data={comments}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => {
-          const user = users[item.user_id]; // Pobierz dane użytkownika z mapy
+          const user = users[item.user_id]; 
+          console.log(item.user_id);
+          console.log(user);
           return (
             <View style={styles.commentContainer}>
               <View style={styles.imageContainer}>

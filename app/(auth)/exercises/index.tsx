@@ -29,7 +29,7 @@ const ExerciseScreen: React.FC = () => {
   let courseDetails = {
     id: "1",
     label: "Lines",
-    shortDesc: "Lorem ipsum dolor sit amet",
+    shortDesc: "Foundation of all drawing and art",
     level: 1,
     percentage: 0.2,
     color: "#FF6B6B",
@@ -52,9 +52,9 @@ const ExerciseScreen: React.FC = () => {
       ai_part: false,
       percentage: 0.2,
       description: [
-        "Lorem ipsum dolor sit amet, consectetur ",
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ",
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut euismod nunc id.",
+        "Lines: The Foundation of Art",
+        "Discover how simple shapes like circles",
+        "Master the basics of line work to bring your art to life.",
       ],
       picture: [
         require("@/assets/images/LessonNo1_No1.png"),
@@ -67,10 +67,10 @@ const ExerciseScreen: React.FC = () => {
   ];
 
   const pathItems = [
-    { id: "1", label: "Lorem ipsum", icon: "star" as IconName, position: 2 },
-    { id: "2", label: "Lorem ipsum", icon: "play" as IconName, position: 4 },
-    { id: "3", label: "Lorem ipsum", icon: "play" as IconName, position: 8 },
-    { id: "4", label: "Lorem ipsum", icon: "play" as IconName, position: 12 },
+    { id: "1", label: "The First Stroke", icon: "star" as IconName, position: 2 },
+    { id: "2", label: "Curves and Arcs", icon: "play" as IconName, position: 4 },
+    { id: "3", label: "Shapes from Lines", icon: "play" as IconName, position: 8 },
+    { id: "4", label: "Exercise", icon: "play" as IconName, position: 12 },
   ];
 
   const course = {
@@ -78,9 +78,9 @@ const ExerciseScreen: React.FC = () => {
     title: "Lines",
     description: "Lorem ipsum dolor sit amet",
     descriptionLongNo1:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. ",
+      "Lines are the foundation of all drawing and art. They are the simplest, yet most essential elements of any composition, forming the basis of everything we see and create. Whether it's the outline of a shape, the curve of a landscape, or the intricate details of a portrait, everything begins with a line. In this lesson, you'll learn the basics of how to draw lines with precision and confidence. By practicing straight lines, curves, and angles, you'll start to understand how they work together to create structure and form. You'll also discover how lines can represent movement, energy, and even emotions, depending on their length, thickness, and direction.",
     descriptionLongNo2:
-      "It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
+      "Through simple exercises, you'll develop control over your hand movements, allowing you to draw steady lines with ease. This skill is crucial, as mastering the ability to draw clean lines is the first step toward creating more complex drawings. You'll also explore how lines can define space, give a sense of depth, and create patterns, helping you see how they come together to build a complete composition. This lesson is perfect for beginners, offering a clear and easy way to start your artistic journey. By the end, you'll have the confidence to use lines as a tool to bring your ideas to life, knowing that every masterpiece begins with a single, simple stroke.",
     icon: require("@/assets/images/lines.png"),
     color: "#FF6B6B",
   };

@@ -31,9 +31,9 @@ export default function TweetScreen() {
       ai_part: false,
       percentage: 0.2,
       description: [
-        "Lorem ipsum dolor sit amet, consectetur ",
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ",
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut euismod nunc id.",
+        "Lines: The Foundation of Art",
+        "Discover how simple shapes like circles",
+        "Master the basics of line work to bring your art to life.",
       ],
       picture: [
         require("@/assets/images/LessonNo1_No1.png"),
@@ -51,10 +51,10 @@ export default function TweetScreen() {
       ai_part: false,
       percentage: 0.4,
       description: [
-        "Lorem ipsum dolor sit amet, consectetur ",
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ",
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut euismod nunc id.",
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut euismod nunc id.",
+        "Master the basics of line work to bring your art to life.",
+        "Learn to draw straight, curved, and dynamic lines effortlessly.",
+        "Learn to break down animals, objects, and characters into their basic geometric forms.",
+        "Discover how simple shapes like circles, squares, and triangles build the foundation for complex drawings.",
       ],
       picture: [
         require("@/assets/images/LessonNo2_No1.png"),
@@ -69,9 +69,9 @@ export default function TweetScreen() {
       ai_part: true,
       percentage: 0.6,
       description: [
-        "Lorem ipsum dolor sit amet, consectetur ",
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ",
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut euismod nunc id.",
+        "Experiment with proportions and details to bring your version to life.",
+        "Use the shapes you’ve learned to recreate this object with your own artistic touch!",
+        "Snap a photo of your drawing and share your progress!",
       ],
       picture: [require("@/assets/images/LessonNo3_No1.png")],
     },
@@ -83,8 +83,8 @@ export default function TweetScreen() {
       ai_part: false,
       percentage: 0.8,
       description: [
-        "Lorem ipsum dolor sit amet, consectetur ",
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ",
+        "Here’s how your drawing compares to the reference!",
+        "You're doing well! Keep up the good work and continue striving for improvement. You've got this!",
       ],
       picture: [
         require("@/assets/images/LessonNo4_No1.png"),
@@ -100,7 +100,7 @@ export default function TweetScreen() {
       percentage: 1,
       description: [
         "Congratulations!",
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ",
+        "Great job! You've completed this task with excellence—keep up the amazing work!",
       ],
       picture: [require("@/assets/images/EndLesson.png")],
     },

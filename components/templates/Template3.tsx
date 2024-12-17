@@ -94,7 +94,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 15,
     width: "100%",
-    textAlign: "center",
     fontWeight: "bold",
   },
   iconContainer: {

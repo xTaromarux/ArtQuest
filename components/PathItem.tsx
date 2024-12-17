@@ -167,9 +167,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    marginTop: 8,
+    marginTop: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center",
     color: "#FFFFFF",
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "bold",
   },
 });

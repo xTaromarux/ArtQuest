@@ -29,18 +29,18 @@ const courses = [
   {
     id: "1",
     title: "Lines",
-    description: "Lorem ipsum dolor sit amet",
+    description: "Master the art of drawing lines.",
     descriptionLongNo1:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. ",
+      "Lines are the foundation of all drawing and art. They are the simplest, yet most essential elements of any composition, forming the basis of everything we see and create. Whether it's the outline of a shape, the curve of a landscape, or the intricate details of a portrait, everything begins with a line. In this lesson, you'll learn the basics of how to draw lines with precision and confidence. By practicing straight lines, curves, and angles, you'll start to understand how they work together to create structure and form. You'll also discover how lines can represent movement, energy, and even emotions, depending on their length, thickness, and direction.",
     descriptionLongNo2:
-      "It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
+      "Through simple exercises, you'll develop control over your hand movements, allowing you to draw steady lines with ease. This skill is crucial, as mastering the ability to draw clean lines is the first step toward creating more complex drawings. You'll also explore how lines can define space, give a sense of depth, and create patterns, helping you see how they come together to build a complete composition. This lesson is perfect for beginners, offering a clear and easy way to start your artistic journey. By the end, you'll have the confidence to use lines as a tool to bring your ideas to life, knowing that every masterpiece begins with a single, simple stroke.",
     icon: require("@/assets/images/lines.png"),
     color: "#FF6B6B",
   },
   {
     id: "2",
     title: "Basic Shapes",
-    description: "Lorem ipsum dolor sit amet",
+    description: "Build with simple shapes.",
     descriptionLongNo1:
       "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. ",
     descriptionLongNo2:
@@ -51,7 +51,7 @@ const courses = [
   {
     id: "3",
     title: "3D Vision",
-    description: "Lorem ipsum dolor sit amet",
+    description: "Add depth to your drawings.",
     descriptionLongNo1:
       "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. ",
     descriptionLongNo2:
@@ -62,7 +62,7 @@ const courses = [
   {
     id: "4",
     title: "Light and Shading",
-    description: "Lorem ipsum dolor sit amet",
+    description: "Bring art to life with light.",
     descriptionLongNo1:
       "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. ",
     descriptionLongNo2:
@@ -73,7 +73,7 @@ const courses = [
   {
     id: "5",
     title: "Perspective",
-    description: "Lorem ipsum dolor sit amet",
+    description: "Create depth and space.",
     descriptionLongNo1:
       "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. ",
     descriptionLongNo2:
@@ -84,7 +84,7 @@ const courses = [
   {
     id: "6",
     title: "Basic Anatomy",
-    description: "Lorem ipsum dolor sit amet",
+    description: "Draw lifelike figures.",
     descriptionLongNo1:
       "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. ",
     descriptionLongNo2:
@@ -95,7 +95,7 @@ const courses = [
   {
     id: "7",
     title: "Basic Anatomy",
-    description: "Lorem ipsum dolor sit amet",
+    description: "Draw lifelike figures.",
     descriptionLongNo1:
       "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. ",
     descriptionLongNo2:
@@ -108,7 +108,7 @@ const courses = [
 const exerciseDetails = {
   id: "7",
   label: "Basic Anatomy",
-  shortDesc: "Lorem ipsum dolor sit amet",
+  shortDesc: "Draw lifelike figures.",
   level: 4,
   percentage: 0.2,
   color: "#FF914D",

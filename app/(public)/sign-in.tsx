@@ -57,8 +57,8 @@ const SignInScreen: React.FC = () => {
   
     try {
       // Konstrukcja adresów URL
-      const redirectUrl = "myapp://oauth-callback"; // Zamień "myapp" na schemat Twojej aplikacji
-      const completeUrl = "myapp://home";
+      const redirectUrl = "http://localhost:8081/oauth-callback"; // Zamień "myapp" na schemat Twojej aplikacji
+      const completeUrl = "http://localhost:8081/home";
   
       await signIn.authenticateWithRedirect({
         strategy: provider,

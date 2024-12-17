@@ -56,6 +56,27 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
     });
   };
 
+  const deletePost = async () => {
+    try {
+      const response = await fetch(`${API_VALUE}/api/post/${tweet.id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to delete the post");
+      }
+  
+      onDelete(); // Informuje rodzica o usunięciu posta
+      setModalVisible(false); // Ukryj modal
+      router.push("/feed"); // Przekieruj na stronę /feed
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  };
+
   return (
     <>
       <Pressable style={styles.container} onPress={handlePostPress}>
@@ -93,7 +114,7 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
 
       <ConfirmationModal
         isVisible={modalVisible}
-        onConfirm={() => {}}
+        onConfirm={deletePost} 
         onCancel={handleCancelDelete}
         title="Are you sure you want to delete this post?"
         IconComponent={AntDesign} 

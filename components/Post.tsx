@@ -15,7 +15,6 @@ type TweetProp = {
   onDelete: () => void;
 };
 
-const user_id = "be72e28f-41af-4234-a112-0a0299ed7197";
 
 const Post = ({ tweet, onDelete }: TweetProp) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -44,6 +43,28 @@ const Post = ({ tweet, onDelete }: TweetProp) => {
       },
     });
   };
+
+  const deletePost = async () => {
+    try {
+      const response = await fetch(`${API_VALUE}/api/post/${tweet.id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to delete the post");
+      }
+  
+      onDelete(); // Informuje rodzica o usunięciu posta
+      setModalVisible(false); // Ukryj modal
+      router.push("/feed"); // Przekieruj na stronę /feed
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  };
+  
 
   return (
     <>
@@ -81,7 +102,7 @@ const Post = ({ tweet, onDelete }: TweetProp) => {
 
       <ConfirmationModal
         isVisible={modalVisible}
-        onConfirm={() => {}}
+        onConfirm={deletePost} // Wywołuje funkcję usuwania posta
         onCancel={handleCancelDelete}
         title="Are you sure you want to delete this post?"
         IconComponent={AntDesign} 
