@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -18,16 +18,89 @@ import Container from "@/components/Container";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Link, router } from "expo-router";
 import styles from "@/constants/styles/screens/HomeScreen.styles";
+import API_BASE_URL from "@/utils/config";
 
 const HomeScreen: React.FC = () => {
-  const { user } = useUser(); // Pobieramy dane użytkownika
+  const { user } = useUser();
   const height = Dimensions.get("screen").height;
+
+  const [course, setCourse] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchCourseDetails = async () => {
+      try {
+        // Pierwsze żądanie do pobrania kursów użytkownika
+        const coursesResponse = await fetch(
+          `${API_BASE_URL}/api/courses/4494aba2-2a7a-4786-95d1-32fa6ccbdeee`, {
+            headers: {
+              "ngrok-skip-browser-warning": "true",
+              "User-Agent": "CustomAgent",
+            },
+          }
+        );
+        console.log(coursesResponse);
+        
+        if (!coursesResponse.ok) {
+          throw new Error("Failed to fetch courses");
+        }
+        const coursesData = await coursesResponse.json();
+        console.log(coursesData);
+        
+
+        const CourseId = coursesData[0]?.course_id;
+        if (!CourseId) {
+          throw new Error("No user_course_id found in response");
+        }
+        console.log(CourseId);
+        
+
+        const courseDetailsResponse = await fetch(
+          `${API_BASE_URL}/api/course_details_by_id/${CourseId}`, {
+            headers: {
+              "ngrok-skip-browser-warning": "true",
+              "User-Agent": "CustomAgent",
+            },
+          }
+        );
+        if (!courseDetailsResponse.ok) {
+          throw new Error("Failed to fetch course details");
+        }
+        const courseDetails = await courseDetailsResponse.json();
+
+        // Zapisanie szczegółów kursu
+        setCourse(courseDetails);
+      } catch (error) {
+        console.error("Error fetching course details:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourseDetails();
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+        <Text>Loading course details...</Text>
+      </View>
+    );
+  }
+
+  if (!course) {
+    return (
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+        <Text>No course found</Text>
+      </View>
+    );
+  }
 
   return (
     <KeyboardAvoidingView
       style={[styles.container, { height: height }]}
-      behavior={Platform.OS == "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS == "ios" ? 0 : 20}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       enabled={Platform.OS === "ios" ? true : false}
     >
       <Text style={styles.greeting}>Hello, {user?.username || "User"}!</Text>
@@ -40,12 +113,12 @@ const HomeScreen: React.FC = () => {
         style={{ marginVertical: 30, padding: 0, justifyContent: "flex-start" }}
       >
         <ImageBackground
-          source={require("@/assets/images/background_course_home.png")} // Poprawiona ścieżka obrazu
+          source={require("@/assets/images/background_course_home.png")}
           style={[styles.courseImageContainer, { width: `100%` }]}
-          imageStyle={{ resizeMode: "cover", borderRadius: 10 }} // Opcjonalne dopasowanie obrazu
+          imageStyle={{ resizeMode: "cover", borderRadius: 10 }}
         >
           <Image
-            source={require("@/assets/images/shapes.png")} // Ikona kursu
+            source={require("@/assets/images/shapes.png")}
             style={styles.courseImage}
             resizeMode="contain"
           />
@@ -53,9 +126,9 @@ const HomeScreen: React.FC = () => {
         <Line width={90} backgroundColor={Colors.dark.text} />
         <View style={styles.courseContentContainer}>
           <View style={styles.courseInfo}>
-            <Text style={styles.levelText}>Level 1</Text>
-            <Text style={styles.courseTitle}>Basic Shapes</Text>
-            <ProgressBar progress={0.4} color={Colors.dark.tintLighterGreen} />
+            <Text style={styles.levelText}>Level {course.level || 1}</Text>
+            <Text style={styles.courseTitle}>{course.title || "Course Title"}</Text>
+            <ProgressBar progress={course.progress || 0} color={Colors.dark.tintLighterGreen} />
           </View>
           <Pressable
             onPress={() => {

@@ -84,6 +84,12 @@ const styles = StyleSheet.create({
     color: Colors.light.background,
     marginBottom: 10,
   },
+  noAchievementsText: {
+    fontSize: 16,
+    color: "#888", // Szary kolor dla tekstu
+    textAlign: "center",
+    marginTop: 10,
+  },  
   statsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",

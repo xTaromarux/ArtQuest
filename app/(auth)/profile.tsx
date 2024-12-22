@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Dimensions,
   KeyboardAvoidingView,
@@ -24,18 +24,45 @@ import LogoutButton from "@/components/LogoutButton";
 import LabeledTextInput from "@/components/LabeledTextInput";
 import * as ImagePicker from "expo-image-picker";
 import { Image } from "expo-image";
-import { Link } from "expo-router";
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 const ExerciseScreen: React.FC = () => {
   const modalizeRef = useRef<Modalize>(null);
   const height = Dimensions.get("screen").height;
   const MODAL_HEIGHT = height - 130;
+
   const [emailAddress, setEmailAddress] = useState("");
   const [nickname, setNickname] = useState("");
   const [password, setPassword] = useState("");
   const [image, setImage] = useState<string | null>(null);
   const [isModalVisible, setModalVisible] = useState(false);
+  const [profileData, setProfileData] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const API_URL = Platform.OS === "web"
+    ? "http://localhost:8000"
+    : "https://example-api.com";
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        const response = await fetch(
+          `${API_URL}/api/user/4494aba2-2a7a-4786-95d1-32fa6ccbdeee/details`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch profile data");
+        }
+        const data = await response.json();
+        setProfileData(data);
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfileData();
+  }, []);
 
   const onOpen = () => {
     modalizeRef.current?.open();
@@ -79,6 +106,22 @@ const ExerciseScreen: React.FC = () => {
     toggleModal();
   };
 
+  if (loading) {
+    return (
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+        <Text>Loading profile...</Text>
+      </View>
+    );
+  }
+
+  if (!profileData) {
+    return (
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+        <Text>No profile data available</Text>
+      </View>
+    );
+  }
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <KeyboardAvoidingView
@@ -96,9 +139,9 @@ const ExerciseScreen: React.FC = () => {
         </ImageBackground>
 
         <View style={styles.contentContainer}>
-          <ProfileHeader onOpen={onOpen} />
-          <StatisticsSection />
-          <AchievementsSection />
+          <ProfileHeader onOpen={onOpen} userData={profileData.user} />
+          <StatisticsSection statistics={profileData.statistics} />
+          <AchievementsSection achievements={profileData.achievements} />
         </View>
 
         <Portal>
@@ -177,9 +220,9 @@ const ExerciseScreen: React.FC = () => {
           title="Are you sure you want to delete your account?"
           onConfirm={handleDeleteAccount}
           onCancel={toggleModal}
-          IconComponent={MaterialCommunityIcons} 
-          iconName="emoticon-sad-outline" 
-          iconSize={50} 
+          IconComponent={MaterialCommunityIcons}
+          iconName="emoticon-sad-outline"
+          iconSize={50}
           iconColor="black"
           acceptText="Delete"
         />
