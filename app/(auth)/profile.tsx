@@ -25,6 +25,7 @@ import LabeledTextInput from "@/components/LabeledTextInput";
 import * as ImagePicker from "expo-image-picker";
 import { Image } from "expo-image";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import API_BASE_URL from "@/utils/config";
 
 const ExerciseScreen: React.FC = () => {
   const modalizeRef = useRef<Modalize>(null);
@@ -39,15 +40,16 @@ const ExerciseScreen: React.FC = () => {
   const [profileData, setProfileData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const API_URL = Platform.OS === "web"
-    ? "http://localhost:8000"
-    : "https://example-api.com";
-
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
         const response = await fetch(
-          `${API_URL}/api/user/4494aba2-2a7a-4786-95d1-32fa6ccbdeee/details`
+          `${API_BASE_URL}/api/user/0f41b706-85a8-4457-8046-132f5505b47d/details`, {
+            headers: {
+              "ngrok-skip-browser-warning": "true",
+              "User-Agent": "CustomAgent",
+            },
+          }
         );
         if (!response.ok) {
           throw new Error("Failed to fetch profile data");

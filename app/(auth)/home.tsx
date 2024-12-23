@@ -32,7 +32,7 @@ const HomeScreen: React.FC = () => {
       try {
         // Pierwsze żądanie do pobrania kursów użytkownika
         const coursesResponse = await fetch(
-          `${API_BASE_URL}/api/courses/4494aba2-2a7a-4786-95d1-32fa6ccbdeee`, {
+          `${API_BASE_URL}/api/courses/0f41b706-85a8-4457-8046-132f5505b47d`, {
             headers: {
               "ngrok-skip-browser-warning": "true",
               "User-Agent": "CustomAgent",
