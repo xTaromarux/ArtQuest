@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
     height: 12,
     width: "100%",
     borderRadius: 10,
-    backgroundColor: Colors.dark.background,
+    backgroundColor: Colors.dark.tintDarkerGreen,
     justifyContent: "center",
     alignContent: "center",
     padding: 2,
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   container: {
     height: 6,
     width: "100%",
-    backgroundColor: Colors.dark.background,
+    backgroundColor: Colors.dark.tintDarkerGreen,
     borderRadius: 10,
     justifyContent: "flex-start",
     alignContent: "flex-start",

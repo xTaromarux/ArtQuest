@@ -26,14 +26,24 @@ export interface ProgressBarProps {
   color: string; 
 }
 
+export interface CourseRequest {
+  course: Course;
+  difficulty: Difficulty;
+  picture_url  : string;
+}
+
 export interface Course {
   id: string;
   title: string;
   description: string;
-  descriptionLongNo1: string;
-  descriptionLongNo2: string;
-  icon: any;
+  long_description: string;
+  short_desscription: string;
+}
+
+export interface Difficulty {
   color: string;
+  experience: number;
+  level: number;
 }
 
 export interface Exercise {

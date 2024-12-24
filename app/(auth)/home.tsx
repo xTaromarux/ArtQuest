@@ -30,7 +30,6 @@ const HomeScreen: React.FC = () => {
   useEffect(() => {
     const fetchCourseDetails = async () => {
       try {
-        // Pierwsze żądanie do pobrania kursów użytkownika
         const coursesResponse = await fetch(
           `${API_BASE_URL}/api/courses/0f41b706-85a8-4457-8046-132f5505b47d`, {
             headers: {
@@ -39,24 +38,20 @@ const HomeScreen: React.FC = () => {
             },
           }
         );
-        console.log(coursesResponse);
         
         if (!coursesResponse.ok) {
           throw new Error("Failed to fetch courses");
         }
         const coursesData = await coursesResponse.json();
-        console.log(coursesData);
         
-
         const CourseId = coursesData[0]?.course_id;
         if (!CourseId) {
           throw new Error("No user_course_id found in response");
         }
-        console.log(CourseId);
         
 
         const courseDetailsResponse = await fetch(
-          `${API_BASE_URL}/api/course_details_by_id/${CourseId}`, {
+          `${API_BASE_URL}/api/course_details/${CourseId}`, {
             headers: {
               "ngrok-skip-browser-warning": "true",
               "User-Agent": "CustomAgent",
@@ -67,7 +62,8 @@ const HomeScreen: React.FC = () => {
           throw new Error("Failed to fetch course details");
         }
         const courseDetails = await courseDetailsResponse.json();
-
+        console.log(courseDetails);
+        
         // Zapisanie szczegółów kursu
         setCourse(courseDetails);
       } catch (error) {
@@ -95,7 +91,7 @@ const HomeScreen: React.FC = () => {
       </View>
     );
   }
-
+  
   return (
     <KeyboardAvoidingView
       style={[styles.container, { height: height }]}
@@ -118,7 +114,7 @@ const HomeScreen: React.FC = () => {
           imageStyle={{ resizeMode: "cover", borderRadius: 10 }}
         >
           <Image
-            source={require("@/assets/images/shapes.png")}
+            source={course.picture_url}
             style={styles.courseImage}
             resizeMode="contain"
           />
@@ -126,8 +122,8 @@ const HomeScreen: React.FC = () => {
         <Line width={90} backgroundColor={Colors.dark.text} />
         <View style={styles.courseContentContainer}>
           <View style={styles.courseInfo}>
-            <Text style={styles.levelText}>Level {course.level || 1}</Text>
-            <Text style={styles.courseTitle}>{course.title || "Course Title"}</Text>
+            <Text style={styles.levelText}>Level {course.difficulty.level || 1}</Text>
+            <Text style={styles.courseTitle}>{course.course.title || "Course Title"}</Text>
             <ProgressBar progress={course.progress || 0} color={Colors.dark.tintLighterGreen} />
           </View>
           <Pressable

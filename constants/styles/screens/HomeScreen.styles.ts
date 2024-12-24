@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   continueButton: {
-    backgroundColor: Colors.dark.background,
+    backgroundColor: Colors.dark.tintDarkerGreen,
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
