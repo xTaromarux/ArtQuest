@@ -10,7 +10,6 @@ const LogoutButton: React.FC = () => {
   const handleLogout = async () => {
     try {
       await signOut();
-      Alert.alert("Wylogowano", "Zostałeś pomyślnie wylogowany.");
     } catch (error: any) {
       Alert.alert("Błąd", "Wystąpił problem podczas wylogowywania.");
     }

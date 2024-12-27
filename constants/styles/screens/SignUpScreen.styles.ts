@@ -77,11 +77,11 @@ const styles = StyleSheet.create({
     width: "100%",
     display: "flex",
     flexDirection: "row",
-    height: "15%",
+    height: 75,
   },
   tintInputRow: {
     width: "100%",
-    height: "40%",
+    height: 220,
   },
   tintInput: {
     flex: 1,

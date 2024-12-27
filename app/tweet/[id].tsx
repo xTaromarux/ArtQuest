@@ -21,6 +21,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
 import Line from "@/components/Line";
 import API_BASE_URL from "@/utils/config";
+import CustomImage from "@/components/CustomImage";
 
 const TweetDetails: React.FC = () => {
   const { post_id, post } = useLocalSearchParams(); // Pobierz ID posta z parametrów URL
@@ -32,6 +33,7 @@ const TweetDetails: React.FC = () => {
     date_added: "",
     date_updated: "",
     picture_url: "",
+    user_picture_url: "",
     reactions: 0,
     user_name: "",
     login: "",
@@ -41,7 +43,6 @@ const TweetDetails: React.FC = () => {
   const [loadingComments, setLoadingComments] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [users, setUsers] = useState<{ [key: string]: UserType }>({});
   const [newComment, setNewComment] = useState<string>(""); // Treść nowego komentarza
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
@@ -87,8 +88,6 @@ const TweetDetails: React.FC = () => {
       }
       const data = await response.json();
       setComments(data);
-      // Pobieranie danych użytkowników dla każdego komentarza
-      data.forEach((comment: Comment) => fetchUserDetails(comment.user_id));
     } catch (error) {
       console.error("Error fetching comments:", error);
       setError("Failed to load comments. Please try again.");
@@ -97,42 +96,19 @@ const TweetDetails: React.FC = () => {
     }
   }, [post_id]);
 
-  const fetchUserDetails = useCallback(
-    async (user_id: string) => {
-      if (users[user_id]) return; // Jeśli użytkownik już istnieje w stanie, pomiń
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/user/${user_id}/details`, {
-          headers: {
-            "ngrok-skip-browser-warning": "true",
-            "User-Agent": "CustomAgent",
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch user: ${response.status}`);
-        }
-        const userData: UserType = await response.json();
-        setUsers((prev) => ({ ...prev, [user_id]: userData }));
-      } catch (error) {
-        console.error(`Error fetching user ${user_id}:`, error);
-      }
-    },
-    [users]
-  );
-
   const handleAddComment = async () => {
     if (!newComment.trim() || !post_id) return;
-  
+
     setIsSubmitting(true);
-  
+
     try {
       const payload = new URLSearchParams({
         description: newComment.trim(),
         reactions: "0",
-        user_id: "e65cad91-1dfd-4469-abfc-3f3b65ca4efb", // Zamień na poprawne ID użytkownika
+        user_id: "0f41b706-85a8-4457-8046-132f5505b47d", // Zamień na poprawne ID użytkownika
         post_id: Array.isArray(post_id) ? post_id.join(",") : post_id, // Upewnij się, że post_id jest ciągiem znaków
       });
-  
+
       const response = await fetch(`${API_BASE_URL}/api/comments/add`, {
         method: "POST",
         headers: {
@@ -142,13 +118,13 @@ const TweetDetails: React.FC = () => {
         },
         body: payload.toString(),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Error response:", errorData);
         throw new Error(`Failed to add comment: ${response.status}`);
       }
-  
+
       setNewComment("");
       Keyboard.dismiss();
       fetchComments();
@@ -159,7 +135,6 @@ const TweetDetails: React.FC = () => {
       setIsSubmitting(false);
     }
   };
-  
 
   useEffect(() => {
     fetchComments();
@@ -188,29 +163,31 @@ const TweetDetails: React.FC = () => {
         data={comments}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => {
-          const user = users[item.user_id]; 
-          console.log(item.user_id);
-          console.log(user);
           return (
             <View style={styles.commentContainer}>
               <View style={styles.imageContainer}>
                 <View style={styles.userImageContainer}>
-                  <Image
-                    source={{
-                      uri:
-                        user?.picture_url ||
-                        "@/assets/images/avatar_default.png",
-                    }}
-                    style={styles.userImage}
-                  />
+                  {item.avatar_url ? (
+                    <CustomImage
+                      url={item.avatar_url}
+                      style={styles.userImage}
+                    />
+                  ) : (
+                    <Image
+                      source={{
+                        uri: "@/assets/images/avatar_default.png",
+                      }}
+                      style={styles.userImage}
+                    />
+                  )}
                 </View>
               </View>
               <View style={styles.commetnDetailsCOntainer}>
                 <View style={styles.userInfo}>
-                  <Text style={styles.name}>{user?.login || "Unknown"}</Text>
+                  <Text style={styles.name}>{item?.login || "Unknown"}</Text>
                   <Text style={{ color: Colors.light.text }}>•</Text>
                   <Text style={styles.username}>
-                    @{user?.user_name || "unknown"}
+                    @{item?.user_name || "unknown"}
                   </Text>
                 </View>
                 <View style={styles.commetnConteiner}>

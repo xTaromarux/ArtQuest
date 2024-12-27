@@ -23,6 +23,10 @@ buildscript {
 
 apply plugin: "com.facebook.react.rootproject"
 
+project.ext.react = [
+    enableHermes: false
+]
+
 allprojects {
     repositories {
         maven {

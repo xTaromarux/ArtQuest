@@ -76,10 +76,10 @@ const ExerciseScreen: React.FC = () => {
   const course = {
     id: "1",
     title: "Lines",
-    description: "Lorem ipsum dolor sit amet",
-    descriptionLongNo1:
+    short_desscription: "Lorem ipsum dolor sit amet",
+    description:
       "Lines are the foundation of all drawing and art. They are the simplest, yet most essential elements of any composition, forming the basis of everything we see and create. Whether it's the outline of a shape, the curve of a landscape, or the intricate details of a portrait, everything begins with a line. In this lesson, you'll learn the basics of how to draw lines with precision and confidence. By practicing straight lines, curves, and angles, you'll start to understand how they work together to create structure and form. You'll also discover how lines can represent movement, energy, and even emotions, depending on their length, thickness, and direction.",
-    descriptionLongNo2:
+      long_description:
       "Through simple exercises, you'll develop control over your hand movements, allowing you to draw steady lines with ease. This skill is crucial, as mastering the ability to draw clean lines is the first step toward creating more complex drawings. You'll also explore how lines can define space, give a sense of depth, and create patterns, helping you see how they come together to build a complete composition. This lesson is perfect for beginners, offering a clear and easy way to start your artistic journey. By the end, you'll have the confidence to use lines as a tool to bring your ideas to life, knowing that every masterpiece begins with a single, simple stroke.",
     icon: require("@/assets/images/lines.png"),
     color: "#FF6B6B",
@@ -178,7 +178,7 @@ const ExerciseScreen: React.FC = () => {
                 <>
                   <View style={stylesModal.iconModalContainer}>
                     <Image
-                      source={selectedCourse.icon}
+                      source={require("@/assets/images/lines.png")}
                       style={stylesModal.modalIcon}
                     />
                   </View>
@@ -189,10 +189,10 @@ const ExerciseScreen: React.FC = () => {
                   </View>
                   <View style={stylesModal.textModalContainer}>
                     <Text style={[stylesModal.modalText, { marginBottom: 20 }]}>
-                      {selectedCourse.descriptionLongNo1}
+                      {selectedCourse.description}
                     </Text>
                     <Text style={stylesModal.modalText}>
-                      {selectedCourse.descriptionLongNo2}
+                      {selectedCourse.long_description}
                     </Text>
                   </View>
                 </>

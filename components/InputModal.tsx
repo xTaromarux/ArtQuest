@@ -6,9 +6,13 @@ import {
   TouchableOpacity,
   StyleSheet,
   TextInput,
+  KeyboardAvoidingView,
+  Dimensions,
+  Platform,
 } from "react-native";
 import Modal from "react-native-modal";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 interface InputModal {
   isVisible: boolean;
@@ -40,69 +44,84 @@ const CenteredModal: React.FC<InputModal> = ({
   setError,
 }) => {
   const [label, setLabel] = useState("");
+  const height = Dimensions.get("screen").height;
 
   return (
-    <Modal
-      isVisible={isVisible}
-      onBackdropPress={onCancel}
-      animationIn="zoomIn"
-      animationOut="zoomOut"
-      backdropOpacity={0.7}
-      style={styles.modalContainer}
-    >
-      <View style={styles.modalContent}>
-        <IconComponent
-          style={{ marginTop: 20 }}
-          name={iconName}
-          size={iconSize}
-          color={iconColor}
-        />
-        <Text style={styles.modalText}>{title}</Text>
-        <View style={{ flex: 1, marginTop: 10, width: "100%" }}>
-          <TextInput
-            style={styles.input}
-            placeholder={labelText}
-            value={label}
-            onChangeText={(text) => {
-              setLabel(text);
-              setError({ ...error, label: "" });
-            }}
-            secureTextEntry
-          />
-          {error?.label ? (
-            <Text style={styles.errorText}>{error.label}</Text>
-          ) : (
-            <Text style={styles.errorText}> </Text>
-          )}
-        </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[styles.button, styles.yesButton]}
-            onPress={() => {
-              if (label.trim() === "") {
-                setError({ label: "Please enter the verification code." });
-              } else {
-                onConfirm(label);
-              }
-            }}
-          >
-            <Text style={styles.yesButtonText}>{acceptText}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.button, styles.noButton]}
-            onPress={onCancel}
-          >
-            <Text style={styles.noButtonText}>Cancel</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </Modal>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <KeyboardAvoidingView
+        style={[styles.screen, { height: height }]}
+        behavior={Platform.OS == "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS == "ios" ? 0 : 20}
+        enabled={Platform.OS === "ios" ? true : false}
+      >
+        <Modal
+          isVisible={isVisible}
+          onBackdropPress={onCancel}
+          animationIn="zoomIn"
+          animationOut="zoomOut"
+          backdropOpacity={0.7}
+          style={styles.modalContainer}
+        >
+          <View style={styles.modalContent}>
+            <IconComponent
+              style={{ marginTop: 20 }}
+              name={iconName}
+              size={iconSize}
+              color={iconColor}
+            />
+            <Text style={styles.modalText}>{title}</Text>
+            <View style={{ flex: 1, marginTop: 10, width: "100%" }}>
+              <TextInput
+                style={styles.input}
+                placeholder={labelText}
+                value={label}
+                onChangeText={(text) => {
+                  setLabel(text);
+                  setError({ ...error, label: "" });
+                }}
+                secureTextEntry
+              />
+              {error?.label ? (
+                <Text style={styles.errorText}>{error.label}</Text>
+              ) : (
+                <Text style={styles.errorText}> </Text>
+              )}
+            </View>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={[styles.button, styles.yesButton]}
+                onPress={() => {
+                  if (label.trim() === "") {
+                    setError({ label: "Please enter the verification code." });
+                  } else {
+                    onConfirm(label);
+                  }
+                }}
+              >
+                <Text style={styles.yesButtonText}>{acceptText}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.button, styles.noButton]}
+                onPress={onCancel}
+              >
+                <Text style={styles.noButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </KeyboardAvoidingView>
+    </GestureHandlerRootView>
   );
 };
 
 export default CenteredModal;
 
 const styles = StyleSheet.create({
+  screen: {
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: Colors.dark.background,
+  },
   modalContainer: {
     justifyContent: "center",
     alignItems: "center",
@@ -110,6 +129,7 @@ const styles = StyleSheet.create({
   modalContent: {
     width: "80%",
     padding: 20,
+    height: 400,
     backgroundColor: "white",
     borderRadius: 10,
     alignItems: "center",
@@ -147,7 +167,6 @@ const styles = StyleSheet.create({
   },
   noButton: {
     width: "100%",
-    padding: 12,
     borderRadius: 10,
     marginTop: 25,
     borderWidth: 3,
@@ -156,7 +175,6 @@ const styles = StyleSheet.create({
   },
   yesButton: {
     width: "100%",
-    padding: 8,
     borderRadius: 10,
     marginTop: 15,
     backgroundColor: Colors.dark.tintDarkerGreen,

@@ -17,8 +17,89 @@ import { enableScreens } from "react-native-screens";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
 import { View, Text } from "react-native";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { Platform } from 'react-native';
+
+
+if (typeof window.CustomEvent !== "function") {
+  class CustomEventPolyfill<T = any> {
+    type: string;
+    detail: T;
+    bubbles: boolean;
+    cancelable: boolean;
+    timestamp: number;
+
+    constructor(type: string, eventInitDict?: CustomEventInit<T>) {
+      this.type = type;
+      this.detail = eventInitDict?.detail ?? (null as T); // Użycie `as T` dla zgodności z typem
+      this.bubbles = eventInitDict?.bubbles ?? false;
+      this.cancelable = eventInitDict?.cancelable ?? false;
+      this.timestamp = Date.now();
+    }
+  }
+
+  // Przypisanie niestandardowej implementacji do `CustomEvent`
+  (window as any).CustomEvent = CustomEventPolyfill;
+}
+
+if (typeof window.dispatchEvent !== "function") {
+  window.dispatchEvent = function (event: Event): boolean {
+    if (typeof event !== "object" || !event.type) {
+      throw new Error("Invalid event object");
+    }
+    // Możesz logować zdarzenie lub zaimplementować dodatkową logikę
+    console.log(`Event dispatched: ${event.type}`);
+    return true; // Zawsze zwracamy `true`, aby symulować sukces
+  };
+}
+if (typeof window.addEventListener !== "function") {
+  type EventListenerCallback = (event: any) => void;
+
+  const listeners: Record<string, EventListenerCallback[]> = {};
+
+  window.addEventListener = function (
+    type: string,
+    listener: EventListenerOrEventListenerObject
+  ): void {
+    if (!listeners[type]) {
+      listeners[type] = [];
+    }
+
+    // Jeśli listener to obiekt, przekształcamy go na funkcję
+    const callback =
+      typeof listener === "function"
+        ? listener
+        : (event: any) => listener.handleEvent(event);
+
+    listeners[type].push(callback);
+  };
+
+  window.removeEventListener = function (
+    type: string,
+    listener: EventListenerOrEventListenerObject
+  ): void {
+    if (!listeners[type]) return;
+
+    const callback =
+      typeof listener === "function"
+        ? listener
+        : (event: any) => listener.handleEvent(event);
+
+    listeners[type] = listeners[type].filter((cb) => cb !== callback);
+  };
+
+  window.dispatchEvent = function (event: { type: string; detail?: any }) {
+    if (!listeners[event.type]) return false;
+
+    listeners[event.type].forEach((callback) => callback(event));
+    return true;
+  };
+}
+
 
 enableScreens();
+const queryClient = new QueryClient();
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 if (!publishableKey) {
@@ -180,20 +261,25 @@ function RootLayoutNav() {
     );
   }
 
+  const Devtools = Platform.OS === 'web' ? ReactQueryDevtools : () => null;
+
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <ClerkProvider publishableKey={publishableKey}>
-        <ThemeProvider
-          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-        >
-          <ClerkLoaded>
-            <PortalProvider>
-              <PortalHost name="menu" />
-              <InitialLayout />
-            </PortalProvider>
-          </ClerkLoaded>
-        </ThemeProvider>
-      </ClerkProvider>
-    </GestureHandlerRootView>
+    <QueryClientProvider client={queryClient}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <ClerkProvider publishableKey={publishableKey}>
+          <ThemeProvider
+            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+          >
+            <ClerkLoaded>
+              <PortalProvider>
+                <PortalHost name="menu" />
+                <InitialLayout />
+                <Devtools initialIsOpen={false} />
+              </PortalProvider>
+            </ClerkLoaded>
+          </ThemeProvider>
+        </ClerkProvider>
+      </GestureHandlerRootView>
+    </QueryClientProvider>
   );
 }

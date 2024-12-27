@@ -20,7 +20,7 @@ import API_BASE_URL from "@/utils/config";
 const ExerciseScreen: React.FC = () => {
   const height = Dimensions.get("screen").height;
 
-  const [tweets, setTweets] = useState<TweetType[]>([]); // Ustawienie typu
+  const [tweets, setTweets] = useState<TweetType[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);

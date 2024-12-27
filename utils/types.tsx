@@ -86,4 +86,12 @@ export interface Comment {
   post_id: string;
   date_added: string;
   date_updated: string;
+  user_name: string;
+  login: string;
+  avatar_url: string;
 }
+
+export type Achievement = {
+  experience: number;
+  picture_id: string;
+};

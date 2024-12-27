@@ -10,6 +10,7 @@ import Colors from "@/constants/Colors";
 import TweetFooter from "./TweetFooter";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { generateRandomString } from "@/scripts/generateId";
+import CustomImage from "./CustomImage";
 
 type TweetProp = {
   tweet: TweetType;
@@ -23,7 +24,6 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
   const base_url = "https://bce9-178-43-255-119.ngrok-free.app";
   const web_url = "http://localhost:8000";
   const API_VALUE = Platform.OS === "web" ? web_url : base_url;
-  const picture_url = tweet.picture_url;
   const imageUrl = tweet.picture_url;
 
   const router = useRouter();
@@ -64,11 +64,11 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
           "Content-Type": "application/json",
         },
       });
-  
+
       if (!response.ok) {
         throw new Error("Failed to delete the post");
       }
-  
+
       onDelete(); // Informuje rodzica o usunięciu posta
       setModalVisible(false); // Ukryj modal
       router.push("/feed"); // Przekieruj na stronę /feed
@@ -77,15 +77,24 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
     }
   };
 
+  console.log(tweet);
+
   return (
     <>
       <Pressable style={styles.container} onPress={handlePostPress}>
         <View style={styles.header}>
           <View style={styles.userImageContainer}>
-            <Image
-              source={require("@/assets/images/avatar_default.png")}
-              style={styles.userImage}
-            />
+            {tweet.user_picture_url ? (
+              <CustomImage
+                url={tweet.user_picture_url}
+                style={styles.userImage}
+              />
+            ) : (
+              <Image
+                source={require("@/assets/images/avatar_default.png")}
+                style={styles.userImage}
+              />
+            )}
           </View>
           <View style={styles.userInfo}>
             <Text style={styles.name}>{tweet.user_name}</Text>
@@ -114,13 +123,13 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
 
       <ConfirmationModal
         isVisible={modalVisible}
-        onConfirm={deletePost} 
+        onConfirm={deletePost}
         onCancel={handleCancelDelete}
         title="Are you sure you want to delete this post?"
-        IconComponent={AntDesign} 
-        iconName="exclamationcircleo" 
-        iconSize={40} 
-        iconColor={Colors.dark.background} 
+        IconComponent={AntDesign}
+        iconName="exclamationcircleo"
+        iconSize={40}
+        iconColor={Colors.dark.background}
         acceptText="Delete"
       />
     </>

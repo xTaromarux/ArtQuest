@@ -35,7 +35,8 @@ const SignInScreen: React.FC = () => {
       });
 
       if (result.status === "complete") {
-        Alert.alert("Sukces", "Zalogowano pomyślnie!");
+        console.log(result);
+        
         router.replace("/home");
       } else {
         Alert.alert("Weryfikacja", "Sprawdź swoją skrzynkę e-mail.");

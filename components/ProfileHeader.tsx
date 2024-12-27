@@ -7,6 +7,8 @@ import Line from "@/components/Line";
 interface ProfileHeaderProps {
   onOpen: () => void;
   userData: {
+    user_id: string;
+    mail: string;
     picture_url?: string;
     login: string;
     user_name: string;
@@ -43,10 +45,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ onOpen, userData }) => {
       <View style={styles.userInfoContainer}>
         <View style={styles.userContainer}>
           <Text style={styles.userName}>
-            {userData.login || "Unknown User"}
+            {userData.user_name || "Unknown User"}
           </Text>
           <Text style={styles.userHandle}>
-            @{userData.user_name || "unknown_username"}
+            @{userData.login || "unknown_username"}
           </Text>
           <Text style={styles.joinDate}>
             Joined{" "}

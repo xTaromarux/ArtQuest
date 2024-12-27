@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
   pathItemWrapper: {
     width: "33.33%", // 3 columns
     alignItems: "flex-start",
-    paddingLeft: 20,
+    paddingLeft: 5,
     marginVertical: 10,
   },
   emptyCell: {

@@ -33,6 +33,8 @@ const styles = StyleSheet.create({
   avatar: {
     width: 90,
     height: 90,
+    borderWidth: 0,
+    borderRadius: 60,
   },
   userInfoContainer:{
     display: "flex",

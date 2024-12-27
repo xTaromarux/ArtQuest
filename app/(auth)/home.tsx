@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import Colors from "@/constants/Colors";
 import ProgressBar from "@/components/ProgressBar";
-import { useUser } from "@clerk/clerk-expo";
+import { useUser, useAuth } from "@clerk/clerk-expo";
 import Line from "@/components/Line";
 import Container from "@/components/Container";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
@@ -21,7 +21,8 @@ import styles from "@/constants/styles/screens/HomeScreen.styles";
 import API_BASE_URL from "@/utils/config";
 
 const HomeScreen: React.FC = () => {
-  const { user } = useUser();
+  const { isSignedIn, user} = useUser();
+  const { userId } = useAuth();
   const height = Dimensions.get("screen").height;
 
   const [course, setCourse] = useState<any>(null);
@@ -92,6 +93,9 @@ const HomeScreen: React.FC = () => {
     );
   }
   
+  console.log(isSignedIn);
+  console.log(user);
+  console.log(userId);
   return (
     <KeyboardAvoidingView
       style={[styles.container, { height: height }]}

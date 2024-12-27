@@ -1,12 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, ScrollView } from "react-native";
 import AchievementItem from "@/components/AchievementItem";
 import styles from "@/constants/styles/screens/ProfileScreen.styles";
-
-type Achievement = {
-  experience: number;
-  picture_url: string;
-};
+import API_BASE_URL from "@/utils/config";
+import { Achievement } from "@/utils/types";
 
 interface AchievementsSectionProps {
   achievements: Achievement[];
@@ -29,7 +26,7 @@ const AchievementsSection: React.FC<AchievementsSectionProps> = ({ achievements 
         {achievements.map((achievement, index) => (
           <AchievementItem
             key={index}
-            source={{ uri: achievement.picture_url }}
+            source={{ uri: achievement.picture_id }}
             style={index === achievements.length - 1 ? { borderRightWidth: 0 } : {}}
           />
         ))}
