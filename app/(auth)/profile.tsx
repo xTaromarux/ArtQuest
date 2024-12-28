@@ -28,6 +28,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import API_BASE_URL from "@/utils/config";
 import { useUser } from "@clerk/clerk-expo";
 import { Achievement } from "@/utils/types";
+import { useRedirect } from "../_layout";
 
 // Typy dla danych profilu i osiągnięć
 interface UserProfile {
@@ -53,6 +54,7 @@ interface ProfileData {
 }
 
 const ExerciseScreen: React.FC = () => {
+  const { setHasRedirected } = useRedirect();
   const modalizeRef = useRef<Modalize>(null);
   const height = Dimensions.get("screen").height;
   const MODAL_HEIGHT = height - 130;
@@ -286,7 +288,7 @@ const ExerciseScreen: React.FC = () => {
           style={styles.backgroundImage}
           imageStyle={{ resizeMode: "cover" }}
         >
-          <LogoutButton />
+          <LogoutButton setHasRedirected={setHasRedirected} />
         </ImageBackground>
 
         <View style={styles.contentContainer}>

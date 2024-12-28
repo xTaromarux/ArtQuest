@@ -6,7 +6,7 @@ import {
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import "react-native-reanimated";
 import { Slot, useRouter, useSegments } from "expo-router";
 import { ClerkProvider, ClerkLoaded, useAuth } from "@clerk/clerk-expo";
@@ -17,89 +17,9 @@ import { enableScreens } from "react-native-screens";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
 import { View, Text } from "react-native";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { Platform } from 'react-native';
-
-
-if (typeof window.CustomEvent !== "function") {
-  class CustomEventPolyfill<T = any> {
-    type: string;
-    detail: T;
-    bubbles: boolean;
-    cancelable: boolean;
-    timestamp: number;
-
-    constructor(type: string, eventInitDict?: CustomEventInit<T>) {
-      this.type = type;
-      this.detail = eventInitDict?.detail ?? (null as T); // Użycie `as T` dla zgodności z typem
-      this.bubbles = eventInitDict?.bubbles ?? false;
-      this.cancelable = eventInitDict?.cancelable ?? false;
-      this.timestamp = Date.now();
-    }
-  }
-
-  // Przypisanie niestandardowej implementacji do `CustomEvent`
-  (window as any).CustomEvent = CustomEventPolyfill;
-}
-
-if (typeof window.dispatchEvent !== "function") {
-  window.dispatchEvent = function (event: Event): boolean {
-    if (typeof event !== "object" || !event.type) {
-      throw new Error("Invalid event object");
-    }
-    // Możesz logować zdarzenie lub zaimplementować dodatkową logikę
-    console.log(`Event dispatched: ${event.type}`);
-    return true; // Zawsze zwracamy `true`, aby symulować sukces
-  };
-}
-if (typeof window.addEventListener !== "function") {
-  type EventListenerCallback = (event: any) => void;
-
-  const listeners: Record<string, EventListenerCallback[]> = {};
-
-  window.addEventListener = function (
-    type: string,
-    listener: EventListenerOrEventListenerObject
-  ): void {
-    if (!listeners[type]) {
-      listeners[type] = [];
-    }
-
-    // Jeśli listener to obiekt, przekształcamy go na funkcję
-    const callback =
-      typeof listener === "function"
-        ? listener
-        : (event: any) => listener.handleEvent(event);
-
-    listeners[type].push(callback);
-  };
-
-  window.removeEventListener = function (
-    type: string,
-    listener: EventListenerOrEventListenerObject
-  ): void {
-    if (!listeners[type]) return;
-
-    const callback =
-      typeof listener === "function"
-        ? listener
-        : (event: any) => listener.handleEvent(event);
-
-    listeners[type] = listeners[type].filter((cb) => cb !== callback);
-  };
-
-  window.dispatchEvent = function (event: { type: string; detail?: any }) {
-    if (!listeners[event.type]) return false;
-
-    listeners[event.type].forEach((callback) => callback(event));
-    return true;
-  };
-}
-
+import * as SecureStore from 'expo-secure-store';
 
 enableScreens();
-const queryClient = new QueryClient();
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 if (!publishableKey) {
@@ -163,53 +83,72 @@ const useOfflineAuth = () => {
   return { isLoaded, isSignedIn, offlineAuth };
 };
 
+type RedirectContextType = {
+  hasRedirected: boolean;
+  setHasRedirected: (value: boolean) => void;
+};
+
+const RedirectContext = createContext<RedirectContextType | undefined>(
+  undefined
+);
+
+export const RedirectProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
+  const [hasRedirected, setHasRedirected] = useState(false);
+
+  return (
+    <RedirectContext.Provider value={{ hasRedirected, setHasRedirected }}>
+      {children}
+    </RedirectContext.Provider>
+  );
+};
+
+export const useRedirect = () => {
+  const context = useContext(RedirectContext);
+  if (!context) {
+    throw new Error("useRedirect must be used within a RedirectProvider");
+  }
+  return context;
+};
+
 const InitialLayout = () => {
-  const { isLoaded, isSignedIn, offlineAuth } = useOfflineAuth();
+  const { isLoaded, isSignedIn } = useAuth();
   const segments = useSegments();
   const router = useRouter();
-  const [isOffline, setIsOffline] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener((state) => {
-      setIsOffline(!state.isConnected);
-    });
+    if (!isLoaded) return;
 
-    return () => unsubscribe();
-  }, []);
+    const inTabsGroup = segments[0] === '(auth)';
 
-  useEffect(() => {
-    if (!isLoaded && offlineAuth) {
-      router.replace("/home");
-    } else if (!isLoaded) {
-      return;
-    }
+    console.log('User changed: ', isSignedIn);
 
-    const isAuthRoute = segments[0] === "(auth)";
-    if (isSignedIn && !isAuthRoute) {
-      router.replace("/home");
+    if (isSignedIn && !inTabsGroup) {
+      router.replace('/home');
     } else if (!isSignedIn) {
-      router.replace("/");
+      router.replace('/');
     }
-  }, [isSignedIn, offlineAuth]);
-
-  if (!isLoaded && !offlineAuth) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Ładowanie danych...</Text>
-      </View>
-    );
-  }
-
-  if (isOffline && offlineAuth) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Jesteś offline. Korzystasz z zapisanych danych.</Text>
-      </View>
-    );
-  }
+  }, [isSignedIn]);
 
   return <Slot />;
 };
+
+const tokenCache = {
+  async getToken(key: string) {
+    try {
+      return SecureStore.getItemAsync(key);
+    } catch (err) {
+      return null;
+    }
+  },
+  async saveToken(key: string, value: string) {
+    try {
+      return SecureStore.setItemAsync(key, value);
+    } catch (err) {
+      return;
+    }
+  },
+};
+
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
@@ -261,10 +200,8 @@ function RootLayoutNav() {
     );
   }
 
-  const Devtools = Platform.OS === 'web' ? ReactQueryDevtools : () => null;
-
   return (
-    <QueryClientProvider client={queryClient}>
+    <RedirectProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <ClerkProvider publishableKey={publishableKey}>
           <ThemeProvider
@@ -274,12 +211,11 @@ function RootLayoutNav() {
               <PortalProvider>
                 <PortalHost name="menu" />
                 <InitialLayout />
-                <Devtools initialIsOpen={false} />
               </PortalProvider>
             </ClerkLoaded>
           </ThemeProvider>
         </ClerkProvider>
       </GestureHandlerRootView>
-    </QueryClientProvider>
+    </RedirectProvider>
   );
 }

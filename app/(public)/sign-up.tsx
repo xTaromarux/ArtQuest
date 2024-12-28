@@ -46,17 +46,12 @@ const SignUpScreen: React.FC = () => {
   });
 
   const createUserOnBackend = async (
-    id: string | undefined | null,
     login: string,
     user_name: string,
     mail: string
   ) => {
     try {
-      if (!id) {
-        throw new Error("User ID is missing.");
-      }
       const queryParams = new URLSearchParams({
-        id,
         login,
         user_name,
         mail,
@@ -226,7 +221,7 @@ const SignUpScreen: React.FC = () => {
         // Zaloguj użytkownika ręcznie
         // let emailAddress = signUp.emailAddress;
         // let userId = signUp.id;
-        // await createUserOnBackend(userId, login, username, emailAddress!);
+        await createUserOnBackend(login, username, emailAddress!);
 
         const completeUrl = Linking.createURL("home");
         router.replace(completeUrl);
@@ -245,11 +240,10 @@ const SignUpScreen: React.FC = () => {
     const checkUserAfterOAuth = async () => {
       try {
         if (signUp?.status === "complete") {
-          const { createdSessionId, emailAddress, username } = signUp;
+          const { emailAddress, username } = signUp;
 
           if (username && emailAddress) {
             await createUserOnBackend(
-              createdSessionId,
               username,
               login,
               emailAddress

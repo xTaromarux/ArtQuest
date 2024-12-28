@@ -1,7 +1,8 @@
 {
   "expo": {
     "name": "ArtQuest",
-    "slug": "ArtQuest",
+    "slug": "artquest",
+    "owner": "saek",
     "version": "1.0.0",
     "platforms": ["ios", "android", "web"],
     "orientation": "portrait",
@@ -15,14 +16,14 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.saek.artquest"
+      "bundleIdentifier": "com.saek.ArtQuest"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.saek.artquest",
+      "package": "com.saek.ArtQuest",
       "jsEngine": "hermes"
     },
     "web": {

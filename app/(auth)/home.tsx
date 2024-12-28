@@ -21,7 +21,7 @@ import styles from "@/constants/styles/screens/HomeScreen.styles";
 import API_BASE_URL from "@/utils/config";
 
 const HomeScreen: React.FC = () => {
-  const { isSignedIn, user} = useUser();
+  const {user} = useUser();
   const { userId } = useAuth();
   const height = Dimensions.get("screen").height;
 
@@ -92,10 +92,6 @@ const HomeScreen: React.FC = () => {
       </View>
     );
   }
-  
-  console.log(isSignedIn);
-  console.log(user);
-  console.log(userId);
   return (
     <KeyboardAvoidingView
       style={[styles.container, { height: height }]}
