@@ -147,7 +147,7 @@ const HomeScreen: React.FC = () => {
       <Text style={styles.subtitle}>Pick up where you left off</Text>
 
       <Container
-        height={400}
+        height={470}
         width={100}
         style={{ marginVertical: 30, padding: 0, justifyContent: "flex-start" }}
       >
