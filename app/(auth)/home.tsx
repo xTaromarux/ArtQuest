@@ -43,6 +43,20 @@ const HomeScreen: React.FC = () => {
         <Text>Error: {userError || error}</Text>
       </View>
     );
+  }if (userLoading || loading) {
+    return (
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+        <Text>Loading course details...</Text>
+      </View>
+    );
+  }
+
+  if (userError || error) {
+    return (
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+        <Text>Error: {userError || error}</Text>
+      </View>
+    );
   }
 
   if (!course) {

@@ -15,7 +15,7 @@ const StatItem: React.FC<StatItemProps> = ({ icon, value, label }) => {
     <View style={styles.statItem}>
       <MaterialCommunityIcons
         name={icon}
-        size={24}
+        size={30}
         color={Colors.dark.background}
         style={styles.statIcon}
       />

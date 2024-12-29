@@ -53,10 +53,16 @@ export interface Exercise {
   next_view_id: string | null;
   previous_view_id: string | null;
   ai_part: boolean;
-  description: string[];
-  picture: string[];
+  descriptions: string[];
+  short_descriptions: string[];
+  picture_urls: Picture[];
   percentage: number;
 }
+
+export type Picture = {
+  picture_id: string;
+  url: string;
+};
 
 export type UserType = {
   id: string;

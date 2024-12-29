@@ -1,92 +1,131 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Image } from "expo-image";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Feather from "@expo/vector-icons/Feather";
 import Colors from "@/constants/Colors";
+import { Exercise } from "@/utils/types";
+import CustomImage from "../CustomImage";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import InformationModal from "../InformationModal";
 
 const TemplateEnd = ({
-  description,
-  picture,
-  handlePress
+  exercise,
+  handlePress,
 }: {
-  description: string[];
-  picture: any[];
-  handlePress: any[];
-}) => (
-  <View style={styles.container}>
-    {/* Pierwszy wiersz */}
-    <View style={[styles.row, { flex: 2 }]}>
-      <Image
-        source={picture[0]}
-        style={[styles.image, { width: "90%", height: "90%" }]}
+  exercise: Exercise;
+  handlePress?: () => void;
+}) => {
+  const { short_descriptions, descriptions, picture_urls, percentage } = exercise;
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
+  const handleInfoPress = (index: number) => {
+    setModalTitle(descriptions[index] || "No description available");
+    toggleModal();
+  };
+
+  return (
+    <GestureHandlerRootView>
+      <View style={styles.container}>
+        {/* Pierwszy wiersz */}
+        {picture_urls[0] && (
+          <View style={[styles.row, { flex: 2 }]}>
+            <CustomImage
+              url={picture_urls[0].url}
+              style={[styles.image, { width: "90%", height: "90%" }]}
+            />
+          </View>
+        )}
+
+        {/* Drugi wiersz */}
+        <View style={[styles.row, { flex: 0.6, flexDirection: "column" }]}>
+          {descriptions[0] && (
+            <View style={styles.textContainer}>
+              <Text style={[styles.text, { fontSize: 28, paddingBottom: 10 }]}>
+                {descriptions[0]}
+              </Text>
+            </View>
+          )}
+          {descriptions[1] && (
+            <View style={styles.textContainer}>
+              <Text style={[styles.text, { fontWeight: "400" }]}>
+                {descriptions[1]}
+              </Text>
+            </View>
+          )}
+        </View>
+
+        {/* Trzeci wiersz */}
+        <View style={[styles.row, styles.rowSplit, { flex: 1 }]}>
+          <View
+            style={[
+              styles.miniContainer,
+              { backgroundColor: Colors.dark.tintDarkGreen },
+            ]}
+          >
+            <Text
+              style={[
+                styles.text,
+                { color: Colors.light.background, fontWeight: "500" },
+              ]}
+            >
+              Completion %
+            </Text>
+            <View style={[styles.innerContainer]}>
+              <MaterialCommunityIcons
+                name="progress-star"
+                size={24}
+                color="black"
+              />
+              <Text style={[styles.smallText]}>
+                {(percentage * 100).toFixed(0)}%
+              </Text>
+            </View>
+          </View>
+          <View
+            style={[
+              styles.miniContainer,
+              { backgroundColor: Colors.dark.tintDarkerGreen },
+            ]}
+          >
+            <Text
+              style={[
+                styles.text,
+                { color: Colors.light.background, fontWeight: "500" },
+              ]}
+            >
+              Points
+            </Text>
+            <View style={[styles.innerContainer]}>
+              <Feather name="target" size={24} color="black" />
+              <Text style={[styles.smallText]}>100</Text>{" "}
+              {/* Placeholder points */}
+            </View>
+          </View>
+        </View>
+
+        {/* Czwarty wiersz */}
+        <View style={[styles.row, { flex: 0.5 }]}>
+          {handlePress && (
+            <Text style={[styles.text, { fontSize: 16 }]} onPress={handlePress}>
+              Tap here to continue
+            </Text>
+          )}
+        </View>
+      </View>
+      <InformationModal
+        isVisible={isModalVisible}
+        title={modalTitle}
+        onCancel={toggleModal}
       />
-    </View>
-
-    {/* Drugi wiersz z dwiema kolumnami */}
-    <View style={[styles.row, { flex: 0.6, flexDirection: "column" }]}>
-      <View style={styles.textContainer}>
-        <Text style={[styles.text, { fontSize: 28, paddingBottom: 10 }]}>
-          {description[0]}
-        </Text>
-      </View>
-      <View style={styles.textContainer}>
-        <Text style={[styles.text, { fontWeight: "400" }]}>
-          {description[1]}
-        </Text>
-      </View>
-    </View>
-
-    {/* Trzeci wiersz z dwiema kolumnami */}
-    <View style={[styles.row, styles.rowSplit, { flex: 1 }]}>
-      <View
-        style={[
-          styles.miniContainer,
-          { backgroundColor: Colors.dark.tintDarkGreen },
-        ]}
-      >
-        <Text
-          style={[
-            styles.text,
-            { color: Colors.light.background, fontWeight: "500" },
-          ]}
-        >
-          Total exp
-        </Text>
-        <View style={[styles.innerContainer]}>
-          <MaterialCommunityIcons
-            name="progress-star"
-            size={24}
-            color="black"
-          />
-          <Text style={[styles.smallText]}>40</Text>
-        </View>
-      </View>
-      <View
-        style={[
-          styles.miniContainer,
-          { backgroundColor: Colors.dark.tintDarkerGreen },
-        ]}
-      >
-        <Text
-          style={[
-            styles.text,
-            { color: Colors.light.background, fontWeight: "500" },
-          ]}
-        >
-          Poits
-        </Text>
-        <View style={[styles.innerContainer]}>
-          <Feather name="target" size={24} color="black" />
-          <Text style={[styles.smallText]}>40</Text>
-        </View>
-      </View>
-    </View>
-
-    {/* Czwarty wiersz z dwiema kolumnami */}
-    <View style={[styles.row, { flex: 0.5 }]}></View>
-  </View>
-);
+    </GestureHandlerRootView>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -95,14 +134,14 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   row: {
-    flex: 1, // Wypełnia równą część wysokości
+    flex: 1,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     padding: 10,
   },
   rowSplit: {
-    flexDirection: "row", // Dwie kolumny w jednym wierszu    
+    flexDirection: "row",
   },
   textContainer: {
     width: "80%",
@@ -113,25 +152,18 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "bold",
   },
-  iconContainer: {
-    width: "100%",
-    justifyContent: "center",
-    alignItems: "flex-end",
-  },
   image: {
-    width: "40%",
-    height: "80%",
     resizeMode: "contain",
     margin: 10,
   },
   miniContainer: {
-    width: "30%",
-    height: "55%",
+    width: "40%",
+    height: "70%",
     borderRadius: 10,
     justifyContent: "flex-end",
     alignItems: "center",
     paddingBottom: 8,
-    margin: 10
+    margin: 10,
   },
   innerContainer: {
     width: "85%",
@@ -141,15 +173,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
-    display: "flex",
-    flexDirection: "row"
+    flexDirection: "row",
   },
   smallText: {
     fontWeight: "bold",
     fontSize: 18,
     paddingLeft: 4,
-    paddingBottom: 2
-  }
+    paddingBottom: 2,
+  },
 });
 
 export default TemplateEnd;

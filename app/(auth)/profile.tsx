@@ -29,6 +29,8 @@ import API_BASE_URL from "@/utils/config";
 import { useUser } from "@clerk/clerk-expo";
 import { Achievement } from "@/utils/types";
 import { useRedirect } from "../_layout";
+import useFetchUserId from "@/hooks/useFetchUserId";
+import CustomImage from "@/components/CustomImage";
 
 // Typy dla danych profilu i osiągnięć
 interface UserProfile {
@@ -61,26 +63,25 @@ const ExerciseScreen: React.FC = () => {
   const { user } = useUser();
   const [password, setPassword] = useState("");
   const [image, setImage] = useState<string | null>(null);
+  const [dataUpdated, setDataUpdated] = useState<boolean>(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [loadingAchievements, setLoadingAchievements] = useState<boolean>(true);
+  const { userId, loading: userLoading, error: userError } = useFetchUserId();
   const [modalUserData, setModalUserData] = useState({
     email: "",
     nickname: "",
     pictureUrl: "",
   });
 
-  console.log("user");
-  console.log(user);
-  
-
   useEffect(() => {
     const fetchProfileData = async () => {
+      if(!userId) return
       try {
         const response = await fetch(
-          `${API_BASE_URL}/api/user/0f41b706-85a8-4457-8046-132f5505b47d/details`,
+          `${API_BASE_URL}/api/user/${userId}/details`,
           {
             headers: {
               "ngrok-skip-browser-warning": "true",
@@ -92,6 +93,8 @@ const ExerciseScreen: React.FC = () => {
           throw new Error("Failed to fetch profile data");
         }
         const data: ProfileData = await response.json();
+        console.log(data);
+
         setProfileData(data);
       } catch (error) {
         console.error("Error fetching profile data:", error);
@@ -101,7 +104,7 @@ const ExerciseScreen: React.FC = () => {
     };
 
     fetchProfileData();
-  }, []);
+  }, [userId, dataUpdated]);
 
   useEffect(() => {
     const fetchAchievements = async () => {
@@ -158,7 +161,8 @@ const ExerciseScreen: React.FC = () => {
 
     if (
       modalUserData.nickname !== profileData?.user.user_name ||
-      modalUserData.email !== profileData?.user.mail
+      modalUserData.email !== profileData?.user.mail ||
+      modalUserData.pictureUrl !== image
     ) {
       hasProfileChanges = true;
     }
@@ -170,12 +174,18 @@ const ExerciseScreen: React.FC = () => {
     try {
       if (hasProfileChanges && profileData) {
         const formData = new FormData();
-        formData.append("user_id", profileData.user.user_id);
-        formData.append("mail", modalUserData.email);
-        formData.append("user_name", modalUserData.nickname);
+        if (image) {
+          const filename = image.split("/").pop();
+          const type = `image/jpg`;
+          formData.append("picture", {
+            uri: image,
+            name: filename,
+            type,
+          } as any);
+        }
 
         const response = await fetch(
-          `${API_BASE_URL}/api/user/update/${profileData.user.user_id}`,
+          `${API_BASE_URL}/api/user/update/${userId}?mail=${modalUserData.email}&user_name=${modalUserData.nickname}`,
           {
             method: "PUT",
             headers: {
@@ -189,9 +199,11 @@ const ExerciseScreen: React.FC = () => {
         if (!response.ok) {
           throw new Error("Failed to update profile data");
         }
-
-        const updatedData = await response.json();
-        console.log("User updated successfully:", updatedData);
+        setDataUpdated((prev) => !prev);
+        setModalUserData((prev) => ({
+          ...prev,
+          pictureUrl: image ? image : "",
+        }));
 
         setProfileData((prev) =>
           prev
@@ -201,6 +213,7 @@ const ExerciseScreen: React.FC = () => {
                   ...prev.user,
                   mail: modalUserData.email,
                   user_name: modalUserData.nickname,
+                  picture_url: image ? image : "",
                 },
               }
             : null
@@ -231,7 +244,7 @@ const ExerciseScreen: React.FC = () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [16, 17],
       quality: 1,
     });
 
@@ -249,7 +262,20 @@ const ExerciseScreen: React.FC = () => {
     toggleModal();
   };
 
-  if (loading || loadingAchievements) {
+  if (userError) {
+    return (
+      <View
+        style={[
+          styles.container,
+          { justifyContent: "center", alignItems: "center" },
+        ]}
+      >
+        <Text>Error: {userError}</Text>
+      </View>
+    );
+  }
+
+  if (userLoading || loading || loadingAchievements) {
     return (
       <View
         style={[
@@ -274,6 +300,8 @@ const ExerciseScreen: React.FC = () => {
       </View>
     );
   }
+
+  console.log(modalUserData);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -316,12 +344,14 @@ const ExerciseScreen: React.FC = () => {
               <View style={styles.inputGroupContainer}>
                 <View style={styles.imagePickerContainer}>
                   <Pressable
-                    onPress={pickImage}
+                    onPress={() => {
+                      pickImage(); // Użycie funkcji bez zdarzenia
+                    }}
                     style={styles.imagePickerButton}
                   >
                     {image || modalUserData.pictureUrl ? (
-                      <Image
-                        source={{ uri: image || modalUserData.pictureUrl }}
+                      <CustomImage
+                        url={image ? image : modalUserData.pictureUrl}
                         style={styles.avatar}
                       />
                     ) : (
@@ -331,16 +361,15 @@ const ExerciseScreen: React.FC = () => {
                       />
                     )}
                   </Pressable>
+
                   <Text style={styles.profileLabel}>Edit profile</Text>
                 </View>
                 <LabeledTextInput
                   label="Nickname"
-                  style={{ marginLeft: 20, bottom: 15 }}
+                  style={{ marginLeft: 20, bottom: 15, width: "70%" }}
                   value={modalUserData.nickname}
                   onChangeText={(text) => {
-                    if (text !== modalUserData.nickname) {
-                      setModalUserData((prev) => ({ ...prev, nickname: text }));
-                    }
+                    setModalUserData((prev) => ({ ...prev, nickname: text })); // Kopiujemy wartość bezpośrednio
                   }}
                   placeholder="Enter your nickname"
                 />
@@ -349,11 +378,12 @@ const ExerciseScreen: React.FC = () => {
               <LabeledTextInput
                 label="Email Address"
                 value={modalUserData.email}
-                onChangeText={(text) =>
-                  setModalUserData((prev) => ({ ...prev, email: text }))
-                }
+                onChangeText={(text) => {
+                  setModalUserData((prev) => ({ ...prev, email: text })); // Kopiujemy wartość
+                }}
                 placeholder="Enter your email"
               />
+
               <LabeledTextInput
                 label="Password"
                 value={password}

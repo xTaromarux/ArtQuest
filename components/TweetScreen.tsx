@@ -4,6 +4,7 @@ import Template3 from "@/components/templates/Template3";
 import Template4 from "@/components/templates/Template4";
 import TemplateEnd from "@/components/templates/TemplateEnd";
 import { Text } from "react-native";
+import { Exercise } from "@/utils/types";
 
 const templateMap: Record<number, React.FC<any>> = {
   1: Template1,
@@ -15,10 +16,16 @@ const templateMap: Record<number, React.FC<any>> = {
 
 export const renderTemplate = (
   template: number,
-  exerciseData: any,
-  handlePress: any
+  exerciseData: Exercise,
+  handlePress: () => void
 ) => {
   const TemplateComponent = templateMap[template];
   if (!TemplateComponent) return <Text>Template not found</Text>;
-  return <TemplateComponent {...exerciseData} handlePress={handlePress} />;
+
+  return (
+    <TemplateComponent
+      exercise={exerciseData}
+      handlePress={handlePress}
+    />
+  );
 };

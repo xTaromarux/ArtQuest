@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -10,70 +10,109 @@ import { Image } from "expo-image";
 import { Feather } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { Exercise } from "@/utils/types";
+import CustomImage from "../CustomImage";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import InformationModal from "../InformationModal";
 
 const Template3 = ({
-  description,
-  picture,
-  handlePress
+  exercise,
+  handlePress,
 }: {
-  description: string[];
-  picture: any[];
+  exercise: Exercise;
   handlePress: () => Promise<void>;
-}) => (
-  <View style={styles.container}>
-    {/* Pierwszy wiersz */}
-    <View style={[styles.row, { flex: 0.8}]}>
-      <View style={styles.textContainer}>
-        <Text style={[styles.text, { fontSize: 20 }]}>{description[0]}</Text>
-      </View>
-    </View>
+}) => {
+  const { short_descriptions, descriptions, picture_urls } = exercise;
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
 
-    {/* Drugi wiersz z dwiema kolumnami */}
-    <View style={[styles.row, { flex: 0.5 }]}>
-      <View
-        style={[
-          styles.textContainer,
-          { position: "absolute", right: 0, top: 0, width: "70%" },
-        ]}
-      >
-        <Text style={styles.text}>{description[1]}</Text>
-        <View style={styles.iconContainer}>
-          <Pressable onPress={() => {}}>
-            <Feather name="info" size={20} color="black" />
-          </Pressable>
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
+  const handleInfoPress = (index: number) => {
+    setModalTitle(descriptions[index] || "No description available");
+    toggleModal();
+  };
+  
+  return (
+        <GestureHandlerRootView>
+    
+    <View style={styles.container}>
+      {/* Pierwszy wiersz */}
+      {descriptions[0] && (
+        <View style={[styles.row, { flex: 0.8 }]}>
+          <View style={styles.textContainer}>
+            <Text style={[styles.text, { fontSize: 20 }]}>
+              {descriptions[0]}
+            </Text>
+          </View>
         </View>
+      )}
+
+      {/* Drugi wiersz */}
+      {descriptions[1] && (
+        <View style={[styles.row, { flex: 0.5 }]}>
+          <View
+            style={[
+              styles.textContainer,
+              { position: "absolute", right: 0, top: 0, width: "70%" },
+            ]}
+          >
+            <Text style={styles.text}>{descriptions[1]}</Text>
+            <View style={styles.iconContainer}>
+              <Pressable onPress={() => console.log("Info pressed")}>
+                <Feather name="info" size={20} color="black" />
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      )}
+
+      {/* Trzeci wiersz */}
+      {picture_urls[0] && (
+        <View style={[styles.row, { flex: 2, alignItems: "flex-start" }]}>
+          <CustomImage
+            url={picture_urls[0].url}
+            style={[styles.image, { width: 200, height: 200 }]}
+          />
+        </View>
+      )}
+
+      {/* Czwarty wiersz */}
+      {descriptions[2] && (
+        <View style={[styles.row, { flex: 0.5 }]}>
+          <View style={[styles.textContainer, { width: "100%" }]}>
+            <Text style={styles.text}>{descriptions[2]}</Text>
+            <View style={styles.iconContainer}>
+              <Pressable onPress={() => console.log("Info pressed")}>
+                <Feather name="info" size={20} color="black" />
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      )}
+
+      {/* Piąty wiersz */}
+      <View style={[styles.row, { flex: 0.5 }]}>
+        <TouchableOpacity style={styles.button} onPress={handlePress}>
+          <Text style={styles.buttonTextDark}>Make picture</Text>
+          <Feather
+            name="camera"
+            size={22}
+            color={Colors.dark.tintDarkerGreen}
+            style={{ marginHorizontal: 10 }}
+          />
+        </TouchableOpacity>
       </View>
     </View>
-
-    {/* Trzeci wiersz z dwiema kolumnami */}
-    <View style={[styles.row, { flex: 2, alignItems: 'flex-start' }]}>
-      <Image
-        source={picture[0]}
-        style={[styles.image, { width: 200, height: 200 }]}
+    <InformationModal
+        isVisible={isModalVisible}
+        title={modalTitle}
+        onCancel={toggleModal}
       />
-    </View>
-
-    {/* Czwarty wiersz z dwiema kolumnami */}
-    <View style={[styles.row, { flex: 0.5 }]}>
-      <View style={[styles.textContainer, { width: "100%" }]}>
-        <Text style={styles.text}>{description[2]}</Text>
-        <View style={styles.iconContainer}>
-          <Pressable onPress={() => {}}>
-            <Feather name="info" size={20} color="black" />
-          </Pressable>
-        </View>
-      </View>
-    </View>
-
-    {/* Piąty wiersz */}
-    <View style={[styles.row, { flex: 0.5 }]}>
-      <TouchableOpacity  style={styles.button} onPress={handlePress}>
-        <Text style={styles.buttonTextDark}>Make picture</Text>
-        <Feather name="camera" size={22} color={Colors.dark.tintDarkerGreen} style={{marginHorizontal: 10}} />
-      </TouchableOpacity>
-    </View>
-  </View>
-);
+    </GestureHandlerRootView>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -82,7 +121,7 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   row: {
-    flex: 1, // Wypełnia równą część wysokości
+    flex: 1,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
