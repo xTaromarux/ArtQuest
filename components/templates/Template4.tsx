@@ -33,14 +33,15 @@ const Template4 = ({
         {/* Pierwszy wiersz */}
         {descriptions[0] && (
           <View style={[styles.row]}>
-            <View style={[styles.textContainer, { width: "100%" }]}>
+            <Pressable
+              onPress={() => console.log("Info pressed")}
+              style={[styles.textContainer, { width: "100%" }]}
+            >
               <Text style={styles.text}>{descriptions[0]}</Text>
               <View style={styles.iconContainer}>
-                <Pressable onPress={() => console.log("Info pressed")}>
-                  <Feather name="info" size={20} color="black" />
-                </Pressable>
+                <Feather name="info" size={20} color="black" />
               </View>
-            </View>
+            </Pressable>
           </View>
         )}
 
@@ -81,14 +82,15 @@ const Template4 = ({
         {/* Czwarty wiersz z dwiema kolumnami */}
         {descriptions[1] && (
           <View style={[styles.row]}>
-            <View style={[styles.textContainer, { width: "100%" }]}>
+            <Pressable
+              onPress={() => console.log("Info pressed")}
+              style={[styles.textContainer, { width: "100%" }]}
+            >
               <Text style={styles.text}>{descriptions[1]}</Text>
               <View style={styles.iconContainer}>
-                <Pressable onPress={() => console.log("Info pressed")}>
-                  <Feather name="info" size={20} color="black" />
-                </Pressable>
+                <Feather name="info" size={20} color="black" />
               </View>
-            </View>
+            </Pressable>
           </View>
         )}
       </View>

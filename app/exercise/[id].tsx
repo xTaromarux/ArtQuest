@@ -20,112 +20,74 @@ import { Exercise } from "@/utils/types";
 import { renderTemplate } from "@/components/TweetScreen";
 import * as ImagePicker from "expo-image-picker";
 import API_BASE_URL from "@/utils/config";
+import useFetchView from "@/hooks/useFetchView";
+import useFetchUserId from "@/hooks/useFetchUserId";
 
 export default function TweetScreen() {
-  const view = [
-    {
-      id: "1",
-      template: 1,
-      next_view_id: "2",
-      previous_view_id: null,
-      ai_part: false,
-      percentage: 0.2,
-      description: [
-        "Lines: The Foundation of Art",
-        "Discover how simple shapes like circles",
-        "Master the basics of line work to bring your art to life.",
-      ],
-      picture: [
-        require("@/assets/images/LessonNo1_No1.png"),
-        require("@/assets/images/LessonNo1_No2.png"),
-        require("@/assets/images/LessonNo1_No3.png"),
-        require("@/assets/images/LessonNo1_No4.png"),
-        require("@/assets/images/LessonNo1_No5.png"),
-      ],
-    },
-    {
-      id: "2",
-      template: 2,
-      next_view_id: "3",
-      previous_view_id: "1",
-      ai_part: false,
-      percentage: 0.4,
-      description: [
-        "Master the basics of line work to bring your art to life.",
-        "Learn to draw straight, curved, and dynamic lines effortlessly.",
-        "Learn to break down animals, objects, and characters into their basic geometric forms.",
-        "Discover how simple shapes like circles, squares, and triangles build the foundation for complex drawings.",
-      ],
-      picture: [
-        require("@/assets/images/LessonNo2_No1.png"),
-        require("@/assets/images/LessonNo2_No2.png"),
-      ],
-    },
-    {
-      id: "3",
-      template: 3,
-      next_view_id: "4",
-      previous_view_id: "2",
-      ai_part: true,
-      percentage: 0.6,
-      description: [
-        "Experiment with proportions and details to bring your version to life.",
-        "Use the shapes you’ve learned to recreate this object with your own artistic touch!",
-        "Snap a photo of your drawing and share your progress!",
-      ],
-      picture: [require("@/assets/images/LessonNo3_No1.png")],
-    },
-    {
-      id: "4",
-      template: 4,
-      next_view_id: "end",
-      previous_view_id: "3",
-      ai_part: false,
-      percentage: 0.8,
-      description: [
-        "Here’s how your drawing compares to the reference!",
-        "You're doing well! Keep up the good work and continue striving for improvement. You've got this!",
-      ],
-      picture: [
-        require("@/assets/images/LessonNo4_No1.png"),
-        require("@/assets/images/LessonNo4_No2.png"),
-      ],
-    },
-    {
-      id: "end",
-      template: 5,
-      next_view_id: null,
-      previous_view_id: null,
-      ai_part: false,
-      percentage: 1,
-      description: [
-        "Congratulations!",
-        "Great job! You've completed this task with excellence—keep up the amazing work!",
-      ],
-      picture: [require("@/assets/images/EndLesson.png")],
-    },
-  ];
-
-  const { id, sendPicture, exercise } = useGlobalSearchParams();
+  const { id, index, exercise } = useGlobalSearchParams();
   const exerciseString = Array.isArray(exercise) ? exercise[0] : exercise;
+  const { userId, loading: userLoading, error: userError } = useFetchUserId();
   const exerciseData = exerciseString ? JSON.parse(exerciseString) : null;
   const height = Dimensions.get("screen").height;
+  const [exerciseId, setExerciseId] = useState<string | null>(null);
+  const [stage, setStage] = useState(Number(index));
+  const [next, setNext] = useState(Boolean);
+  const {
+    view,
+    loading: viewLoading,
+    error: viewError,
+  } = useFetchView(exerciseId, stage);
+
+  
+  useEffect(() => {
+    const setExercise = async () => {
+      if(!view) return
+
+      let sendPicture = "false";
+      if (image) {
+        view.picture_urls[1].url = image;
+        sendPicture = "true";
+  
+        // Wywołanie uploadImage i przypisanie wiadomości do aiDescription
+        const feedbackMessage = await uploadImage(userId!, exerciseData.id, image);
+  
+        setAiDescription(feedbackMessage);
+        view.short_descriptions[1] = feedbackMessage;
+      }
+  
+      router.push({
+        pathname: `../../exercise/[id]`,
+        params: {
+          id: view.id,
+          index: next ? stage + 1 : stage - 1,
+          sendPicture: sendPicture,
+          exercise: JSON.stringify(view),
+        },
+      });
+    };
+
+    setExercise();
+  }, [view]);
 
   const [image, setImage] = useState<string | null>(null);
   const [aiDescription, setAiDescription] = useState<string>("Error");
 
-  const uploadImage = async (userId: string, exerciseId: string, imageUri: string) => {
+  const uploadImage = async (
+    userId: string,
+    exerciseId: string,
+    imageUri: string
+  ) => {
     const formData = new FormData();
-  
+
     // Pobranie obrazu jako Blob
     const response = await fetch(imageUri);
     const blob = await response.blob();
-  
+
     // Dodanie danych do FormData
     formData.append("user_id", userId);
     formData.append("exercise_id", exerciseId);
     formData.append("feedback_image", blob, "feedback_image.jpg");
-  
+
     try {
       const uploadResponse = await fetch(`${API_BASE_URL}/api/feedback/`, {
         method: "POST",
@@ -135,17 +97,17 @@ export default function TweetScreen() {
         },
         body: formData,
       });
-  
+
       if (!uploadResponse.ok) {
         const errorData = await uploadResponse.json();
         throw new Error(errorData.message || "Upload failed");
       }
-  
+
       Alert.alert("Success", "Image uploaded successfully!");
-  
+
       // Pobierz szczegóły z feedback_details
       const feedbackDetails = await fetchFeedbackDetails(exerciseId, userId);
-  
+
       // Zwróć dane, aby użyć ich w handlePress
       return feedbackDetails.message || "No feedback provided";
     } catch (error: any) {
@@ -154,23 +116,23 @@ export default function TweetScreen() {
       return "Error fetching feedback details"; // Zwróć wartość domyślną w przypadku błędu
     }
   };
-  
+
   const pickImage = async () => {
     const permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
-  
+
     if (permissionResult.granted === false) {
       Alert.alert("Permission to access gallery is required!");
       return;
     }
-  
+
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-  
+
     if (!result.canceled) {
       setImage(result.assets[0].uri);
     }
@@ -178,19 +140,24 @@ export default function TweetScreen() {
 
   const fetchFeedbackDetails = async (exerciseId: string, userId: string) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/feedback_details/${exerciseId}/${userId}`, {
-        method: "GET",
-        headers: {
-          "ngrok-skip-browser-warning": "true",
-          "User-Agent": "CustomAgent",
-        },
-      });
-  
+      const response = await fetch(
+        `${API_BASE_URL}/api/feedback_details/${exerciseId}/${userId}`,
+        {
+          method: "GET",
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+            "User-Agent": "CustomAgent",
+          },
+        }
+      );
+
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to fetch feedback details");
+        throw new Error(
+          errorData.message || "Failed to fetch feedback details"
+        );
       }
-  
+
       const data = await response.json();
       console.log("Feedback Details:", data);
       return data; // Zwróć dane, aby można było je dalej wykorzystać
@@ -198,41 +165,13 @@ export default function TweetScreen() {
       console.error("Error fetching feedback details:", error.message || error);
       return { message: "Error fetching feedback details" }; // Zwrot błędu w przypadku problemów
     }
-  };  
-  
-  const handlePress = async (exercise: Exercise, next: boolean) => {
-    let viewTmp: Exercise = view.find(
-      (item) =>
-        item.id === (next ? exercise.next_view_id : exercise.previous_view_id)
-    )!;
-  
-    let sendPicture = "false";
-    if (image) {
-      viewTmp.picture[1] = image;
-      sendPicture = "true";
-  
-      // Wywołanie uploadImage i przypisanie wiadomości do aiDescription
-      const feedbackMessage = await uploadImage(
-        "e65cad91-1dfd-4469-abfc-3f3b65ca4efb",
-        "de610de9-45e1-4a12-9a38-657703dd4773",
-        image
-      );
-  
-      setAiDescription(feedbackMessage); // Aktualizuj stan
-      viewTmp.description[1] = feedbackMessage; // Przypisz wiadomość do description
-    }
-  
-    router.push({
-      pathname: `../../exercise/[id]`,
-      params: {
-        id: viewTmp.id,
-        sendPicture: sendPicture,
-        exercise: JSON.stringify(viewTmp),
-      },
-    });
   };
-  
-  
+
+  const handlePress = async (exercise: Exercise, next: boolean) => {
+    setNext(next)
+    setExerciseId(next ? exercise.next_view_id : exercise.previous_view_id)
+  };
+
   return (
     <KeyboardAvoidingView
       style={[styles.screen, { height: height }]}
@@ -259,7 +198,11 @@ export default function TweetScreen() {
         <View style={styles.viewContainer}>
           <View style={styles.mainContainer}>
             {exerciseData &&
-              renderTemplate(exerciseData.template, exerciseData, exerciseData.ai_part ? pickImage : null)}
+              renderTemplate(
+                exerciseData.template,
+                exerciseData,
+                exerciseData.ai_part ? pickImage : null
+              )}
           </View>
           <View style={styles.leftArrowContainer}>
             {exerciseData.previous_view_id ? (

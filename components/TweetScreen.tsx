@@ -17,7 +17,7 @@ const templateMap: Record<number, React.FC<any>> = {
 export const renderTemplate = (
   template: number,
   exerciseData: Exercise,
-  handlePress: () => void
+  handlePress: (() => Promise<void>) | null
 ) => {
   const TemplateComponent = templateMap[template];
   if (!TemplateComponent) return <Text>Template not found</Text>;

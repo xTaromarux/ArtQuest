@@ -15,6 +15,8 @@ const useFetchView = (exerciseId: string | null, index: number) => {
 
     const fetchCourseDetails = async () => {
       try {
+        console.log(exerciseId);
+        
         const coursesResponse = await fetch(
           `${API_BASE_URL}/api/view_details/${exerciseId}`,
           {
@@ -24,7 +26,8 @@ const useFetchView = (exerciseId: string | null, index: number) => {
             },
           }
         );
-
+        console.log(coursesResponse);
+        
         if (!coursesResponse.ok) {
           throw new Error("Failed to fetch courses exercises");
         }

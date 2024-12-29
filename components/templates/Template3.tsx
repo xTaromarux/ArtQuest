@@ -33,79 +33,78 @@ const Template3 = ({
     setModalTitle(descriptions[index] || "No description available");
     toggleModal();
   };
-  
+
   return (
-        <GestureHandlerRootView>
-    
-    <View style={styles.container}>
-      {/* Pierwszy wiersz */}
-      {descriptions[0] && (
-        <View style={[styles.row, { flex: 0.8 }]}>
-          <View style={styles.textContainer}>
-            <Text style={[styles.text, { fontSize: 20 }]}>
-              {descriptions[0]}
-            </Text>
-          </View>
-        </View>
-      )}
-
-      {/* Drugi wiersz */}
-      {descriptions[1] && (
-        <View style={[styles.row, { flex: 0.5 }]}>
-          <View
-            style={[
-              styles.textContainer,
-              { position: "absolute", right: 0, top: 0, width: "70%" },
-            ]}
-          >
-            <Text style={styles.text}>{descriptions[1]}</Text>
-            <View style={styles.iconContainer}>
-              <Pressable onPress={() => console.log("Info pressed")}>
-                <Feather name="info" size={20} color="black" />
-              </Pressable>
+    <GestureHandlerRootView>
+      <View style={styles.container}>
+        {/* Pierwszy wiersz */}
+        {descriptions[0] && (
+          <View style={[styles.row, { flex: 0.8 }]}>
+            <View style={styles.textContainer}>
+              <Text style={[styles.text, { fontSize: 20 }]}>
+                {descriptions[0]}
+              </Text>
             </View>
           </View>
-        </View>
-      )}
+        )}
 
-      {/* Trzeci wiersz */}
-      {picture_urls[0] && (
-        <View style={[styles.row, { flex: 2, alignItems: "flex-start" }]}>
-          <CustomImage
-            url={picture_urls[0].url}
-            style={[styles.image, { width: 200, height: 200 }]}
-          />
-        </View>
-      )}
-
-      {/* Czwarty wiersz */}
-      {descriptions[2] && (
-        <View style={[styles.row, { flex: 0.5 }]}>
-          <View style={[styles.textContainer, { width: "100%" }]}>
-            <Text style={styles.text}>{descriptions[2]}</Text>
-            <View style={styles.iconContainer}>
-              <Pressable onPress={() => console.log("Info pressed")}>
+        {/* Drugi wiersz */}
+        {descriptions[1] && (
+          <View style={[styles.row, { flex: 0.5 }]}>
+            <Pressable
+              onPress={() => console.log("Info pressed")}
+              style={[
+                styles.textContainer,
+                { position: "absolute", right: 0, top: 0, width: "70%" },
+              ]}
+            >
+              <Text style={styles.text}>{descriptions[1]}</Text>
+              <View style={styles.iconContainer}>
                 <Feather name="info" size={20} color="black" />
-              </Pressable>
-            </View>
+              </View>
+            </Pressable>
           </View>
-        </View>
-      )}
+        )}
 
-      {/* Piąty wiersz */}
-      <View style={[styles.row, { flex: 0.5 }]}>
-        <TouchableOpacity style={styles.button} onPress={handlePress}>
-          <Text style={styles.buttonTextDark}>Make picture</Text>
-          <Feather
-            name="camera"
-            size={22}
-            color={Colors.dark.tintDarkerGreen}
-            style={{ marginHorizontal: 10 }}
-          />
-        </TouchableOpacity>
+        {/* Trzeci wiersz */}
+        {picture_urls[0] && (
+          <View style={[styles.row, { flex: 2, alignItems: "flex-start" }]}>
+            <CustomImage
+              url={picture_urls[0].url}
+              style={[styles.image, { width: 200, height: 200 }]}
+            />
+          </View>
+        )}
+
+        {/* Czwarty wiersz */}
+        {descriptions[2] && (
+          <View style={[styles.row, { flex: 0.5 }]}>
+            <Pressable
+              onPress={() => console.log("Info pressed")}
+              style={[styles.textContainer, { width: "100%" }]}
+            >
+              <Text style={styles.text}>{descriptions[2]}</Text>
+              <View style={styles.iconContainer}>
+                <Feather name="info" size={20} color="black" />
+              </View>
+            </Pressable>
+          </View>
+        )}
+
+        {/* Piąty wiersz */}
+        <View style={[styles.row, { flex: 0.5 }]}>
+          <TouchableOpacity style={styles.button} onPress={handlePress}>
+            <Text style={styles.buttonTextDark}>Make picture</Text>
+            <Feather
+              name="camera"
+              size={22}
+              color={Colors.dark.tintDarkerGreen}
+              style={{ marginHorizontal: 10 }}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
-    <InformationModal
+      <InformationModal
         isVisible={isModalVisible}
         title={modalTitle}
         onCancel={toggleModal}

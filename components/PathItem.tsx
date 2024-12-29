@@ -58,7 +58,7 @@ const PathItem: React.FC<PathItemProps> = ({
     opacity: withTiming(clicked ? 0 : 1, { duration: 5 }),
   }));
 
-  const handlePress = async () => {
+  const handlePress = async (indexTmp: number) => {
     if (onClick) {
       await onClick();
     }
@@ -83,13 +83,13 @@ const PathItem: React.FC<PathItemProps> = ({
       };
 
       console.log(exercise);
-      
 
       setClicked(true);
       router.push({
         pathname: `../../exercise/[id]`,
         params: {
           id: exercise.id,
+          index: indexTmp,
           exercise: JSON.stringify(exercise),
         },
       });
@@ -125,7 +125,12 @@ const PathItem: React.FC<PathItemProps> = ({
   }
 
   return (
-    <Pressable onPress={handlePress} style={styles.container}>
+    <Pressable
+      onPress={() => {
+        handlePress(index);
+      }}
+      style={styles.container}
+    >
       {/* Icon at the top */}
       <MaterialCommunityIcons
         name={icon}
