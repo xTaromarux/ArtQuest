@@ -19,6 +19,7 @@ import { Feather } from "@expo/vector-icons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import * as FileSystem from "expo-file-system";
 import API_BASE_URL from "@/utils/config";
+import useFetchUserId from "@/hooks/useFetchUserId";
 
 const NewPost: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -26,6 +27,7 @@ const NewPost: React.FC = () => {
   const [image, setImage] = useState<string | null>(null);
   const [description, setDescription] = useState<string>("");
   const router = useRouter();
+  const { userId, loading: userLoading, error } = useFetchUserId();
 
   const pickImage = async () => {
     const permissionResult =
@@ -39,7 +41,7 @@ const NewPost: React.FC = () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [16, 17],
       quality: 1,
     });
 
@@ -53,43 +55,37 @@ const NewPost: React.FC = () => {
       Alert.alert("Please provide a description and select an image.");
       return;
     }
-  
+
+    if (!userId) return;
+
     setLoading(true);
-  
+
     try {
+
       const formData = new FormData();
       formData.append("description", description);
       formData.append("reactions", "0");
-      formData.append("user_id", "e65cad91-1dfd-4469-abfc-3f3b65ca4efb");
-  
-      if (Platform.OS === "web") {
-        const response = await fetch(image);
-        const blob = await response.blob();
-        formData.append("picture", blob, "image.jpg");
-      } else {
-        const fileBase64 = await FileSystem.readAsStringAsync(image, {
-          encoding: FileSystem.EncodingType.Base64,
-        });
-        formData.append("picture", `data:image/jpeg;base64,${fileBase64}`);
-      }
-  
-      // Debugowanie formData
-      for (let pair of formData.entries()) {
-        console.log(`${pair[0]}: ${pair[1]}`);
-      }
-  
+      formData.append("user_id", userId);
+
+      const filename = image.split("/").pop(); 
+      const type = `image/jpg`; 
+      formData.append("picture", {
+        uri: image,
+        name: filename,
+        type,
+      } as any);
+
       const response = await fetch(`${API_BASE_URL}/api/add_post`, {
         method: "POST",
         body: formData,
       });
-  
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Server response:", errorText);
         throw new Error("Failed to save post. Please try again.");
       }
-  
-      Alert.alert("Post saved successfully!");
+
       router.push("/feed");
     } catch (error) {
       console.error(error);
@@ -98,16 +94,9 @@ const NewPost: React.FC = () => {
       setLoading(false);
     }
   };
-  
-  
 
   return (
-    <KeyboardAvoidingView
-      style={[styles.screen, { height: height }]}
-      behavior={Platform.OS == "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS == "ios" ? 0 : 20}
-      enabled={Platform.OS === "ios" ? true : false}
-    >
+    <View style={[styles.screen, { height: height }]}>
       <Container height={780} width={90}>
         <View style={styles.formContainer}>
           <View style={styles.header}>
@@ -165,7 +154,7 @@ const NewPost: React.FC = () => {
           </TouchableOpacity>
         </View>
       </Container>
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 

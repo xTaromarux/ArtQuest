@@ -5,6 +5,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.dark.background,
     paddingBottom: 90,
+    paddingTop:30
   },
   loaderContainer: {
     flex: 1,
@@ -19,7 +20,7 @@ const styles = StyleSheet.create({
     height: 70,
     position: "absolute",
     right: 20,
-    bottom: 100,
+    bottom: "15%",
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 3,

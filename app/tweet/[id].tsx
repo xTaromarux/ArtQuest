@@ -22,6 +22,7 @@ import Feather from "@expo/vector-icons/Feather";
 import Line from "@/components/Line";
 import API_BASE_URL from "@/utils/config";
 import CustomImage from "@/components/CustomImage";
+import useFetchUserId from "@/hooks/useFetchUserId";
 
 const TweetDetails: React.FC = () => {
   const { post_id, post } = useLocalSearchParams(); // Pobierz ID posta z parametrów URL
@@ -45,6 +46,7 @@ const TweetDetails: React.FC = () => {
 
   const [newComment, setNewComment] = useState<string>(""); // Treść nowego komentarza
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const { userId, loading: userLoading } = useFetchUserId();
 
   useEffect(() => {
     if (typeof post === "string") {
@@ -98,15 +100,15 @@ const TweetDetails: React.FC = () => {
 
   const handleAddComment = async () => {
     if (!newComment.trim() || !post_id) return;
-
+    if (!userId) return;
     setIsSubmitting(true);
 
     try {
       const payload = new URLSearchParams({
         description: newComment.trim(),
         reactions: "0",
-        user_id: "0f41b706-85a8-4457-8046-132f5505b47d", // Zamień na poprawne ID użytkownika
-        post_id: Array.isArray(post_id) ? post_id.join(",") : post_id, // Upewnij się, że post_id jest ciągiem znaków
+        user_id: userId, 
+        post_id: Array.isArray(post_id) ? post_id.join(",") : post_id,
       });
 
       const response = await fetch(`${API_BASE_URL}/api/comments/add`, {
@@ -141,12 +143,7 @@ const TweetDetails: React.FC = () => {
   }, [fetchComments]);
 
   return (
-    <KeyboardAvoidingView
-      style={[styles.container, { height }]}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
-      enabled={Platform.OS === "ios"}
-    >
+    < >
       <View style={styles.header}>
         <Link href="/feed" asChild>
           <Pressable>
@@ -159,7 +156,7 @@ const TweetDetails: React.FC = () => {
         </Link>
       </View>
       <FlatList
-        style={{ paddingBottom: 20, marginBottom: 10 }}
+        style={{ paddingBottom: 30, backgroundColor: Colors.dark.background, paddingHorizontal: 20 }}
         data={comments}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => {
@@ -231,7 +228,7 @@ const TweetDetails: React.FC = () => {
           <Feather name="send" size={24} color={Colors.dark.background} />
         </Pressable>
       </View>
-    </KeyboardAvoidingView>
+    </>
   );
 };
 
@@ -253,7 +250,10 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   header: {
-    marginBottom: 20,
+    backgroundColor: Colors.dark.background,
+    paddingBottom: 20,
+    paddingTop: 40,
+    paddingHorizontal: 20,
   },
   tweetContent: {
     fontSize: 18,
@@ -311,25 +311,28 @@ const styles = StyleSheet.create({
   },
   newCommentContainer: {
     flexDirection: "row",
+    backgroundColor: Colors.dark.background, 
+    paddingHorizontal: 20,
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 20,
+    paddingBottom: 20,
   },
   input: {
-    width: "100%",
+    width: "90%",
     height: 40,
     padding: 10,
     backgroundColor: Colors.light.background,
-    borderTopStartRadius: 10,
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
     borderBottomStartRadius: 10,
     color: Colors.dark.text,
   },
   floatingButton: {
     height: 40,
     backgroundColor: Colors.light.background,
-    borderEndEndRadius: 10,
-    borderStartEndRadius: 10,
-    padding: 10,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+    paddingHorizontal: 10,
     justifyContent: "center",
     alignItems: "center",
   },

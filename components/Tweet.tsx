@@ -11,19 +11,15 @@ import TweetFooter from "./TweetFooter";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { generateRandomString } from "@/scripts/generateId";
 import CustomImage from "./CustomImage";
+import API_BASE_URL from "@/utils/config";
 
 type TweetProp = {
   tweet: TweetType;
   onDelete: () => void;
 };
 
-const user_id = "be72e28f-41af-4234-a112-0a0299ed7197";
-
 const Tweet = ({ tweet, onDelete }: TweetProp) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const base_url = "https://bce9-178-43-255-119.ngrok-free.app";
-  const web_url = "http://localhost:8000";
-  const API_VALUE = Platform.OS === "web" ? web_url : base_url;
   const imageUrl = tweet.picture_url;
 
   const router = useRouter();
@@ -55,16 +51,19 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
       },
     });
   };
-
+  
   const deletePost = async () => {
     try {
-      const response = await fetch(`${API_VALUE}/api/post/${tweet.id}`, {
+      console.log(tweet.id);
+      
+      const response = await fetch(`${API_BASE_URL}/api/post/${tweet.id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
       });
-
+      console.log(response);
+      
       if (!response.ok) {
         throw new Error("Failed to delete the post");
       }
@@ -77,7 +76,6 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
     }
   };
 
-  console.log(tweet);
 
   return (
     <>

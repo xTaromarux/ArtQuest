@@ -20,95 +20,57 @@ import { Link, router } from "expo-router";
 import styles from "@/constants/styles/screens/HomeScreen.styles";
 import API_BASE_URL from "@/utils/config";
 import CustomImage from "@/components/CustomImage";
+import useFetchUserId from "@/hooks/useFetchUserId";
 
 const HomeScreen: React.FC = () => {
   const {user} = useUser();
   const height = Dimensions.get("screen").height;
 
   const [course, setCourse] = useState<any>(null);
-  const [userId, setUserId] = useState<any>(null);
+  const { userId, loading: userLoading, error } = useFetchUserId();
   const [loading, setLoading] = useState<boolean>(true);
 
-  
   useEffect(() => {
-    const fetchUserId = async () => {
-      try {
-        console.log(user?.emailAddresses[0].emailAddress);
-        
-        const userIdResponse = await fetch(
-          `${API_BASE_URL}/api/users/get-id-by-email?email=${user?.emailAddresses[0].emailAddress}`, {
-            headers: {
-              "ngrok-skip-browser-warning": "true",
-              "User-Agent": "CustomAgent",
-            },
-          }
-        );
-        
-        if (!userIdResponse.ok) {
-          throw new Error("Failed to fetch user_id");
-        }
-        const userIdData = await userIdResponse.json();     
-        console.log(userIdData);
-         
-        const userId = userIdData?.id;
-        if (!userId) {
-          throw new Error("No user_id found in response");
-        }
+    if (!userId) return;
 
-        setUserId(userId);
-      } catch (error) {
-        console.error("Error fetching userId details:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserId();
-  }, []);
-
-  useEffect(() => {
     const fetchCourseDetails = async () => {
-
-      console.log("userId");
-      console.log(userId);
-      
       try {
         const coursesResponse = await fetch(
-          `${API_BASE_URL}/api/courses/${userId}`, {
+          `${API_BASE_URL}/api/courses/${userId}`,
+          {
             headers: {
               "ngrok-skip-browser-warning": "true",
               "User-Agent": "CustomAgent",
             },
           }
         );
-        
+
         if (!coursesResponse.ok) {
           throw new Error("Failed to fetch courses");
         }
-        const coursesData = await coursesResponse.json();
-        console.log(coursesData);
 
-        const CourseId = coursesData[0]?.course_id;
-        if (!CourseId) {
-          throw new Error("No user_course_id found in response");
+        const coursesData = await coursesResponse.json();
+        const courseId = coursesData[0]?.course_id;
+
+        if (!courseId) {
+          throw new Error("No course_id found in response");
         }
-        
 
         const courseDetailsResponse = await fetch(
-          `${API_BASE_URL}/api/course_details/${CourseId}`, {
+          `${API_BASE_URL}/api/course_details/${courseId}`,
+          {
             headers: {
               "ngrok-skip-browser-warning": "true",
               "User-Agent": "CustomAgent",
             },
           }
         );
+
         if (!courseDetailsResponse.ok) {
           throw new Error("Failed to fetch course details");
         }
+
         const courseDetails = await courseDetailsResponse.json();
-        console.log(courseDetails);
-        
-        // Zapisanie szczegółów kursu
         setCourse(courseDetails);
       } catch (error) {
         console.error("Error fetching course details:", error);
@@ -120,10 +82,18 @@ const HomeScreen: React.FC = () => {
     fetchCourseDetails();
   }, [userId]);
 
-  if (loading) {
+  if (userLoading || loading) {
     return (
       <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
         <Text>Loading course details...</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+        <Text>Error: {error}</Text>
       </View>
     );
   }
@@ -135,6 +105,7 @@ const HomeScreen: React.FC = () => {
       </View>
     );
   }
+  
   return (
     <KeyboardAvoidingView
       style={[styles.container, { height: height }]}

@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   importIcon: {
     width: "100%",
     height: "10%",
-    padding: 30,
+    padding: 10,
     justifyContent: "flex-start",
     alignItems: "flex-end",
   },
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
   avatar: {
     width: "100%",
     height: "100%",
-    borderRadius: 20,
+    borderRadius: 10,
   },
   noImage: {
     width: "40%",

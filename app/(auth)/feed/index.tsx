@@ -8,11 +8,12 @@ import {
   ActivityIndicator,
   RefreshControl,
   Text,
+  Pressable,
 } from "react-native";
 import styles from "@/constants/styles/screens/FeedScreen.styles";
 import Tweet from "@/components/Tweet";
 import { Entypo } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import Colors from "@/constants/Colors";
 import { TweetType } from "@/utils/types";
 import API_BASE_URL from "@/utils/config";
@@ -35,7 +36,7 @@ const ExerciseScreen: React.FC = () => {
           "User-Agent": "CustomAgent",
         },
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -104,6 +105,12 @@ const ExerciseScreen: React.FC = () => {
     );
   }
 
+  const handleNewPostPress = () => {
+    router.push({
+      pathname: `/new-post`,
+    });
+  };
+
   return (
     <KeyboardAvoidingView
       style={[styles.container, { height }]}
@@ -120,17 +127,10 @@ const ExerciseScreen: React.FC = () => {
         }
         contentContainerStyle={{ paddingBottom: 90 }}
       />
-      <Link
-        href={{
-          pathname: "/new-post",
-          params: { refreshKey: new Date().toISOString() },
-        }}
-        asChild
-      >
-        <View style={styles.floatingButton}>
-          <Entypo name="plus" size={40} color={Colors.dark.text} />
-        </View>
-      </Link>
+
+      <Pressable style={styles.floatingButton} onPress={handleNewPostPress}>
+        <Entypo name="plus" size={40} color={Colors.dark.text} />
+      </Pressable>
     </KeyboardAvoidingView>
   );
 };
