@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -12,75 +12,22 @@ import {
 } from "react-native";
 import Colors from "@/constants/Colors";
 import ProgressBar from "@/components/ProgressBar";
-import { useUser, useAuth } from "@clerk/clerk-expo";
+import { useUser } from "@clerk/clerk-expo";
 import Line from "@/components/Line";
 import Container from "@/components/Container";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Link, router } from "expo-router";
 import styles from "@/constants/styles/screens/HomeScreen.styles";
-import API_BASE_URL from "@/utils/config";
-import CustomImage from "@/components/CustomImage";
 import useFetchUserId from "@/hooks/useFetchUserId";
+import useFetchCourseDetails from "@/hooks/useFetchCourseDetails";
+import CustomImage from "@/components/CustomImage";
 
 const HomeScreen: React.FC = () => {
-  const {user} = useUser();
+  const { user } = useUser();
   const height = Dimensions.get("screen").height;
 
-  const [course, setCourse] = useState<any>(null);
-  const { userId, loading: userLoading, error } = useFetchUserId();
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    if (!userId) return;
-
-    const fetchCourseDetails = async () => {
-      try {
-        const coursesResponse = await fetch(
-          `${API_BASE_URL}/api/courses/${userId}`,
-          {
-            headers: {
-              "ngrok-skip-browser-warning": "true",
-              "User-Agent": "CustomAgent",
-            },
-          }
-        );
-
-        if (!coursesResponse.ok) {
-          throw new Error("Failed to fetch courses");
-        }
-
-        const coursesData = await coursesResponse.json();
-        const courseId = coursesData[0]?.course_id;
-
-        if (!courseId) {
-          throw new Error("No course_id found in response");
-        }
-
-        const courseDetailsResponse = await fetch(
-          `${API_BASE_URL}/api/course_details/${courseId}`,
-          {
-            headers: {
-              "ngrok-skip-browser-warning": "true",
-              "User-Agent": "CustomAgent",
-            },
-          }
-        );
-
-        if (!courseDetailsResponse.ok) {
-          throw new Error("Failed to fetch course details");
-        }
-
-        const courseDetails = await courseDetailsResponse.json();
-        setCourse(courseDetails);
-      } catch (error) {
-        console.error("Error fetching course details:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCourseDetails();
-  }, [userId]);
+  const { userId, loading: userLoading, error: userError } = useFetchUserId();
+  const { course, loading, error } = useFetchCourseDetails(userId);
 
   if (userLoading || loading) {
     return (
@@ -90,10 +37,10 @@ const HomeScreen: React.FC = () => {
     );
   }
 
-  if (error) {
+  if (userError || error) {
     return (
       <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
-        <Text>Error: {error}</Text>
+        <Text>Error: {userError || error}</Text>
       </View>
     );
   }
@@ -105,7 +52,7 @@ const HomeScreen: React.FC = () => {
       </View>
     );
   }
-  
+
   return (
     <KeyboardAvoidingView
       style={[styles.container, { height: height }]}
@@ -128,17 +75,17 @@ const HomeScreen: React.FC = () => {
           imageStyle={{ resizeMode: "cover", borderRadius: 10 }}
         >
           <CustomImage
-                      url={course.picture_url}
-                      style={styles.courseImage}
-                      resizeMode="contain"
-                    />
+            url={course.picture_url}
+            style={styles.courseImage}
+            resizeMode="contain"
+          />
         </ImageBackground>
         <Line width={90} backgroundColor={Colors.dark.text} />
         <View style={styles.courseContentContainer}>
           <View style={styles.courseInfo}>
             <Text style={styles.levelText}>Level {course.difficulty.level || 1}</Text>
             <Text style={styles.courseTitle}>{course.course.title || "Course Title"}</Text>
-            <ProgressBar progress={course.progress || 0} color={Colors.dark.tintLighterGreen} />
+            <ProgressBar progress={course.stage || 0} color={Colors.dark.tintLighterGreen} />
           </View>
           <Pressable
             onPress={() => {

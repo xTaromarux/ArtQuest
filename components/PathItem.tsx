@@ -49,7 +49,7 @@ const PathItem: React.FC<PathItemProps> = ({ icon, title, exercise }) => {
       {/* Icon at the top */}
       <MaterialCommunityIcons
         name={icon}
-        size={48}
+        size={60}
         color="#C4C4C4"
         style={{ marginBottom: 10 }}
       />
@@ -86,8 +86,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   platformBase: {
-    width: 50,
-    height: 50,
+    width: 70,
+    height: 70,
     backgroundColor: "#3D3D3D",
     transform: [{ rotateX: "45deg" }, { rotateZ: "0.785398rad" }],
     borderRadius: 5,
@@ -96,28 +96,28 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   platformBaseSupportRight: {
-    width: 22,
+    width: 20,
     height: 15,
     transform: [{ rotateZ: "0.785398rad" }],
     position: "relative",
     borderRadius: 5,
-    right: 24,
-    bottom: -5,
+    right: 34,
+    bottom: -15,
     backgroundColor: "#3D3D3D",
   },
   platformBaseSupportLeft: {
-    width: 22,
+    width: 20,
     height: 15,
     transform: [{ rotateZ: "0.785398rad" }],
     position: "relative",
     borderRadius: 5,
-    left: 13,
-    bottom: 16,
+    left: 23,
+    bottom: 26,
     backgroundColor: "#3D3D3D",
   },
   platformMiddle: {
-    width: 50,
-    height: 50,
+    width: 70,
+    height: 70,
     backgroundColor: "#ADADAD",
     borderRadius: 5,
     position: "absolute",
@@ -127,8 +127,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   platformTop: {
-    width: 36,
-    height: 36,
+    width: 56,
+    height: 56,
     backgroundColor: "#3D3D3D",
     borderRadius: 5,
     position: "absolute",
@@ -141,8 +141,8 @@ const styles = StyleSheet.create({
     transform: [{ rotateZ: "0.785398rad" }],
     position: "relative",
     borderRadius: 5,
-    right: 8,
-    bottom: -2,
+    right: 7,
+    bottom: -22,
     backgroundColor: "#3D3D3D",
   },
   platformTopSupportLeft: {
@@ -151,13 +151,13 @@ const styles = StyleSheet.create({
     transform: [{ rotateZ: "0.785398rad" }],
     position: "relative",
     borderRadius: 5,
-    left: 14,
-    bottom: 6,
+    left: 32,
+    bottom: 7,
     backgroundColor: "#3D3D3D",
   },
   platformTopOfTheTop: {
-    width: 35,
-    height: 35,
+    width: 55,
+    height: 55,
     backgroundColor: "#ADADAD",
     borderRadius: 5,
     position: "absolute",
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     textAlign: "center",
     color: "#FFFFFF",
-    fontSize: 13,
+    fontSize: 16,
     fontWeight: "bold",
   },
 });

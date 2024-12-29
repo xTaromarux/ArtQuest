@@ -30,6 +30,7 @@ export interface CourseRequest {
   course: Course;
   difficulty: Difficulty;
   picture_url  : string;
+  stage : string;
 }
 
 export interface Course {

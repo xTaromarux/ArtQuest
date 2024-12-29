@@ -81,9 +81,27 @@ const CourseListScreen: React.FC = () => {
       course.course.title &&
       course.course.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
+  const handleOpen = () => {
+    setModalVisible(true);
+  };
+
+  const handleCancel = () => {
+    setModalVisible(false);
+  };
+
+  const handleAccept = () => {
+    setModalVisible(false);
+    router.push({
+      pathname: `../exercises`,
+      params: {
+        // id: "2",
+        // exercise: JSON.stringify(exerciseDetails),
+      },
+    });
+  };
 
   const renderCourseItem = ({ item }: { item: CourseRequest }) => (
-    <Pressable style={styles.courseCard} onPress={() => onOpen(item)}>
+    <Pressable style={styles.courseCard} onPress={() => handleOpen()}>
       <View style={[styles.iconContainer]}>
         <View
           style={[styles.iconBar, { backgroundColor: item.difficulty.color }]}
@@ -198,6 +216,17 @@ const CourseListScreen: React.FC = () => {
           </Modalize>
         </Portal>
       </KeyboardAvoidingView>
+      <ConfirmationModal
+        isVisible={modalVisible}
+        onConfirm={handleAccept}
+        onCancel={handleCancel}
+        title="Are you sure you want to change you exercise?"
+        IconComponent={AntDesign}
+        iconName="exclamationcircleo"
+        iconSize={40}
+        iconColor={Colors.dark.background}
+        acceptText="Change"
+      />
     </GestureHandlerRootView>
   );
 };

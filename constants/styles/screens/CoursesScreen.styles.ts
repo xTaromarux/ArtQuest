@@ -28,7 +28,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: Colors.light.background,
-    padding: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
     borderRadius: 10,
     marginBottom: 10,
     shadowColor: Colors.dark.text,
@@ -39,7 +40,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     width: 60,
-    height: 50,
+    height: 60,
     display: "flex",
     flexDirection: "row",
     borderRadius: 8,
@@ -54,19 +55,19 @@ const styles = StyleSheet.create({
     marginRight: 10
   },
   icon: {
-    width: 45,
-    height: 45,
+    width: 55,
+    height: 55,
   },
   courseInfo: {
     flex: 1,
   },
   courseTitle: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: "bold",
     color: Colors.dark.text,
   },
   courseDescription: {
-    fontSize: 14,
+    fontSize: 16,
     color: "#666",
   },
   infoIconContainer: {

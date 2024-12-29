@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -18,30 +18,26 @@ import PathItem from "@/components/PathItem";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Modalize } from "react-native-modalize";
 import stylesModal from "@/constants/styles/components/Modal.style";
-import { Course } from "@/utils/types";
+import { Course, CourseRequest } from "@/utils/types";
 import { Portal } from "@gorhom/portal";
+import API_BASE_URL from "@/utils/config";
+import useFetchCourseDetails from "@/hooks/useFetchCourseDetails";
+import useFetchUserId from "@/hooks/useFetchUserId";
 
 type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
 
 const ExerciseScreen: React.FC = () => {
-  const { id, exercise } = useGlobalSearchParams();
+  const { id, newCourse } = useGlobalSearchParams();
+  const { userId, loading: userLoading, error: userError } = useFetchUserId();
+  const { course, loading, error } = useFetchCourseDetails(userId);
   
-  let courseDetails = {
-    id: "1",
-    label: "Lines",
-    shortDesc: "Foundation of all drawing and art",
-    level: 1,
-    percentage: 0.2,
-    color: "#FF6B6B",
-  };
-  
-  if (typeof exercise === "string") {
-    try {
-      courseDetails = JSON.parse(exercise);
-    } catch (error) {
-      console.error("Nie udało się sparsować danych:", error);
-    }
-  }
+  // if (typeof newCourse === "string") {
+  //   try {
+  //     course = JSON.parse(newCourse);
+  //   } catch (error) {
+  //     console.error("Nie udało się sparsować danych:", error);
+  //   }
+  // }
 
   const view = [
     {
@@ -67,24 +63,26 @@ const ExerciseScreen: React.FC = () => {
   ];
 
   const pathItems = [
-    { id: "1", label: "The First Stroke", icon: "star" as IconName, position: 2 },
-    { id: "2", label: "Curves and Arcs", icon: "play" as IconName, position: 4 },
-    { id: "3", label: "Shapes from Lines", icon: "play" as IconName, position: 8 },
+    {
+      id: "1",
+      label: "The First Stroke",
+      icon: "star" as IconName,
+      position: 2,
+    },
+    {
+      id: "2",
+      label: "Curves and Arcs",
+      icon: "play" as IconName,
+      position: 4,
+    },
+    {
+      id: "3",
+      label: "Shapes from Lines",
+      icon: "play" as IconName,
+      position: 8,
+    },
     { id: "4", label: "Exercise", icon: "play" as IconName, position: 12 },
   ];
-
-  const course = {
-    id: "1",
-    title: "Lines",
-    short_desscription: "Lorem ipsum dolor sit amet",
-    description:
-      "Lines are the foundation of all drawing and art. They are the simplest, yet most essential elements of any composition, forming the basis of everything we see and create. Whether it's the outline of a shape, the curve of a landscape, or the intricate details of a portrait, everything begins with a line. In this lesson, you'll learn the basics of how to draw lines with precision and confidence. By practicing straight lines, curves, and angles, you'll start to understand how they work together to create structure and form. You'll also discover how lines can represent movement, energy, and even emotions, depending on their length, thickness, and direction.",
-      long_description:
-      "Through simple exercises, you'll develop control over your hand movements, allowing you to draw steady lines with ease. This skill is crucial, as mastering the ability to draw clean lines is the first step toward creating more complex drawings. You'll also explore how lines can define space, give a sense of depth, and create patterns, helping you see how they come together to build a complete composition. This lesson is perfect for beginners, offering a clear and easy way to start your artistic journey. By the end, you'll have the confidence to use lines as a tool to bring your ideas to life, knowing that every masterpiece begins with a single, simple stroke.",
-    icon: require("@/assets/images/lines.png"),
-    color: "#FF6B6B",
-  };
-
 
 
   const height = Dimensions.get("screen").height;
@@ -96,16 +94,16 @@ const ExerciseScreen: React.FC = () => {
       const item = pathItems.find((i) => i.position === index + 1);
       return item ? (
         <View key={`item-${item.id}`} style={styles.pathItemWrapper}>
-          <PathItem icon={item.icon} title={item.label} exercise={view[0]} />
+          <PathItem icon="play" title={item.label} exercise={view[0]} />
         </View>
       ) : (
         <View key={`empty-${index}`} style={styles.emptyCell} />
       );
     });
 
-  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  const [selectedCourse, setSelectedCourse] = useState<CourseRequest | null>(null);
 
-  const onOpen = (course: Course) => {
+  const onOpen = (course: CourseRequest) => {
     // Directly pass the course object, avoiding any reference to the synthetic event
     setSelectedCourse(course);
     modalizeRef.current?.open();
@@ -115,6 +113,30 @@ const ExerciseScreen: React.FC = () => {
     modalizeRef.current?.close();
     setSelectedCourse(null);
   };
+
+  if (userLoading || loading) {
+    return (
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+        <Text>Loading course details...</Text>
+      </View>
+    );
+  }
+
+  if (userError || error) {
+    return (
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+        <Text>Error: {userError || error}</Text>
+      </View>
+    );
+  }
+
+  if (!course) {
+    return (
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+        <Text>No course found</Text>
+      </View>
+    );
+  }
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -128,22 +150,19 @@ const ExerciseScreen: React.FC = () => {
         <View style={styles.courseCard}>
           <View style={styles.barContainer}>
             <View
-              style={[styles.bar, { backgroundColor: courseDetails.color }]}
+              style={[styles.bar, { backgroundColor: course.difficulty.color }]}
             ></View>
           </View>
           <View style={styles.courseInfoContainer}>
-            <Text style={styles.courseTitle}>{courseDetails.label}</Text>
+            <Text style={styles.courseTitle}>{course.course.title}</Text>
             <Text style={styles.courseSubtitle}>
-              {courseDetails.shortDesc} • Level {courseDetails.level}
+              {course.course.short_desscription} • Level {course.difficulty.level}
             </Text>
-            <ProgressBar
-              progress={courseDetails.percentage}
-              color={Colors.dark.tintLighterGreen}
-            />
+            <ProgressBar progress={course.stage || 0} color={Colors.dark.tintLighterGreen} />
           </View>
           <View style={styles.infoIconContainer}>
             <Pressable
-              style={[styles.infoIcon, { borderColor: course.color }]}
+              style={[styles.infoIcon, { borderColor: course.difficulty.color }]}
               onPress={() => onOpen(course)}
             >
               <AntDesign name="book" size={24} color="black" />
@@ -184,15 +203,15 @@ const ExerciseScreen: React.FC = () => {
                   </View>
                   <View style={stylesModal.titleModalContainer}>
                     <Text style={stylesModal.modalTitle}>
-                      {selectedCourse.title}
+                      {selectedCourse.course.title}
                     </Text>
                   </View>
                   <View style={stylesModal.textModalContainer}>
                     <Text style={[stylesModal.modalText, { marginBottom: 20 }]}>
-                      {selectedCourse.description}
+                      {selectedCourse.course.description}
                     </Text>
                     <Text style={stylesModal.modalText}>
-                      {selectedCourse.long_description}
+                      {selectedCourse.course.long_description}
                     </Text>
                   </View>
                 </>
