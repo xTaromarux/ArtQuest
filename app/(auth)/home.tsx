@@ -19,20 +19,62 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Link, router } from "expo-router";
 import styles from "@/constants/styles/screens/HomeScreen.styles";
 import API_BASE_URL from "@/utils/config";
+import CustomImage from "@/components/CustomImage";
 
 const HomeScreen: React.FC = () => {
   const {user} = useUser();
-  const { userId } = useAuth();
   const height = Dimensions.get("screen").height;
 
   const [course, setCourse] = useState<any>(null);
+  const [userId, setUserId] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
+
+  
+  useEffect(() => {
+    const fetchUserId = async () => {
+      try {
+        console.log(user?.emailAddresses[0].emailAddress);
+        
+        const userIdResponse = await fetch(
+          `${API_BASE_URL}/api/users/get-id-by-email?email=${user?.emailAddresses[0].emailAddress}`, {
+            headers: {
+              "ngrok-skip-browser-warning": "true",
+              "User-Agent": "CustomAgent",
+            },
+          }
+        );
+        
+        if (!userIdResponse.ok) {
+          throw new Error("Failed to fetch user_id");
+        }
+        const userIdData = await userIdResponse.json();     
+        console.log(userIdData);
+         
+        const userId = userIdData?.id;
+        if (!userId) {
+          throw new Error("No user_id found in response");
+        }
+
+        setUserId(userId);
+      } catch (error) {
+        console.error("Error fetching userId details:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserId();
+  }, []);
 
   useEffect(() => {
     const fetchCourseDetails = async () => {
+
+      console.log("userId");
+      console.log(userId);
+      
       try {
         const coursesResponse = await fetch(
-          `${API_BASE_URL}/api/courses/0f41b706-85a8-4457-8046-132f5505b47d`, {
+          `${API_BASE_URL}/api/courses/${userId}`, {
             headers: {
               "ngrok-skip-browser-warning": "true",
               "User-Agent": "CustomAgent",
@@ -44,7 +86,8 @@ const HomeScreen: React.FC = () => {
           throw new Error("Failed to fetch courses");
         }
         const coursesData = await coursesResponse.json();
-        
+        console.log(coursesData);
+
         const CourseId = coursesData[0]?.course_id;
         if (!CourseId) {
           throw new Error("No user_course_id found in response");
@@ -75,7 +118,7 @@ const HomeScreen: React.FC = () => {
     };
 
     fetchCourseDetails();
-  }, []);
+  }, [userId]);
 
   if (loading) {
     return (
@@ -113,11 +156,11 @@ const HomeScreen: React.FC = () => {
           style={[styles.courseImageContainer, { width: `100%` }]}
           imageStyle={{ resizeMode: "cover", borderRadius: 10 }}
         >
-          <Image
-            source={course.picture_url}
-            style={styles.courseImage}
-            resizeMode="contain"
-          />
+          <CustomImage
+                      url={course.picture_url}
+                      style={styles.courseImage}
+                      resizeMode="contain"
+                    />
         </ImageBackground>
         <Line width={90} backgroundColor={Colors.dark.text} />
         <View style={styles.courseContentContainer}>

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { View, Image, ActivityIndicator, Text, StyleProp, ImageStyle } from "react-native";
+import { View, Image, ActivityIndicator, Text, StyleProp, ImageStyle, ImageResizeMode } from "react-native";
 
 interface CustomImageProps {
   url: string;
-  style?: StyleProp<ImageStyle>; 
+  style?: StyleProp<ImageStyle>;
+  resizeMode?: ImageResizeMode; // Dodanie resizeMode jako opcji
 }
 
-const CustomImage: React.FC<CustomImageProps> = ({ url, style }) => {
+const CustomImage: React.FC<CustomImageProps> = ({ url, style, resizeMode = "cover" }) => {
   const [imageData, setImageData] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -41,7 +42,10 @@ const CustomImage: React.FC<CustomImageProps> = ({ url, style }) => {
   }
 
   return imageData ? (
-    <Image source={{ uri: imageData }} style={style} />
+    <Image 
+      source={{ uri: imageData }} 
+      style={[{ resizeMode }, style]} // Dodanie resizeMode do stylu
+    />
   ) : (
     <View>
       <Text>Error loading image</Text>

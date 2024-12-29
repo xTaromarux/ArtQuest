@@ -22,17 +22,19 @@ import InputModal from "@/components/InputModal";
 import * as Linking from "expo-linking";
 
 const SignUpScreen: React.FC = () => {
-  const { isLoaded, signUp } = useSignUp();
+  const { isLoaded, signUp, setActive } = useSignUp();
   const { signIn } = useSignIn();
   const { signOut } = useAuth();
   const router = useRouter();
   const [login, setLogin] = useState("");
+  const [userId, setUserId] = useState("");
   const [username, setUsername] = useState("");
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const height = Dimensions.get("screen").height;
   const [modalVisible, setModalVisible] = useState(false);
+  const [loadingAfterRegistration, setLoadingAfterRegistration] = useState(false);
 
   const [errors, setErrors] = useState({
     login: "",
@@ -71,8 +73,12 @@ const SignUpScreen: React.FC = () => {
       if (!response.ok) {
         throw new Error("Failed to create user on backend.");
       }
-
+      
       console.log("User created successfully on backend.");
+      const responseData = await response.json();
+      console.log(responseData);
+
+      return responseData;
     } catch (error: any) {
       console.error("Error creating user on backend:", error.message);
       Alert.alert("Error", "Failed to save user data. Please try again.");
@@ -204,27 +210,102 @@ const SignUpScreen: React.FC = () => {
     setModalVisible(false);
   };
 
+  const createUserCourse = async (userId: string) => {
+
+    try {
+      const data = {
+        course_id: "44c92ac4-ced2-41c5-ac20-46ca8bbe0745", 
+        user_id: userId, 
+      };
+      const formBody = new URLSearchParams(data).toString();
+
+      const response = await fetch(`${API_BASE_URL}/api/user-course/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: formBody,
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Server response:", errorText);
+        throw new Error("Failed to save user's course. Please try again.");
+      }
+  
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const createUserStats = async (userId: string) => {
+  
+    const now = new Date();
+    const currentDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}.${String(now.getMilliseconds()).padStart(6, "0")}`;
+  
+    try {
+      const data = {
+        experience: "0",
+        level: "0",
+        courses: "0",
+        start_strike: currentDate,
+        end_strike: currentDate,
+        user_id: userId,
+      };
+  
+      const formBody = new URLSearchParams(data).toString();
+  
+      const response = await fetch(`${API_BASE_URL}/api/statistics/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: formBody,
+      });
+  
+      if (!response.ok) {
+        console.error("Server response:", await response.text());
+        throw new Error("Failed to save user's stats. Please try again.");
+      }
+  
+      console.log("User stats created successfully.");
+    } catch (error) {
+      console.error("Error creating user stats:", error);
+    }
+  };
+  
+
   const handleAccept = async (code: string) => {
     if (!signUp) return;
-
+  
     setVerificationCodeError({ label: "" });
     try {
       const response = await signUp.attemptEmailAddressVerification({
         code,
       });
       console.log(response);
-
+  
       if (response.status === "complete") {
+  
         console.log("Verification successful!");
         setModalVisible(false);
-
-        // Zaloguj użytkownika ręcznie
-        // let emailAddress = signUp.emailAddress;
-        // let userId = signUp.id;
-        await createUserOnBackend(login, username, emailAddress!);
-
-        const completeUrl = Linking.createURL("home");
-        router.replace(completeUrl);
+  
+        let user = await createUserOnBackend(login, username, emailAddress!);
+        console.log(user);
+  
+        if (user?.id) {
+          setLoadingAfterRegistration(true); // Ustaw flagę przed operacjami
+  
+          await createUserStats(user.id);
+          await createUserCourse(user.id);
+  
+          setLoadingAfterRegistration(false); // Flaga po zakończeniu
+          // const completeUrl = Linking.createURL("home");
+          // router.replace(completeUrl);
+          await setActive({ session: response.createdSessionId });
+        } else {
+          throw new Error("User ID is not available.");
+        }
       } else {
         throw new Error("Verification failed. Please try again.");
       }

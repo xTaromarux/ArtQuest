@@ -114,9 +114,10 @@ const InitialLayout = () => {
   const { isLoaded, isSignedIn } = useAuth();
   const segments = useSegments();
   const router = useRouter();
+  const [isWaiting, setIsWaiting] = useState(false);
 
   useEffect(() => {
-    if (!isLoaded) return;
+    if (!isLoaded || isWaiting) return;
 
     const inTabsGroup = segments[0] === '(auth)';
 
@@ -127,7 +128,7 @@ const InitialLayout = () => {
     } else if (!isSignedIn) {
       router.replace('/');
     }
-  }, [isSignedIn]);
+  }, [isSignedIn, isWaiting]);
 
   return <Slot />;
 };
