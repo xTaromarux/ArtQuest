@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, startTransition } from "react";
 import {
   View,
   Text,
@@ -64,7 +64,9 @@ const TweetDetails: React.FC = () => {
           login: parsedPost.login,
         };
 
-        setTweet(tweetData);
+        startTransition(() => {
+          setTweet(tweetData);
+        });
       } catch (error) {
         console.error("Błąd parsowania JSON:", error);
       }
@@ -75,8 +77,16 @@ const TweetDetails: React.FC = () => {
 
   const fetchComments = useCallback(async () => {
     if (!post_id) return;
-    setLoadingComments(true);
-    setError(null);
+    startTransition(() => {
+      startTransition(() => {
+        setLoadingComments(true);
+      });
+    });
+    startTransition(() => {
+      startTransition(() => {
+        setError(null);
+      });
+    });
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/comments/${post_id}`, {
@@ -89,12 +99,18 @@ const TweetDetails: React.FC = () => {
         throw new Error(`Failed to fetch comments: ${response.status}`);
       }
       const data = await response.json();
-      setComments(data);
+      startTransition(() => {
+        setComments(data);
+      });
     } catch (error) {
       console.error("Error fetching comments:", error);
-      setError("Failed to load comments. Please try again.");
+      startTransition(() => {
+        setError("Failed to load comments. Please try again.");
+      });
     } finally {
-      setLoadingComments(false);
+      startTransition(() => {
+        setLoadingComments(false);
+      });
     }
   }, [post_id]);
 

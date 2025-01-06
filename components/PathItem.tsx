@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { startTransition, useEffect, useState } from "react";
 import { View, Text, StyleSheet, Dimensions, Pressable } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, {
@@ -13,6 +13,7 @@ interface PathItemProps {
   icon: keyof typeof MaterialCommunityIcons.glyphMap;
   title: string;
   exercise?: Exercise;
+  userCourseId?: string;
   onClick?: () => void;
   index: number;
 }
@@ -21,6 +22,7 @@ const PathItem: React.FC<PathItemProps> = ({
   icon,
   title,
   exercise,
+  userCourseId,
   onClick,
   index,
 }) => {
@@ -34,7 +36,9 @@ const PathItem: React.FC<PathItemProps> = ({
   } = useFetchView(exerciseId, index);
   useEffect(() => {
     const setExercise = async () => {
-      setExerciseId(exercise?.id || "");
+      startTransition(() => {
+        setExerciseId(exercise?.id || "");
+      });
     };
 
     setExercise();
@@ -68,7 +72,7 @@ const PathItem: React.FC<PathItemProps> = ({
     }
     console.log(view);
     if (view && typeof view === "object") {
-      const exercise: Exercise = {
+      const viewTmp: Exercise = {
         id: view.id || "",
         template: view.template || 0,
         next_view_id: view.next_view_id || null,
@@ -83,14 +87,18 @@ const PathItem: React.FC<PathItemProps> = ({
       };
 
       console.log(exercise);
+      console.log("indexTmp");
+      console.log(indexTmp);
 
       setClicked(true);
       router.push({
         pathname: `../../exercise/[id]`,
         params: {
-          id: exercise.id,
+          id: viewTmp.id,
           index: indexTmp,
-          exercise: JSON.stringify(exercise),
+          exercise: JSON.stringify(viewTmp),
+          exerciseId: exercise?.id,
+          userCourseId: userCourseId,
         },
       });
     } else {

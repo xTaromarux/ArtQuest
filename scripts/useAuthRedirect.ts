@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import { Router } from "expo-router";
 
@@ -24,12 +24,16 @@ export const useAuthRedirect = ({
         const token = await SecureStore.getItemAsync("authToken");
         if (token) {
           console.log("Token found, setting as valid");
-          setIsTokenValid(true);
+          startTransition(() => {
+            setIsTokenValid(true);
+          });
         }
       } catch (error) {
         console.error("Error checking token:", error);
       } finally {
-        setIsInitialized(true);
+        startTransition(() => {
+          setIsInitialized(true);
+        });
       }
     };
 

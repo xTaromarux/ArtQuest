@@ -1,16 +1,24 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, startTransition } from "react";
 import API_BASE_URL from "@/utils/config";
 
-const useFetchCourseExercises = (courseId: string | null) => {
+const useFetchCourseExercises = (
+  courseId: string | null,
+  newCourse: string | null
+) => {
   const [pathItems, setPathItems] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!courseId) {
-      setLoading(false);
+      startTransition(() => {
+        setLoading(false);
+      });
       return;
     }
+    startTransition(() => {
+      setLoading(true);
+    });
 
     const fetchCourseDetails = async () => {
       try {
@@ -27,25 +35,32 @@ const useFetchCourseExercises = (courseId: string | null) => {
         if (!coursesResponse.ok) {
           throw new Error("Failed to fetch courses exercises");
         }
-        
-        const courseDetails = await coursesResponse.json();
 
-        setPathItems(courseDetails);
+        const courseDetails = await coursesResponse.json();
+        startTransition(() => {
+          setPathItems(courseDetails);
+        });
       } catch (err) {
         if (err instanceof Error) {
+          startTransition(() => {
             setError(err.message);
-            console.error("Error fetching course exercises:", err.message);
-          } else {
+          });
+          console.error("Error fetching course exercises:", err.message);
+        } else {
+          startTransition(() => {
             setError("An unknown error occurred");
-            console.error("Unknown error:", err);
-          }
+          });
+          console.error("Unknown error:", err);
+        }
       } finally {
-        setLoading(false);
+        startTransition(() => {
+          setLoading(false);
+        });
       }
     };
 
     fetchCourseDetails();
-  }, [courseId]);
+  }, [courseId, newCourse]);
 
   return { pathItems, loading, error };
 };

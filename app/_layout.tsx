@@ -6,7 +6,14 @@ import {
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  startTransition,
+  Suspense,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import "react-native-reanimated";
 import { Slot, useRouter, useSegments } from "expo-router";
 import { ClerkProvider, ClerkLoaded, useAuth } from "@clerk/clerk-expo";
@@ -17,7 +24,7 @@ import { enableScreens } from "react-native-screens";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
 import { View, Text } from "react-native";
-import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from "expo-secure-store";
 
 enableScreens();
 
@@ -44,11 +51,15 @@ const useOfflineAuth = () => {
   }>(null);
 
   useEffect(() => {
+    let isMounted = true;
+
     const loadOfflineAuth = async () => {
       try {
         const savedAuth = await AsyncStorage.getItem("auth");
-        if (savedAuth) {
-          setOfflineAuth(JSON.parse(savedAuth));
+        if (savedAuth && isMounted) {
+          startTransition(() => {
+            setOfflineAuth(JSON.parse(savedAuth));
+          });
         }
       } catch (error) {
         console.error("Error loading offline auth data:", error);
@@ -58,26 +69,38 @@ const useOfflineAuth = () => {
     if (!isLoaded) {
       loadOfflineAuth();
     }
+
+    return () => {
+      isMounted = false; // Cleanup to avoid state updates after component unmount.
+    };
   }, [isLoaded]);
 
   useEffect(() => {
+    let isMounted = true;
+
     const saveAuth = async () => {
-      if (isLoaded && isSignedIn) {
-        try {
+      try {
+        if (isLoaded && isSignedIn) {
           const token = await getToken();
-          await AsyncStorage.setItem(
-            "auth",
-            JSON.stringify({ userId, isSignedIn, token })
-          );
-        } catch (error) {
-          console.error("Error saving auth data:", error);
+          if (isMounted) {
+            await AsyncStorage.setItem(
+              "auth",
+              JSON.stringify({ userId, isSignedIn, token })
+            );
+          }
+        } else if (isMounted) {
+          await AsyncStorage.removeItem("auth");
         }
-      } else {
-        await AsyncStorage.removeItem("auth");
+      } catch (error) {
+        console.error("Error saving auth data:", error);
       }
     };
 
     saveAuth();
+
+    return () => {
+      isMounted = false; // Cleanup to prevent updates to unmounted components.
+    };
   }, [isLoaded, isSignedIn, userId]);
 
   return { isLoaded, isSignedIn, offlineAuth };
@@ -92,7 +115,9 @@ const RedirectContext = createContext<RedirectContextType | undefined>(
   undefined
 );
 
-export const RedirectProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
+export const RedirectProvider: React.FC<React.PropsWithChildren<{}>> = ({
+  children,
+}) => {
   const [hasRedirected, setHasRedirected] = useState(false);
 
   return (
@@ -119,14 +144,14 @@ const InitialLayout = () => {
   useEffect(() => {
     if (!isLoaded || isWaiting) return;
 
-    const inTabsGroup = segments[0] === '(auth)';
+    const inTabsGroup = segments[0] === "(auth)";
 
-    console.log('User changed: ', isSignedIn);
+    console.log("User changed: ", isSignedIn);
 
     if (isSignedIn && !inTabsGroup) {
-      router.replace('/home');
+      router.replace("/home");
     } else if (!isSignedIn) {
-      router.replace('/');
+      router.replace("/");
     }
   }, [isSignedIn, isWaiting]);
 
@@ -149,7 +174,6 @@ const tokenCache = {
     }
   },
 };
-
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
@@ -180,7 +204,9 @@ function RootLayoutNav() {
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
-      setIsOffline(!state.isConnected);
+      startTransition(() => {
+        setIsOffline(!state.isConnected);
+      });
     });
 
     return () => unsubscribe();
@@ -208,12 +234,14 @@ function RootLayoutNav() {
           <ThemeProvider
             value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
           >
-            <ClerkLoaded>
-              <PortalProvider>
-                <PortalHost name="menu" />
-                <InitialLayout />
-              </PortalProvider>
-            </ClerkLoaded>
+            {/* <Suspense fallback={<Text>Loading App...</Text>}> */}
+              <ClerkLoaded>
+                <PortalProvider>
+                  <PortalHost name="menu" />
+                  <InitialLayout />
+                </PortalProvider>
+              </ClerkLoaded>
+            {/* </Suspense> */}
           </ThemeProvider>
         </ClerkProvider>
       </GestureHandlerRootView>

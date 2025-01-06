@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, startTransition } from "react";
 import API_BASE_URL from "@/utils/config";
 import { useUser } from "@clerk/clerk-expo";
 
@@ -33,13 +33,18 @@ const useFetchUserId = () => {
         if (!data?.id) {
           throw new Error("No user_id found in response");
         }
-
-        setUserId(data.id);
+        startTransition(() => {
+          setUserId(data.id);
+        });
       } catch (err: any) {
         console.error("Error fetching userId:", err);
-        setError(err.message || "An error occurred");
+        startTransition(() => {
+          setError(err.message || "An error occurred");
+        });
       } finally {
-        setLoading(false);
+        startTransition(() => {
+          setLoading(false);
+        });
       }
     };
 

@@ -2,13 +2,13 @@ import { useState, useEffect, startTransition } from "react";
 import API_BASE_URL from "@/utils/config";
 import { Exercise } from "@/utils/types";
 
-const useFetchView = (exerciseId: string | null, index: number) => {
+const useFetchViewById = (viewId: string | null, index: number) => {
   const [view, setView] = useState<Exercise>();
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!exerciseId) {
+    if (!viewId) {
       startTransition(() => {
         setLoading(false);
       });
@@ -17,10 +17,9 @@ const useFetchView = (exerciseId: string | null, index: number) => {
 
     const fetchCourseDetails = async () => {
       try {
-        console.log(exerciseId);
 
         const coursesResponse = await fetch(
-          `${API_BASE_URL}/api/view_details/${exerciseId}`,
+          `${API_BASE_URL}/api/view_details_by_id/${viewId}`,
           {
             headers: {
               "ngrok-skip-browser-warning": "true",
@@ -58,9 +57,9 @@ const useFetchView = (exerciseId: string | null, index: number) => {
     };
 
     fetchCourseDetails();
-  }, [exerciseId]);
+  }, [viewId]);
 
   return { view, loading, error };
 };
 
-export default useFetchView;
+export default useFetchViewById;

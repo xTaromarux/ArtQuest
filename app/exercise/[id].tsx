@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, startTransition } from "react";
 import { Link, router, useGlobalSearchParams, useRouter } from "expo-router";
 import {
   SafeAreaView,
@@ -20,48 +20,64 @@ import { Exercise } from "@/utils/types";
 import { renderTemplate } from "@/components/TweetScreen";
 import * as ImagePicker from "expo-image-picker";
 import API_BASE_URL from "@/utils/config";
-import useFetchView from "@/hooks/useFetchView";
+import useFetchViewById from "@/hooks/useFetchViewById";
 import useFetchUserId from "@/hooks/useFetchUserId";
 
 export default function TweetScreen() {
-  const { id, index, exercise } = useGlobalSearchParams();
+  const { id, index, exercise, exerciseId, userCourseId } = useGlobalSearchParams();
   const exerciseString = Array.isArray(exercise) ? exercise[0] : exercise;
   const { userId, loading: userLoading, error: userError } = useFetchUserId();
   const exerciseData = exerciseString ? JSON.parse(exerciseString) : null;
   const height = Dimensions.get("screen").height;
-  const [exerciseId, setExerciseId] = useState<string | null>(null);
+  const [viewId, setViewId] = useState<string | null>(null);
   const [stage, setStage] = useState(Number(index));
   const [next, setNext] = useState(Boolean);
   const {
     view,
     loading: viewLoading,
     error: viewError,
-  } = useFetchView(exerciseId, stage);
+  } = useFetchViewById(viewId, stage);
+  console.log("stage start");
+  console.log(stage);
+  console.log("exerciseData");
+  console.log(exerciseData);
 
-  
   useEffect(() => {
     const setExercise = async () => {
-      if(!view) return
+      if (!view) return;
 
       let sendPicture = "false";
       if (image) {
         view.picture_urls[1].url = image;
         sendPicture = "true";
-  
+
         // Wywołanie uploadImage i przypisanie wiadomości do aiDescription
-        const feedbackMessage = await uploadImage(userId!, exerciseData.id, image);
-  
-        setAiDescription(feedbackMessage);
+        const feedbackMessage = await uploadImage(
+          userId!,
+          exerciseId as string,
+          image
+        );
+        startTransition(() => {
+          setAiDescription(feedbackMessage);
+        });
         view.short_descriptions[1] = feedbackMessage;
       }
-  
+
+      console.log("stage before", stage);
+      startTransition(() => {
+        setStage(next ? stage + 2 : stage - 2);
+      });
+      view.percentage = stage;
+      console.log("stage after", view.percentage);
+
       router.push({
         pathname: `../../exercise/[id]`,
         params: {
           id: view.id,
-          index: next ? stage + 1 : stage - 1,
-          sendPicture: sendPicture,
+          index: next ? stage + 2 : stage - 2,
           exercise: JSON.stringify(view),
+          exerciseId: exerciseId,
+          userCourseId: userCourseId,
         },
       });
     };
@@ -81,12 +97,28 @@ export default function TweetScreen() {
 
     // Pobranie obrazu jako Blob
     const response = await fetch(imageUri);
-    const blob = await response.blob();
+    console.log("response image " + response);
+    
+
 
     // Dodanie danych do FormData
     formData.append("user_id", userId);
     formData.append("exercise_id", exerciseId);
-    formData.append("feedback_image", blob, "feedback_image.jpg");
+
+    
+    if (imageUri) {
+      const filename = imageUri.split("/").pop();
+      const type = `image/jpg`;
+      formData.append("feedback_image", {
+        uri: imageUri,
+        name: filename,
+        type,
+      } as any);
+    }
+
+    console.log("formData");
+    console.log(formData);
+    
 
     try {
       const uploadResponse = await fetch(`${API_BASE_URL}/api/feedback/`, {
@@ -103,16 +135,16 @@ export default function TweetScreen() {
         throw new Error(errorData.message || "Upload failed");
       }
 
-      Alert.alert("Success", "Image uploaded successfully!");
-
-      // Pobierz szczegóły z feedback_details
       const feedbackDetails = await fetchFeedbackDetails(exerciseId, userId);
+
+      console.log("feedbackDetails");
+      console.log(feedbackDetails);
+      
 
       // Zwróć dane, aby użyć ich w handlePress
       return feedbackDetails.message || "No feedback provided";
     } catch (error: any) {
       console.error("Error during upload:", error.message || error);
-      Alert.alert("Error", error.message || "Failed to upload image");
       return "Error fetching feedback details"; // Zwróć wartość domyślną w przypadku błędu
     }
   };
@@ -167,9 +199,43 @@ export default function TweetScreen() {
     }
   };
 
+  useEffect(() => {
+    editCourseState(stage);
+  }, [stage, index]);
+
+  const editCourseState = async (stage: number) => {
+    try {
+      if (!userCourseId) return;
+
+      console.log("stage - update");
+      console.log(stage);
+
+      const response = await fetch(
+        `${API_BASE_URL}/api/progresses/${userCourseId}/edit_stage?stage=${String(stage)}`,
+        {
+          method: "PUT",
+        }
+      );
+
+      console.log("response - stage");
+      console.log(response.json());
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Server response:", errorText);
+        throw new Error("Failed to save course progress. Please try again.");
+      }
+
+      console.log("response");
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handlePress = async (exercise: Exercise, next: boolean) => {
-    setNext(next)
-    setExerciseId(next ? exercise.next_view_id : exercise.previous_view_id)
+    await setNext(next);
+    await setViewId(next ? exercise.next_view_id : exercise.previous_view_id);
   };
 
   return (
@@ -183,7 +249,7 @@ export default function TweetScreen() {
         <View style={styles.header}>
           <View style={styles.courseInfoContainer}>
             <ProgressBar
-              progress={exerciseData.percentage}
+              progress={stage / 10}
               color={Colors.dark.tintLighterGreen}
             />
           </View>

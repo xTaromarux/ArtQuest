@@ -1,16 +1,39 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, startTransition, useRef } from "react";
 import API_BASE_URL from "@/utils/config";
+import useFetchCreateCourseState from "./useFetchCreateCourseState";
 
-const useFetchCourseDetails = (userId: string | null) => {
+const useFetchCourseDetails = (
+  userId: string | null,
+  prevCourseId: string | null,
+  newCourse: string | null
+) => {
   const [course, setCourse] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [fetchTrigger, setFetchTrigger] = useState(0);
+  const [userCourse, setUserCourse] = useState<string>("");
+
+  const { loading: courseLoading, error: courseError } =
+    useFetchCreateCourseState(userCourse, newCourse, prevCourseId);
+
+  useEffect(() => {
+    console.log("setFetchTrigger ", newCourse);
+    startTransition(() => {
+      setFetchTrigger((prev) => prev + 1);
+    });
+  }, [newCourse]);
 
   useEffect(() => {
     if (!userId) {
-      setLoading(false);
+      startTransition(() => {
+        setLoading(false);
+      });
       return;
     }
+
+    startTransition(() => {
+      setLoading(true);
+    });
 
     const fetchCourseDetails = async () => {
       try {
@@ -29,6 +52,18 @@ const useFetchCourseDetails = (userId: string | null) => {
         }
 
         const coursesData = await coursesResponse.json();
+        startTransition(() => {
+          setUserCourse((prev) =>
+            prev === coursesData[0].user_course_id
+              ? prev
+              : coursesData[0].user_course_id
+          );
+          console.log("userCourse", userCourse);
+
+        });
+        console.log("coursesData");
+        console.log(coursesData);
+
         const courseId = coursesData[0]?.course_id;
 
         if (!courseId) {
@@ -50,23 +85,34 @@ const useFetchCourseDetails = (userId: string | null) => {
         }
 
         const courseDetails = await courseDetailsResponse.json();
-        courseDetails.stage = coursesData.stage;
-        setCourse(courseDetails);
+        console.log("courseDetails - stage");
+        console.log(coursesData[0]?.stage);
+        courseDetails.stage = coursesData[0]?.stage / 10;
+        courseDetails.user_course_id = coursesData[0].user_course_id;
+        startTransition(() => {
+          setCourse(courseDetails);
+        });
       } catch (err) {
         if (err instanceof Error) {
+          startTransition(() => {
             setError(err.message);
-            console.error("Error fetching course details:", err.message);
-          } else {
+          });
+          console.error("Error fetching course details:", err.message);
+        } else {
+          startTransition(() => {
             setError("An unknown error occurred");
-            console.error("Unknown error:", err);
-          }
+          });
+          console.error("Unknown error:", err);
+        }
       } finally {
-        setLoading(false);
+        startTransition(() => {
+          setLoading(false);
+        });
       }
     };
 
     fetchCourseDetails();
-  }, [userId]);
+  }, [userId, fetchTrigger]);
 
   return { course, loading, error };
 };

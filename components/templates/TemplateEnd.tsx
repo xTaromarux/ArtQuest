@@ -15,7 +15,7 @@ const TemplateEnd = ({
 }: {
   exercise: Exercise;
   handlePress?: () => void;
-}) => {
+}) => {  
   const { short_descriptions, descriptions, picture_urls, percentage } = exercise;
   const [isModalVisible, setModalVisible] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
@@ -103,8 +103,7 @@ const TemplateEnd = ({
             </Text>
             <View style={[styles.innerContainer]}>
               <Feather name="target" size={24} color="black" />
-              <Text style={[styles.smallText]}>100</Text>{" "}
-              {/* Placeholder points */}
+              <Text style={[styles.smallText]}>100</Text>
             </View>
           </View>
         </View>

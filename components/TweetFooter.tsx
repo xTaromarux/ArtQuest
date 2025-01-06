@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { startTransition, useEffect, useState } from "react";
 import { Text, View, StyleSheet } from "react-native";
 import IconButton from "@/components/IconButton"; // Zakładam, że masz taki komponent
 import { TweetType } from "@/utils/types";
@@ -24,7 +24,9 @@ const TweetFooter: React.FC<{ tweet: TweetType }> = ({ tweet }) => {
     const performEditReactions = async () => {
       if (isUserAction) { 
         await editReactions(likes);
-        setIsUserAction(false);
+        startTransition(() => {
+          setIsUserAction(false);
+        });
       }
     };
   

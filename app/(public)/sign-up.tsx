@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -20,6 +20,7 @@ import { AntDesign } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import InputModal from "@/components/InputModal";
 import * as Linking from "expo-linking";
+import useFetchCreateCourseState from "@/hooks/useFetchCreateCourseState";
 
 const SignUpScreen: React.FC = () => {
   const { isLoaded, signUp, setActive } = useSignUp();
@@ -31,10 +32,15 @@ const SignUpScreen: React.FC = () => {
   const [username, setUsername] = useState("");
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
+  const [userCourse, setUserCourse] = useState<string>("");
+  const [prevUserCourse, setPrevUserCourse] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const height = Dimensions.get("screen").height;
   const [modalVisible, setModalVisible] = useState(false);
-  const [loadingAfterRegistration, setLoadingAfterRegistration] = useState(false);
+  const [loadingAfterRegistration, setLoadingAfterRegistration] =
+    useState(false);
+  const { loading: courseLoading, error: courseError } =
+    useFetchCreateCourseState(userCourse, "0", "1");
 
   const [errors, setErrors] = useState({
     login: "",
@@ -73,7 +79,7 @@ const SignUpScreen: React.FC = () => {
       if (!response.ok) {
         throw new Error("Failed to create user on backend.");
       }
-      
+
       console.log("User created successfully on backend.");
       const responseData = await response.json();
       console.log(responseData);
@@ -86,7 +92,7 @@ const SignUpScreen: React.FC = () => {
   };
 
   const validateInputs = () => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const newErrors = {
       login: login.trim().length >= 3 ? "" : "Login: at least 3 chars",
       username: username ? "" : "Username is required",
@@ -211,11 +217,10 @@ const SignUpScreen: React.FC = () => {
   };
 
   const createUserCourse = async (userId: string) => {
-
     try {
       const data = {
-        course_id: "44c92ac4-ced2-41c5-ac20-46ca8bbe0745", 
-        user_id: userId, 
+        course_id: "44c92ac4-ced2-41c5-ac20-46ca8bbe0745",
+        user_id: userId,
       };
       const formBody = new URLSearchParams(data).toString();
 
@@ -226,23 +231,26 @@ const SignUpScreen: React.FC = () => {
         },
         body: formBody,
       });
-  
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Server response:", errorText);
         throw new Error("Failed to save user's course. Please try again.");
       }
-  
+      let userCourseTemo = await response.json();
+
+      console.log(userCourseTemo);
+
+      setUserCourse(userCourseTemo.id);
     } catch (error) {
       console.error(error);
     }
   };
 
   const createUserStats = async (userId: string) => {
-  
     const now = new Date();
     const currentDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}.${String(now.getMilliseconds()).padStart(6, "0")}`;
-  
+
     try {
       const data = {
         experience: "0",
@@ -252,9 +260,9 @@ const SignUpScreen: React.FC = () => {
         end_strike: currentDate,
         user_id: userId,
       };
-  
+
       const formBody = new URLSearchParams(data).toString();
-  
+
       const response = await fetch(`${API_BASE_URL}/api/statistics/create`, {
         method: "POST",
         headers: {
@@ -262,43 +270,41 @@ const SignUpScreen: React.FC = () => {
         },
         body: formBody,
       });
-  
+
       if (!response.ok) {
         console.error("Server response:", await response.text());
         throw new Error("Failed to save user's stats. Please try again.");
       }
-  
+
       console.log("User stats created successfully.");
     } catch (error) {
       console.error("Error creating user stats:", error);
     }
   };
-  
 
   const handleAccept = async (code: string) => {
     if (!signUp) return;
-  
+
     setVerificationCodeError({ label: "" });
     try {
       const response = await signUp.attemptEmailAddressVerification({
         code,
       });
       console.log(response);
-  
+
       if (response.status === "complete") {
-  
         console.log("Verification successful!");
         setModalVisible(false);
-  
+
         let user = await createUserOnBackend(login, username, emailAddress!);
         console.log(user);
-  
+
         if (user?.id) {
           setLoadingAfterRegistration(true); // Ustaw flagę przed operacjami
-  
+
           await createUserStats(user.id);
           await createUserCourse(user.id);
-  
+
           setLoadingAfterRegistration(false); // Flaga po zakończeniu
           // const completeUrl = Linking.createURL("home");
           // router.replace(completeUrl);
@@ -324,11 +330,7 @@ const SignUpScreen: React.FC = () => {
           const { emailAddress, username } = signUp;
 
           if (username && emailAddress) {
-            await createUserOnBackend(
-              username,
-              login,
-              emailAddress
-            );
+            await createUserOnBackend(username, login, emailAddress);
           }
         }
       } catch (error: any) {

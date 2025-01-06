@@ -2,13 +2,12 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  Image,
-  Pressable,
+  ActivityIndicator,
   ImageBackground,
-  useWindowDimensions,
-  Platform,
+  Pressable,
   KeyboardAvoidingView,
   Dimensions,
+  Platform,
 } from "react-native";
 import Colors from "@/constants/Colors";
 import ProgressBar from "@/components/ProgressBar";
@@ -27,43 +26,58 @@ const HomeScreen: React.FC = () => {
   const height = Dimensions.get("screen").height;
 
   const { userId, loading: userLoading, error: userError } = useFetchUserId();
-  const { course, loading, error } = useFetchCourseDetails(userId);
+  const { course, loading, error } = useFetchCourseDetails(userId, "", "");
+
+  console.log("course");
+  console.log(course);
+  console.log("userId");
+  console.log(userId);
 
   if (userLoading || loading) {
     return (
-      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
-        <Text>Loading course details...</Text>
-      </View>
+      <KeyboardAvoidingView
+        style={[
+          styles.container,
+          { height: height, justifyContent: "center", alignItems: "center" },
+        ]}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        enabled={Platform.OS === "ios"}
+      >
+        <ActivityIndicator size="large" color={Colors.dark.tintDarkerGreen} />
+      </KeyboardAvoidingView>
     );
   }
 
   if (userError || error) {
     return (
-      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+      <KeyboardAvoidingView
+        style={[
+          styles.container,
+          { height: height, justifyContent: "center", alignItems: "center" },
+        ]}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        enabled={Platform.OS === "ios"}
+      >
         <Text>Error: {userError || error}</Text>
-      </View>
-    );
-  }if (userLoading || loading) {
-    return (
-      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
-        <Text>Loading course details...</Text>
-      </View>
-    );
-  }
-
-  if (userError || error) {
-    return (
-      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
-        <Text>Error: {userError || error}</Text>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 
   if (!course) {
     return (
-      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+      <KeyboardAvoidingView
+        style={[
+          styles.container,
+          { height: height, justifyContent: "center", alignItems: "center" },
+        ]}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        enabled={Platform.OS === "ios"}
+      >
         <Text>No course found</Text>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 
@@ -72,7 +86,7 @@ const HomeScreen: React.FC = () => {
       style={[styles.container, { height: height }]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
-      enabled={Platform.OS === "ios" ? true : false}
+      enabled={Platform.OS === "ios"}
     >
       <Text style={styles.greeting}>Hello, {user?.username || "User"}!</Text>
       <Line width={100} style={{ marginVertical: 20 }} />
@@ -85,7 +99,7 @@ const HomeScreen: React.FC = () => {
       >
         <ImageBackground
           source={require("@/assets/images/background_course_home.png")}
-          style={[styles.courseImageContainer, { width: `100%` }]}
+          style={[styles.courseImageContainer, { width: `100%`, height: 200 }]}
           imageStyle={{ resizeMode: "cover", borderRadius: 10 }}
         >
           <CustomImage
@@ -97,9 +111,16 @@ const HomeScreen: React.FC = () => {
         <Line width={90} backgroundColor={Colors.dark.text} />
         <View style={styles.courseContentContainer}>
           <View style={styles.courseInfo}>
-            <Text style={styles.levelText}>Level {course.difficulty.level || 1}</Text>
-            <Text style={styles.courseTitle}>{course.course.title || "Course Title"}</Text>
-            <ProgressBar progress={course.stage || 0} color={Colors.dark.tintLighterGreen} />
+            <Text style={styles.levelText}>
+              Level {course.difficulty.level || 1}
+            </Text>
+            <Text style={styles.courseTitle}>
+              {course.course.title || "Course Title"}
+            </Text>
+            <ProgressBar
+              progress={course.stage || 0}
+              color={Colors.dark.tintLighterGreen}
+            />
           </View>
           <Pressable
             onPress={() => {

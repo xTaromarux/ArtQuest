@@ -8,11 +8,10 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
-  Dimensions,
-  Linking,
+  Dimensions
 } from "react-native";
 import Container from "@/components/Container";
-import { useSignIn } from "@clerk/clerk-expo";
+import { useSignIn, useSignUp } from "@clerk/clerk-expo";
 import { Link, useRouter } from "expo-router";
 import styles from "@/constants/styles/screens/SignInScreen.styles";
 import API_BASE_URL from "@/utils/config";
@@ -20,9 +19,11 @@ import { useRedirect } from "../_layout";
 import { useAuth } from "@clerk/clerk-expo";
 import * as AuthSession from "expo-auth-session";
 import * as SecureStore from "expo-secure-store";
+import * as Linking from "expo-linking";
 
 const SignInScreen: React.FC = () => {
   const { signIn, setActive, isLoaded } = useSignIn();
+  const { isLoaded: isLoadedSignUp, signUp, setActive: setActiveSignUp } = useSignUp();
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -30,6 +31,20 @@ const SignInScreen: React.FC = () => {
   const router = useRouter();
   const { setHasRedirected } = useRedirect();
   const { isSignedIn } = useAuth();
+  const publishableGoogleKey = process.env.GOOGLE_CLIENT_ID!;
+  const publishableGithubKey = process.env.GITHUB_CLIENT_ID!;
+
+  if (!publishableGoogleKey) {
+    throw new Error(
+      "Missing Publishable Key. Please set GOOGLE_CLIENT_ID in your .env"
+    );
+  }
+
+  if (!publishableGithubKey) {
+    throw new Error(
+      "Missing Publishable Key. Please set GITHUB_CLIENT_ID in your .env"
+    );
+  }
 
   const handleSignIn = async () => {
     if (!isLoaded) {
@@ -61,129 +76,29 @@ const SignInScreen: React.FC = () => {
       setLoading(false);
     }
   };
+  
+  const handleOAuthSignIn = async (
+    provider: "oauth_google" | "oauth_github"
+  ) => {
+    if (!isLoaded || !signIn) return;
 
-  const publishableClerkKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
-  const publishableGoogleKey = process.env.GOOGLE_CLIENT_ID!;
-  const publishableGithubKey = process.env.GITHUB_CLIENT_ID!;
-
-  const handleOAuthSignIn = async (provider: "google" | "github") => {
     try {
-      // Generowanie dynamicznego redirect URI
-      const redirectUri = AuthSession.makeRedirectUri({
-        scheme: "artquest",
-        path: "oauth-callback",
-        preferLocalhost: false,
+      const redirectUrl = Linking.createURL("/oauth-callback");
+      const completeUrl = Linking.createURL("/home");
+
+      // Użycie tej samej funkcji dla mobilnych i webowych aplikacji
+      await signIn.authenticateWithRedirect({
+        strategy: provider,
+        redirectUrl,
+        redirectUrlComplete: completeUrl,
       });
-      console.log(redirectUri);
-      
-      // Discovery dokument z authorizationEndpoint
-      const discovery = {
-        authorizationEndpoint: `${API_BASE_URL}/login/${provider}`,
-      };
-      console.log(discovery);
-
-      // Tworzenie żądania OAuth
-      const request = new AuthSession.AuthRequest({
-        clientId:
-          provider === "google"
-            ? publishableGoogleKey
-            : publishableGithubKey,
-        scopes: ["openid", "email", "profile"],
-        redirectUri,
-      });
-      console.log(request);
-
-      // Autoryzacja użytkownika
-      const result = await request.promptAsync(discovery);
-      console.log(result);
-      console.log(result.type);
-
-      if (result.type !== "error") {
-        Alert.alert(
-          "Błąd",
-          `Nie udało się zalogować przez ${
-            provider === "google" ? "Google" : "GitHub"
-          }.`
-        );
-        return;
-      }
-  
-      // Pobranie kodu autoryzacji
-      const { code } = result.params;
-  
-      // Wywołanie backendu w celu pobrania danych użytkownika
-      const response = await fetch(
-        `${API_BASE_URL}/oauth-callback?provider=${provider}&code=${code}`,
-        {
-          method: "POST",
-          headers: {
-            "ngrok-skip-browser-warning": "true",
-            "User-Agent": "CustomAgent",
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log(response);
-
-      if (!response.ok) {
-        Alert.alert("Błąd", "Nie udało się zweryfikować użytkownika.");
-        return;
-      }
-  
-      const userData = await response.json();
-  
-      const { email, given_name: firstName, name: username } = userData;
-  
-      // Sprawdzenie, czy użytkownik istnieje w Clerk
-      const checkUserResponse = await fetch(
-        `https://api.clerk.dev/v1/users?email_address=${email}`,
-        {
-          headers: {
-            Authorization: `Bearer YOUR_CLERK_API_KEY`,
-          },
-        }
-      );
-  
-      const existingUsers = await checkUserResponse.json();
-  
-      if (existingUsers.length > 0) {
-        // Użytkownik istnieje, przekierowanie na stronę główną
-        router.push("/");
-      } else {
-        // Tworzenie nowego użytkownika w Clerk
-        const createUserResponse = await fetch(
-          "https://api.clerk.dev/v1/users",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: publishableClerkKey,
-            },
-            body: JSON.stringify({
-              email_addresses: [{ email_address: email }],
-              first_name: firstName,
-              username,
-            }),
-          }
-        );
-  
-        if (!createUserResponse.ok) {
-          Alert.alert(
-            "Błąd",
-            "Nie udało się utworzyć konta użytkownika w Clerk."
-          );
-          return;
-        }
-  
-        // Konto stworzone, przekierowanie na stronę /home
-        router.push("/home");
-      }
     } catch (error: any) {
-      Alert.alert("Błąd", "Wystąpił problem podczas logowania.");
-      console.error("OAuth Error:", error);
+      Alert.alert(
+        "Błąd",
+        `Nie udało się zalogować przez ${provider === "oauth_google" ? "Google" : "GitHub"}.`
+      );
     }
   };
-  
 
   return (
     <KeyboardAvoidingView
@@ -201,7 +116,7 @@ const SignInScreen: React.FC = () => {
         <View style={styles.socialButtonsContainer}>
           <TouchableOpacity
             style={[styles.socialButton, { marginRight: 5 }]}
-            onPress={() => handleOAuthSignIn("google")}
+            onPress={() => handleOAuthSignIn("oauth_google")}
           >
             <Image
               source={require("@/assets/images/google.png")}
@@ -212,7 +127,7 @@ const SignInScreen: React.FC = () => {
 
           <TouchableOpacity
             style={[styles.socialButton, { marginLeft: 5 }]}
-            onPress={() => handleOAuthSignIn("github")}
+            onPress={() => handleOAuthSignIn("oauth_github")}
           >
             <Image
               source={require("@/assets/images/github.png")}

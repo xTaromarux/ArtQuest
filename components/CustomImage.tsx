@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { startTransition, useEffect, useState } from "react";
 import { View, Image, ActivityIndicator, Text, StyleProp, ImageStyle, ImageResizeMode } from "react-native";
 
 interface CustomImageProps {
@@ -24,13 +24,19 @@ const CustomImage: React.FC<CustomImageProps> = ({ url, style, resizeMode = "cov
         const blob = await response.blob();
         const reader = new FileReader();
         reader.onloadend = () => {
-          setImageData(reader.result as string);
-          setLoading(false);
+          startTransition(() => {
+            setImageData(reader.result as string);
+          });
+          startTransition(() => {
+            setLoading(false);
+          });
         };
         reader.readAsDataURL(blob);
       } catch (error) {
         console.error("Error loading image:", error);
-        setLoading(false);
+        startTransition(() => {
+          setLoading(false);
+        });
       }
     };
 

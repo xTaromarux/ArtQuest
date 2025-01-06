@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { startTransition, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   Dimensions,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 import ProgressBar from "@/components/ProgressBar";
 import Colors from "@/constants/Colors";
@@ -29,43 +30,105 @@ import useFetchUserId from "@/hooks/useFetchUserId";
 type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
 
 const ExerciseScreen: React.FC = () => {
-  const { id, newCourse } = useGlobalSearchParams();
+  const { id } = useGlobalSearchParams();
   const { userId, loading: userLoading, error: userError } = useFetchUserId();
-  const { course, loading, error } = useFetchCourseDetails(userId);
+  const [newCourse, setCourse] = useState<string>("");
+  const [prevCourse, setPrevCourse] = useState<string>("");
+  const { course, loading, error } = useFetchCourseDetails(
+    userId,
+    newCourse,
+    prevCourse
+  );
   const {
     pathItems,
     loading: pathLoading,
     error: pathError,
-  } = useFetchCourseExercises(course?.course.id);
+  } = useFetchCourseExercises(course?.course.id, newCourse);
 
-  // if (typeof newCourse === "string") {
-  //   try {
-  //     course = JSON.parse(newCourse);
-  //   } catch (error) {
-  //     console.error("Nie udało się sparsować danych:", error);
-  //   }
-  // }
+  console.log("course");
+  console.log(course);
+
+  useEffect(() => {
+    const loadNewCourse = async () => {
+      console.log("id ", id);
+      console.log("userId ", userId);
+
+      if (!id) {
+        return;
+      }
+
+      console.log("newUserCourse", id);
+
+      const payload = new URLSearchParams({
+        course_id: id.toString(),
+      });
+
+      const coursesResponse = await fetch(
+        `${API_BASE_URL}/api/user_course/${userId}/edit_course`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "ngrok-skip-browser-warning": "true",
+            "User-Agent": "CustomAgent",
+          },
+          body: payload.toString(),
+        }
+      );
+
+      if (!coursesResponse.ok) {
+        throw new Error("Failed to fetch courses");
+      }
+
+      const coursesData = await coursesResponse.json();
+
+      const courseId = coursesData?.course_id;
+
+      console.log("Before setCourse:", newCourse, courseId);
+      startTransition(() => {
+        setPrevCourse((prev) => (prev === newCourse ? prev : newCourse));
+        setCourse((prev) => (prev === courseId ? prev : courseId));
+      });
+    };
+
+    loadNewCourse();
+  }, [id]);
 
   const height = Dimensions.get("screen").height;
   const MODAL_HEIGHT = height - 170;
-  const modalizeRef = useRef<Modalize>(null); // <- Problem
+  const modalizeRef = useRef<Modalize>(null);
+  let count = 0;
   const grid = Array(12)
     .fill(null)
     .map((_, index) => {
       const item = pathItems?.find((i: any) => i.position === index + 1);
 
-      return item ? (
-        <View key={`item-${item.id}`} style={styles.pathItemWrapper}>
-          <PathItem
-            icon={item.done ? "star" : "play"}
-            title={item.title}
-            exercise={item}
-            index={index}
-          />
-        </View>
-      ) : (
-        <View key={`empty-${index}`} style={styles.emptyCell} />
-      );
+      if (item) {
+        console.log("count bef " + count);
+        
+        count += 2;
+        console.log("count aft " + count);
+
+        return (
+          <View key={`item-${item.id}`} style={styles.pathItemWrapper}>
+            {userLoading || loading || pathLoading ? (
+              <ActivityIndicator
+                size="small"
+                color={Colors.dark.tintDarkerGreen}
+              />
+            ) : (
+              <PathItem
+                icon={item.done ? "star" : "play"}
+                title={item.title}
+                exercise={item}
+                userCourseId={course.user_course_id}
+                index={count} 
+              />
+            )}
+          </View>
+        );
+      }
+      return <View key={`empty-${index}`} style={styles.emptyCell} />;
     });
 
   const [selectedCourse, setSelectedCourse] = useState<CourseRequest | null>(
@@ -73,7 +136,6 @@ const ExerciseScreen: React.FC = () => {
   );
 
   const onOpen = (course: CourseRequest) => {
-    // Directly pass the course object, avoiding any reference to the synthetic event
     setSelectedCourse(course);
     modalizeRef.current?.open();
   };
@@ -85,40 +147,49 @@ const ExerciseScreen: React.FC = () => {
 
   if (userLoading || loading || pathLoading) {
     return (
-      <View
+      <KeyboardAvoidingView
         style={[
           styles.container,
-          { justifyContent: "center", alignItems: "center" },
+          { height: height, justifyContent: "center", alignItems: "center" },
         ]}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        enabled={Platform.OS === "ios"}
       >
-        <Text>Loading course details...</Text>
-      </View>
+        <ActivityIndicator size="large" color={Colors.dark.tintDarkerGreen} />
+      </KeyboardAvoidingView>
     );
   }
 
   if (userError || error) {
     return (
-      <View
+      <KeyboardAvoidingView
         style={[
           styles.container,
-          { justifyContent: "center", alignItems: "center" },
+          { height: height, justifyContent: "center", alignItems: "center" },
         ]}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        enabled={Platform.OS === "ios"}
       >
         <Text>Error: {userError || error}</Text>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 
   if (!course) {
     return (
-      <View
+      <KeyboardAvoidingView
         style={[
           styles.container,
-          { justifyContent: "center", alignItems: "center" },
+          { height: height, justifyContent: "center", alignItems: "center" },
         ]}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        enabled={Platform.OS === "ios"}
       >
         <Text>No course found</Text>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 
@@ -130,7 +201,6 @@ const ExerciseScreen: React.FC = () => {
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
         enabled={Platform.OS === "ios"}
       >
-        {/* Course Card at the Top */}
         <View style={styles.courseCard}>
           <View style={styles.barContainer}>
             <View

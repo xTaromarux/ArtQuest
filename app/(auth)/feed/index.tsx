@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, startTransition } from "react";
 import {
   Dimensions,
   KeyboardAvoidingView,
@@ -58,7 +58,9 @@ const ExerciseScreen: React.FC = () => {
 
   useEffect(() => {
     const loadTweets = async () => {
-      setLoading(true);
+      startTransition(() => {
+        setLoading(true);
+      });
       try {
         const response = await fetch(`${API_BASE_URL}/api/posts`, {
           headers: {
@@ -74,12 +76,17 @@ const ExerciseScreen: React.FC = () => {
         }
 
         const data = JSON.parse(text); // Parsuj ręcznie tylko poprawny JSON
-        setTweets(data);
+        startTransition(() => {
+          setTweets(data);
+        });
       } catch (error) {
         console.error("Error fetching tweets:", error);
         setError("Failed to load tweets. Please try again.");
       } finally {
-        setLoading(false);
+
+        startTransition(() => {
+          setLoading(false);
+        });
       }
     };
 
@@ -88,20 +95,36 @@ const ExerciseScreen: React.FC = () => {
 
   if (loading) {
     return (
-      <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color={Colors.dark.text} />
-      </View>
+      <KeyboardAvoidingView
+        style={[
+          styles.container,
+          { height: height, justifyContent: "center", alignItems: "center" },
+        ]}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        enabled={Platform.OS === "ios"}
+      >
+        <ActivityIndicator size="large" color={Colors.dark.tintDarkerGreen} />
+      </KeyboardAvoidingView>
     );
   }
 
   if (error) {
     return (
-      <View style={styles.errorContainer}>
+      <KeyboardAvoidingView
+        style={[
+          styles.container,
+          { height: height, justifyContent: "center", alignItems: "center" },
+        ]}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        enabled={Platform.OS === "ios"}
+      >
         <Text style={styles.errorText}>{error}</Text>
         <Text style={styles.retryText} onPress={fetchTweets}>
           Tap to retry
         </Text>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { startTransition, useEffect, useRef, useState } from "react";
 import {
   Dimensions,
   KeyboardAvoidingView,
@@ -9,6 +9,7 @@ import {
   Pressable,
   Alert,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import styles from "@/constants/styles/screens/ProfileScreen.styles";
 import stylesModal from "@/constants/styles/components/Modal.style";
@@ -31,6 +32,7 @@ import { Achievement } from "@/utils/types";
 import { useRedirect } from "../_layout";
 import useFetchUserId from "@/hooks/useFetchUserId";
 import CustomImage from "@/components/CustomImage";
+import Colors from "@/constants/Colors";
 
 // Typy dla danych profilu i osiągnięć
 interface UserProfile {
@@ -78,7 +80,7 @@ const ExerciseScreen: React.FC = () => {
 
   useEffect(() => {
     const fetchProfileData = async () => {
-      if(!userId) return
+      if (!userId) return;
       try {
         const response = await fetch(
           `${API_BASE_URL}/api/user/${userId}/details`,
@@ -94,12 +96,15 @@ const ExerciseScreen: React.FC = () => {
         }
         const data: ProfileData = await response.json();
         console.log(data);
-
-        setProfileData(data);
+        startTransition(() => {
+          setProfileData(data);
+        });
       } catch (error) {
         console.error("Error fetching profile data:", error);
       } finally {
-        setLoading(false);
+        startTransition(() => {
+          setLoading(false);
+        });
       }
     };
 
@@ -119,11 +124,15 @@ const ExerciseScreen: React.FC = () => {
           throw new Error("Failed to fetch achievements");
         }
         const data: Achievement[] = await response.json();
-        setAchievements(data);
+        startTransition(() => {
+          setAchievements(data);
+        });
       } catch (error) {
         console.error("Error fetching achievements:", error);
       } finally {
-        setLoadingAchievements(false);
+        startTransition(() => {
+          setLoadingAchievements(false);
+        });
       }
     };
 
@@ -264,40 +273,49 @@ const ExerciseScreen: React.FC = () => {
 
   if (userError) {
     return (
-      <View
+      <KeyboardAvoidingView
         style={[
           styles.container,
-          { justifyContent: "center", alignItems: "center" },
+          { height: height, justifyContent: "center", alignItems: "center" },
         ]}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        enabled={Platform.OS === "ios"}
       >
         <Text>Error: {userError}</Text>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 
   if (userLoading || loading || loadingAchievements) {
     return (
-      <View
+      <KeyboardAvoidingView
         style={[
           styles.container,
-          { justifyContent: "center", alignItems: "center" },
+          { height: height, justifyContent: "center", alignItems: "center" },
         ]}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        enabled={Platform.OS === "ios"}
       >
-        <Text>Loading...</Text>
-      </View>
+        <ActivityIndicator size="large" color={Colors.dark.tintDarkerGreen} />
+      </KeyboardAvoidingView>
     );
   }
 
   if (!profileData) {
     return (
-      <View
+      <KeyboardAvoidingView
         style={[
           styles.container,
-          { justifyContent: "center", alignItems: "center" },
+          { height: height, justifyContent: "center", alignItems: "center" },
         ]}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        enabled={Platform.OS === "ios"}
       >
         <Text>No profile data available</Text>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 

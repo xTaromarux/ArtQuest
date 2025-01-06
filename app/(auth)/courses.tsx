@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, startTransition } from "react";
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Modalize } from "react-native-modalize";
@@ -55,11 +56,15 @@ const CourseListScreen: React.FC = () => {
         }
         const data = await response.json();
         console.log(data);
-        setCourses(data);
+        startTransition(() => {
+          setCourses(data);
+        });
       } catch (error) {
         console.error("Error fetching courses:", error);
       } finally {
-        setLoading(false);
+        startTransition(() => {
+          setLoading(false);
+        });
       }
     };
 
@@ -81,32 +86,37 @@ const CourseListScreen: React.FC = () => {
       course.course.title &&
       course.course.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
-  const handleOpen = () => {
+  const handleOpen = (course: CourseRequest) => {
     setModalVisible(true);
+    setSelectedCourse(course);
   };
 
   const handleCancel = () => {
     setModalVisible(false);
+    setSelectedCourse(null);
   };
 
   const handleAccept = () => {
     setModalVisible(false);
+    // setUserCourse(selectedCourse?.course.course_id);
+    console.log("selectedCourse");
+    console.log(selectedCourse);
+    
     router.push({
       pathname: `../exercises`,
       params: {
-        // id: "2",
-        // exercise: JSON.stringify(exerciseDetails),
+        id: selectedCourse?.course.id,
+        exercise: JSON.stringify(selectedCourse),
       },
     });
   };
 
   const renderCourseItem = ({ item }: { item: CourseRequest }) => (
-    <Pressable style={styles.courseCard} onPress={() => handleOpen()}>
+    <Pressable style={styles.courseCard} onPress={() => handleOpen(item)}>
       <View style={[styles.iconContainer]}>
         <View
           style={[styles.iconBar, { backgroundColor: item.difficulty.color }]}
         />
-        {/* <Image source={{ uri: item.picture_url }} style={styles.icon} /> */}
         <CustomImage url={item.picture_url} style={styles.icon} />
       </View>
       <View style={styles.courseInfo}>
@@ -129,14 +139,17 @@ const CourseListScreen: React.FC = () => {
 
   if (loading) {
     return (
-      <View
+      <KeyboardAvoidingView
         style={[
           styles.container,
-          { justifyContent: "center", alignItems: "center" },
+          { height: height, justifyContent: "center", alignItems: "center" },
         ]}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        enabled={Platform.OS === "ios"}
       >
-        <Text>Loading courses...</Text>
-      </View>
+        <ActivityIndicator size="large" color={Colors.dark.tintDarkerGreen} />
+      </KeyboardAvoidingView>
     );
   }
 
@@ -188,10 +201,6 @@ const CourseListScreen: React.FC = () => {
               {selectedCourse && (
                 <>
                   <View style={stylesModal.iconModalContainer}>
-                    {/* <Image
-                      source={{ uri: selectedCourse.picture_url }}
-                      style={stylesModal.modalIcon}
-                    /> */}
                     <CustomImage
                       url={selectedCourse.picture_url}
                       style={stylesModal.modalIcon}

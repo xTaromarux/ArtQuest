@@ -1,4 +1,5 @@
 import Container from "@/components/Container";
+import CustomImage from "@/components/CustomImage";
 import styles from "@/constants/styles/screens/MainScreen.styles";
 import { Link } from "expo-router";
 import React from "react";
@@ -10,8 +11,8 @@ const MainScreen = () => {
       <Container height={600} width={80}>
         <View style={styles.contentContainer}>
           <Image
-            source={require("@/assets/images/logo.png")}
-            style={styles.image}
+  source={require('../assets/images/logo.png')}
+  style={styles.image}
           />
           <Text style={styles.title}>ArtQuest</Text>
           <Text style={styles.subtitle}>
