@@ -1,9 +1,13 @@
-import React, { useState, useCallback, useEffect, startTransition } from "react";
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  startTransition,
+} from "react";
 import {
   Dimensions,
   KeyboardAvoidingView,
   Platform,
-  View,
   FlatList,
   ActivityIndicator,
   RefreshControl,
@@ -13,7 +17,7 @@ import {
 import styles from "@/constants/styles/screens/FeedScreen.styles";
 import Tweet from "@/components/Tweet";
 import { Entypo } from "@expo/vector-icons";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import Colors from "@/constants/Colors";
 import { TweetType } from "@/utils/types";
 import API_BASE_URL from "@/utils/config";
@@ -68,14 +72,13 @@ const ExerciseScreen: React.FC = () => {
             "User-Agent": "CustomAgent",
           },
         });
-        const text = await response.text(); // Zwraca odpowiedź jako tekst
-        console.log("Response text:", text);
+        const text = await response.text();
 
         if (!response.ok) {
           throw new Error(`Failed to fetch tweets: ${response.statusText}`);
         }
 
-        const data = JSON.parse(text); // Parsuj ręcznie tylko poprawny JSON
+        const data = JSON.parse(text);
         startTransition(() => {
           setTweets(data);
         });
@@ -83,7 +86,6 @@ const ExerciseScreen: React.FC = () => {
         console.error("Error fetching tweets:", error);
         setError("Failed to load tweets. Please try again.");
       } finally {
-
         startTransition(() => {
           setLoading(false);
         });

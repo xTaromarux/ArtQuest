@@ -17,7 +17,6 @@ const useFetchCourseDetails = (
     useFetchCreateCourseState(userCourse, newCourse, prevCourseId);
 
   useEffect(() => {
-    console.log("setFetchTrigger ", newCourse);
     startTransition(() => {
       setFetchTrigger((prev) => prev + 1);
     });
@@ -58,11 +57,7 @@ const useFetchCourseDetails = (
               ? prev
               : coursesData[0].user_course_id
           );
-          console.log("userCourse", userCourse);
-
         });
-        console.log("coursesData");
-        console.log(coursesData);
 
         const courseId = coursesData[0]?.course_id;
 
@@ -85,8 +80,7 @@ const useFetchCourseDetails = (
         }
 
         const courseDetails = await courseDetailsResponse.json();
-        console.log("courseDetails - stage");
-        console.log(coursesData[0]?.stage);
+
         courseDetails.stage = coursesData[0]?.stage / 10;
         courseDetails.user_course_id = coursesData[0].user_course_id;
         startTransition(() => {

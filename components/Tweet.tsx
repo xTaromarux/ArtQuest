@@ -1,22 +1,15 @@
 import React, { useState } from "react";
-import { Image, StyleSheet, Pressable, Platform } from "react-native";
-import { Text, View } from "./Themed";
-import { Entypo } from "@expo/vector-icons";
+import {Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import ConfirmationModal from "./ConfirmationModal";
-import Menu, { MenuItem } from "./PopupMenu";
-import { TweetType } from "@/utils/types";
+import { TweetProp } from "@/utils/types";
 import Colors from "@/constants/Colors";
 import TweetFooter from "./TweetFooter";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { generateRandomString } from "@/scripts/generateId";
-import CustomImage from "./CustomImage";
 import API_BASE_URL from "@/utils/config";
-
-type TweetProp = {
-  tweet: TweetType;
-  onDelete: () => void;
-};
+import styles from "@/constants/styles/components/Tweet.style";
+import TweetHeader from "./TweetHeader";
+import TweetImage from "./TweetImage";
 
 const Tweet = ({ tweet, onDelete }: TweetProp) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -68,9 +61,9 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
         throw new Error("Failed to delete the post");
       }
 
-      onDelete(); // Informuje rodzica o usunięciu posta
-      setModalVisible(false); // Ukryj modal
-      router.push("/feed"); // Przekieruj na stronę /feed
+      onDelete(); 
+      setModalVisible(false); 
+      router.push("/feed");
     } catch (error) {
       console.error("Error deleting post:", error);
     }
@@ -80,42 +73,12 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
   return (
     <>
       <Pressable style={styles.container} onPress={handlePostPress}>
-        <View style={styles.header}>
-          <View style={styles.userImageContainer}>
-            {tweet.user_picture_url ? (
-              <CustomImage
-                url={tweet.user_picture_url}
-                style={styles.userImage}
-              />
-            ) : (
-              <Image
-                source={require("@/assets/images/avatar_default.png")}
-                style={styles.userImage}
-              />
-            )}
-          </View>
-          <View style={styles.userInfo}>
-            <Text style={styles.name}>{tweet.user_name}</Text>
-            <Text>•</Text>
-            <Text style={styles.username}>@{tweet.login}</Text>
-          </View>
-          <Menu
-            style={styles.menu}
-            key={tweet.id}
-            trigger={
-              <Entypo name="dots-three-horizontal" size={20} color="gray" />
-            }
-          >
-            <MenuItem key={1} text="Edit" onPress={handleEdit} />
-            <MenuItem key={2} text="Delete" onPress={handleDelete} />
-          </Menu>
-        </View>
-
-        {tweet.picture_url && (
-          <View style={styles.imageWrapper}>
-            <Image source={{ uri: imageUrl }} style={styles.image} />
-          </View>
-        )}
+        <TweetHeader
+          tweet={tweet}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
+        {tweet.picture_url && <TweetImage url={tweet.picture_url} />}
         <TweetFooter tweet={tweet} />
       </Pressable>
 
@@ -133,80 +96,5 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: Colors.dark.background,
-    paddingTop: 10,
-    margin: 20,
-    borderRadius: 10,
-    marginVertical: 8,
-  },
-  header: {
-    backgroundColor: Colors.dark.background,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  userImageContainer: {
-    width: 50,
-    height: 50,
-    backgroundColor: Colors.light.background,
-    borderRadius: 100,
-    padding: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  userImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 100,
-  },
-  userInfo: {
-    backgroundColor: Colors.dark.background,
-    flex: 1,
-    flexDirection: "row",
-  },
-  name: {
-    color: Colors.light.text,
-    fontWeight: "bold",
-    marginLeft: 20,
-    marginRight: 10,
-  },
-  username: {
-    color: "gray",
-    marginLeft: 10,
-  },
-  menu: {
-    marginLeft: "auto",
-    borderRadius: 10,
-  },
-  content: {
-    width: "100%",
-    color: Colors.light.text,
-    height: "100%",
-    fontSize: 14,
-  },
-  imageWrapper: {
-    width: "100%",
-    aspectRatio: 1,
-    borderRadius: 10,
-    overflow: "hidden",
-    backgroundColor: "#333",
-    marginTop: 10,
-  },
-  image: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "cover",
-  },
-  footer: {
-    backgroundColor: Colors.dark.background,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-end",
-    marginTop: 10,
-  },
-});
 
 export default Tweet;

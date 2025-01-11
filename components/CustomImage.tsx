@@ -1,11 +1,7 @@
+import { CustomImageProps } from "@/utils/types";
 import React, { startTransition, useEffect, useState } from "react";
-import { View, Image, ActivityIndicator, Text, StyleProp, ImageStyle, ImageResizeMode } from "react-native";
+import { View, Image, ActivityIndicator, Text } from "react-native";
 
-interface CustomImageProps {
-  url: string;
-  style?: StyleProp<ImageStyle>;
-  resizeMode?: ImageResizeMode; // Dodanie resizeMode jako opcji
-}
 
 const CustomImage: React.FC<CustomImageProps> = ({ url, style, resizeMode = "cover" }) => {
   const [imageData, setImageData] = useState<string | null>(null);
@@ -18,7 +14,7 @@ const CustomImage: React.FC<CustomImageProps> = ({ url, style, resizeMode = "cov
           headers: {
             "ngrok-skip-browser-warning": "true",
             "User-Agent": "CustomAgent",
-          },
+          }
         });
 
         const blob = await response.blob();
@@ -50,7 +46,7 @@ const CustomImage: React.FC<CustomImageProps> = ({ url, style, resizeMode = "cov
   return imageData ? (
     <Image 
       source={{ uri: imageData }} 
-      style={[{ resizeMode }, style]} // Dodanie resizeMode do stylu
+      style={[{ resizeMode }, style]} 
     />
   ) : (
     <View>

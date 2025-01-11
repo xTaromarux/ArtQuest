@@ -1,16 +1,8 @@
-import Colors from "@/constants/Colors";
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-
-interface LabeledTextInputProps {
-  label: string;
-  value: string;
-  onChangeText: (text: string) => void;
-  placeholder?: string;
-  style?: object;
-  secureTextEntry?: boolean; // Nowy props
-}
+import styles from "@/constants/styles/components/LabeledTextInput.style";
+import { LabeledTextInputProps } from "@/utils/types";
 
 const LabeledTextInput: React.FC<LabeledTextInputProps> = ({
   label,
@@ -18,9 +10,9 @@ const LabeledTextInput: React.FC<LabeledTextInputProps> = ({
   onChangeText,
   placeholder,
   style,
-  secureTextEntry = false, // Domyślnie wyłączone
+  secureTextEntry = false,
 }) => {
-  const [isSecure, setIsSecure] = useState(secureTextEntry); // Sterowanie widocznością hasła
+  const [isSecure, setIsSecure] = useState(secureTextEntry);
 
   return (
     <View style={[styles.inputContainer, style]}>
@@ -32,7 +24,7 @@ const LabeledTextInput: React.FC<LabeledTextInputProps> = ({
           onChangeText={onChangeText}
           placeholder={placeholder}
           placeholderTextColor="#999"
-          secureTextEntry={isSecure} // Ustawienie zasłaniania
+          secureTextEntry={isSecure}
         />
         {secureTextEntry && (
           <TouchableOpacity
@@ -40,7 +32,7 @@ const LabeledTextInput: React.FC<LabeledTextInputProps> = ({
             style={styles.iconContainer}
           >
             <MaterialCommunityIcons
-              name={isSecure ? "eye-off" : "eye"} // Zmiana ikony
+              name={isSecure ? "eye-off" : "eye"}
               size={20}
               color="#999"
             />
@@ -50,32 +42,5 @@ const LabeledTextInput: React.FC<LabeledTextInputProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  inputContainer: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 14,
-    marginBottom: 2,
-    color: "#333",
-  },
-  inputWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 3,
-    borderColor: Colors.dark.background,
-    borderRadius: 10,
-    overflow: "hidden",
-  },
-  input: {
-    flex: 1,
-    padding: 10,
-    color: "#333",
-  },
-  iconContainer: {
-    paddingHorizontal: 10,
-  },
-});
 
 export default LabeledTextInput;

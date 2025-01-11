@@ -5,8 +5,6 @@ import {
   StyleSheet,
   FlatList,
   TextInput,
-  KeyboardAvoidingView,
-  Platform,
   Dimensions,
   Image,
   Pressable,
@@ -15,7 +13,7 @@ import {
 } from "react-native";
 import { Link, useLocalSearchParams } from "expo-router";
 import Colors from "@/constants/Colors";
-import { Comment, TweetType, UserType } from "@/utils/types";
+import { Comment, TweetType } from "@/utils/types";
 import Post from "@/components/Post";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
@@ -23,9 +21,10 @@ import Line from "@/components/Line";
 import API_BASE_URL from "@/utils/config";
 import CustomImage from "@/components/CustomImage";
 import useFetchUserId from "@/hooks/useFetchUserId";
+import styles from "@/constants/styles/screens/TweetDetails.styles";
 
 const TweetDetails: React.FC = () => {
-  const { post_id, post } = useLocalSearchParams(); // Pobierz ID posta z parametrów URL
+  const { post_id, post } = useLocalSearchParams(); 
   const height = Dimensions.get("screen").height;
 
   const [tweet, setTweet] = useState<TweetType>({
@@ -40,11 +39,11 @@ const TweetDetails: React.FC = () => {
     login: "",
   });
 
-  const [comments, setComments] = useState<Comment[]>([]); // Stan dla komentarzy
+  const [comments, setComments] = useState<Comment[]>([]);
   const [loadingComments, setLoadingComments] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [newComment, setNewComment] = useState<string>(""); // Treść nowego komentarza
+  const [newComment, setNewComment] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const { userId, loading: userLoading } = useFetchUserId();
 
@@ -247,111 +246,5 @@ const TweetDetails: React.FC = () => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: Colors.dark.background,
-    padding: 20,
-  },
-  loaderContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#1F1F1F",
-  },
-
-  mainContainer: {
-    width: "100%",
-    paddingHorizontal: 20,
-    backgroundColor: "transparent",
-  },
-  header: {
-    backgroundColor: Colors.dark.background,
-    paddingBottom: 20,
-    paddingTop: 40,
-    paddingHorizontal: 20,
-  },
-  tweetContent: {
-    fontSize: 18,
-    color: Colors.light.text,
-    marginBottom: 10,
-  },
-  commentContainer: {
-    marginBottom: 10,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  imageContainer: {
-    width: "20%",
-    height: "100%",
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
-  },
-  userImageContainer: {
-    width: 50,
-    height: 50,
-    backgroundColor: Colors.light.background,
-    borderRadius: 100,
-    marginTop: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  userImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 100,
-  },
-  commetnDetailsCOntainer: {
-    flexDirection: "column",
-    width: "80%",
-  },
-  userInfo: {
-    width: "100%",
-    marginVertical: 10,
-    flexDirection: "row",
-  },
-  name: {
-    color: Colors.light.text,
-    fontWeight: "bold",
-    marginRight: 10,
-  },
-  username: {
-    color: "gray",
-    marginLeft: 10,
-  },
-  commetnConteiner: {
-    width: "100%",
-  },
-  commentContent: {
-    color: Colors.light.text,
-  },
-  newCommentContainer: {
-    flexDirection: "row",
-    backgroundColor: Colors.dark.background, 
-    paddingHorizontal: 20,
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingBottom: 20,
-  },
-  input: {
-    width: "90%",
-    height: 40,
-    padding: 10,
-    backgroundColor: Colors.light.background,
-    borderTopLeftRadius: 10,
-    borderBottomLeftRadius: 10,
-    borderBottomStartRadius: 10,
-    color: Colors.dark.text,
-  },
-  floatingButton: {
-    height: 40,
-    backgroundColor: Colors.light.background,
-    borderTopRightRadius: 10,
-    borderBottomRightRadius: 10,
-    paddingHorizontal: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
 
 export default TweetDetails;

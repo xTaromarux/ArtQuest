@@ -13,15 +13,10 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({ setHasRedirected }) => {
   const { signOut } = useAuth();
 
   const handleLogout = async () => {
-    try {
-      console.log("a");
-      
-      await SecureStore.deleteItemAsync("authToken"); // Usuń token
-      console.log("b");
-      setHasRedirected(false); // Resetuj flagę
-      console.log("c");
+    try {      
+      await SecureStore.deleteItemAsync("authToken"); 
+      setHasRedirected(false); 
       await signOut();
-      console.log("d");
     } catch (error: any) {
       Alert.alert("Błąd", "Wystąpił problem podczas wylogowywania.");
     }

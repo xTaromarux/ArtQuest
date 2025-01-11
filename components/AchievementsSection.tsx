@@ -1,20 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { View, Text, ScrollView } from "react-native";
 import AchievementItem from "@/components/AchievementItem";
 import styles from "@/constants/styles/screens/ProfileScreen.styles";
-import API_BASE_URL from "@/utils/config";
-import { Achievement } from "@/utils/types";
+import { AchievementsSectionProps } from "@/utils/types";
 
-interface AchievementsSectionProps {
-  achievements: Achievement[];
-}
-
-const AchievementsSection: React.FC<AchievementsSectionProps> = ({ achievements }) => {
+const AchievementsSection: React.FC<AchievementsSectionProps> = ({
+  achievements,
+}) => {
   if (!achievements || achievements.length === 0) {
     return (
       <View style={styles.sectionContainer}>
         <Text style={styles.sectionTitle}>Achievements</Text>
-        <Text style={styles.noAchievementsText}>No achievements unlocked yet.</Text>
+        <Text style={styles.noAchievementsText}>
+          No achievements unlocked yet.
+        </Text>
       </View>
     );
   }
@@ -27,7 +26,9 @@ const AchievementsSection: React.FC<AchievementsSectionProps> = ({ achievements 
           <AchievementItem
             key={index}
             source={{ uri: achievement.picture_id }}
-            style={index === achievements.length - 1 ? { borderRightWidth: 0 } : {}}
+            style={
+              index === achievements.length - 1 ? { borderRightWidth: 0 } : {}
+            }
           />
         ))}
       </ScrollView>

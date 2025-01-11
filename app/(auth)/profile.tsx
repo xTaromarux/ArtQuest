@@ -28,34 +28,11 @@ import { Image } from "expo-image";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import API_BASE_URL from "@/utils/config";
 import { useUser } from "@clerk/clerk-expo";
-import { Achievement } from "@/utils/types";
+import { Achievement, ProfileData } from "@/utils/types";
 import { useRedirect } from "../_layout";
 import useFetchUserId from "@/hooks/useFetchUserId";
 import CustomImage from "@/components/CustomImage";
 import Colors from "@/constants/Colors";
-
-// Typy dla danych profilu i osiągnięć
-interface UserProfile {
-  user_id: string;
-  mail: string;
-  picture_url?: string;
-  login: string;
-  user_name: string;
-  created_date: string;
-}
-
-interface StatisticsData {
-  experience: number;
-  level: number;
-  courses: number;
-  start_strike: string;
-  end_strike: string;
-}
-
-interface ProfileData {
-  user: UserProfile;
-  statistics: StatisticsData;
-}
 
 const ExerciseScreen: React.FC = () => {
   const { setHasRedirected } = useRedirect();
@@ -95,7 +72,6 @@ const ExerciseScreen: React.FC = () => {
           throw new Error("Failed to fetch profile data");
         }
         const data: ProfileData = await response.json();
-        console.log(data);
         startTransition(() => {
           setProfileData(data);
         });
@@ -142,7 +118,6 @@ const ExerciseScreen: React.FC = () => {
   const updateUserPassword = async (newPassword: string) => {
     try {
       await user?.updatePassword({ newPassword });
-      console.log("Password updated successfully");
     } catch (error) {
       console.error("Error updating password:", error);
       Alert.alert("Error", "Failed to update password. Please try again.");
@@ -267,7 +242,6 @@ const ExerciseScreen: React.FC = () => {
   };
 
   const handleDeleteAccount = () => {
-    console.log("Account deleted");
     toggleModal();
   };
 
@@ -319,8 +293,6 @@ const ExerciseScreen: React.FC = () => {
     );
   }
 
-  console.log(modalUserData);
-
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <KeyboardAvoidingView
@@ -363,7 +335,7 @@ const ExerciseScreen: React.FC = () => {
                 <View style={styles.imagePickerContainer}>
                   <Pressable
                     onPress={() => {
-                      pickImage(); // Użycie funkcji bez zdarzenia
+                      pickImage();
                     }}
                     style={styles.imagePickerButton}
                   >
@@ -387,7 +359,7 @@ const ExerciseScreen: React.FC = () => {
                   style={{ marginLeft: 20, bottom: 15, width: "70%" }}
                   value={modalUserData.nickname}
                   onChangeText={(text) => {
-                    setModalUserData((prev) => ({ ...prev, nickname: text })); // Kopiujemy wartość bezpośrednio
+                    setModalUserData((prev) => ({ ...prev, nickname: text }));
                   }}
                   placeholder="Enter your nickname"
                 />
@@ -397,7 +369,7 @@ const ExerciseScreen: React.FC = () => {
                 label="Email Address"
                 value={modalUserData.email}
                 onChangeText={(text) => {
-                  setModalUserData((prev) => ({ ...prev, email: text })); // Kopiujemy wartość
+                  setModalUserData((prev) => ({ ...prev, email: text }));
                 }}
                 placeholder="Enter your email"
               />

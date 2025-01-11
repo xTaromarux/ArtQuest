@@ -2,17 +2,16 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   Pressable,
   TouchableOpacity,
 } from "react-native";
-import { Image } from "expo-image";
 import { Feather } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { Exercise } from "@/utils/types";
 import CustomImage from "../CustomImage";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import InformationModal from "../InformationModal";
+import styles from "@/constants/styles/components/Template3.style";
 
 const Template3 = ({
   exercise,
@@ -81,7 +80,7 @@ const Template3 = ({
           <View style={[styles.row, { flex: 0.5 }]}>
             <Pressable
               onPress={() => handleInfoPress(2)}
-              style={[styles.textContainer, { width: "100%"}]}
+              style={[styles.textContainer, { width: "100%" }]}
             >
               <Text style={styles.text}>{short_descriptions[2]}</Text>
               <Pressable
@@ -115,56 +114,5 @@ const Template3 = ({
     </GestureHandlerRootView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: "100%",
-    height: "100%",
-  },
-  row: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 10,
-  },
-  textContainer: {
-    width: "80%",
-  },
-  text: {
-    fontSize: 15,
-    width: "100%",
-    fontWeight: "bold",
-  },
-  iconContainer: {
-    width: "100%",
-    justifyContent: "center",
-    alignItems: "flex-end",
-  },
-  image: {
-    width: "40%",
-    height: "80%",
-    resizeMode: "contain",
-    margin: 10,
-  },
-  button: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
-    width: "100%",
-    padding: 8,
-    borderRadius: 10,
-    borderColor: Colors.dark.tintDarkerGreen,
-    borderWidth: 3,
-    alignItems: "center",
-    height: 50,
-  },
-  buttonTextDark: {
-    color: Colors.dark.text,
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-});
 
 export default Template3;

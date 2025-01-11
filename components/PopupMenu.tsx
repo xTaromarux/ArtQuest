@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import {
-  View,
   Pressable,
   StyleSheet,
   Platform,
   Dimensions,
   TouchableOpacity,
   Text,
-  StatusBar,
   Animated,
 } from "react-native";
 import { Portal } from "@gorhom/portal";

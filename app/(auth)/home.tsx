@@ -28,11 +28,6 @@ const HomeScreen: React.FC = () => {
   const { userId, loading: userLoading, error: userError } = useFetchUserId();
   const { course, loading, error } = useFetchCourseDetails(userId, "", "");
 
-  console.log("course");
-  console.log(course);
-  console.log("userId");
-  console.log(userId);
-
   if (userLoading || loading) {
     return (
       <KeyboardAvoidingView

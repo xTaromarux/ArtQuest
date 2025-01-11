@@ -1,10 +1,7 @@
 import React, { useState, useEffect, startTransition } from "react";
 import { Link, router, useGlobalSearchParams, useRouter } from "expo-router";
 import {
-  SafeAreaView,
   View,
-  Text,
-  StyleSheet,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -22,9 +19,11 @@ import * as ImagePicker from "expo-image-picker";
 import API_BASE_URL from "@/utils/config";
 import useFetchViewById from "@/hooks/useFetchViewById";
 import useFetchUserId from "@/hooks/useFetchUserId";
+import styles from "@/constants/styles/screens/ExerciseDetails.styles";
 
-export default function TweetScreen() {
-  const { id, index, exercise, exerciseId, userCourseId } = useGlobalSearchParams();
+export default function ExerciseDetails() {
+  const { id, index, exercise, exerciseId, userCourseId } =
+    useGlobalSearchParams();
   const exerciseString = Array.isArray(exercise) ? exercise[0] : exercise;
   const { userId, loading: userLoading, error: userError } = useFetchUserId();
   const exerciseData = exerciseString ? JSON.parse(exerciseString) : null;
@@ -37,10 +36,6 @@ export default function TweetScreen() {
     loading: viewLoading,
     error: viewError,
   } = useFetchViewById(viewId, stage);
-  console.log("stage start");
-  console.log(stage);
-  console.log("exerciseData");
-  console.log(exerciseData);
 
   useEffect(() => {
     const setExercise = async () => {
@@ -57,17 +52,14 @@ export default function TweetScreen() {
           exerciseId as string,
           image
         );
-        
-        
+
         view.short_descriptions[1] = feedbackMessage;
       }
 
-      console.log("stage before", stage);
       startTransition(() => {
         setStage(next ? stage + 2 : stage - 2);
       });
       view.percentage = stage;
-      console.log("stage after", view);
 
       router.push({
         pathname: `../../exercise/[id]`,
@@ -93,17 +85,11 @@ export default function TweetScreen() {
   ) => {
     const formData = new FormData();
 
-    // Pobranie obrazu jako Blob
     const response = await fetch(imageUri);
-    console.log("response image " + response);
-    
 
-
-    // Dodanie danych do FormData
     formData.append("user_id", userId);
     formData.append("exercise_id", exerciseId);
 
-    
     if (imageUri) {
       const filename = imageUri.split("/").pop();
       const type = `image/jpg`;
@@ -113,10 +99,6 @@ export default function TweetScreen() {
         type,
       } as any);
     }
-
-    console.log("formData");
-    console.log(formData);
-    
 
     try {
       const uploadResponse = await fetch(`${API_BASE_URL}/api/feedback/`, {
@@ -135,15 +117,10 @@ export default function TweetScreen() {
 
       const feedbackDetails = await fetchFeedbackDetails(exerciseId, userId);
 
-      console.log("feedbackDetails");
-      console.log(feedbackDetails);
-
-
-      // Zwróć dane, aby użyć ich w handlePress
       return feedbackDetails.message || "No feedback provided";
     } catch (error: any) {
       console.error("Error during upload:", error.message || error);
-      return "Error fetching feedback details"; // Zwróć wartość domyślną w przypadku błędu
+      return "Error fetching feedback details";
     }
   };
 
@@ -189,7 +166,6 @@ export default function TweetScreen() {
       }
 
       const data = await response.json();
-      console.log("Feedback Details:", data);
       return data; // Zwróć dane, aby można było je dalej wykorzystać
     } catch (error: any) {
       console.error("Error fetching feedback details:", error.message || error);
@@ -205,9 +181,6 @@ export default function TweetScreen() {
     try {
       if (!userCourseId) return;
 
-      console.log("stage - update");
-      console.log(stage);
-
       const response = await fetch(
         `${API_BASE_URL}/api/progresses/${userCourseId}/edit_stage?stage=${String(stage)}`,
         {
@@ -215,17 +188,11 @@ export default function TweetScreen() {
         }
       );
 
-      console.log("response - stage");
-      console.log(response.json());
-
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Server response:", errorText);
         throw new Error("Failed to save course progress. Please try again.");
       }
-
-      console.log("response");
-      console.log(response);
     } catch (error) {
       console.error(error);
     }
@@ -291,61 +258,3 @@ export default function TweetScreen() {
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  screen: {
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: Colors.dark.background,
-  },
-  header: {
-    justifyContent: "center",
-    alignItems: "flex-start",
-    display: "flex",
-    flexDirection: "row",
-    width: "100%",
-    height: "5%",
-  },
-
-  courseInfoContainer: {
-    width: "85%",
-    paddingTop: 8,
-  },
-
-  exitButtonContainer: {
-    width: "15%",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingLeft: 10,
-  },
-
-  viewContainer: {
-    width: "100%",
-    height: "95%",
-    justifyContent: "flex-start",
-  },
-
-  mainContainer: {
-    width: "100%",
-    height: "100%",
-  },
-
-  leftArrowContainer: {
-    position: "absolute",
-    width: "15%",
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-    opacity: 0.5,
-  },
-
-  rightArrowContainer: {
-    position: "absolute",
-    left: "85%",
-    width: "15%",
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-    opacity: 0.5,
-  },
-});

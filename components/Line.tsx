@@ -6,7 +6,7 @@ import { LineProps } from "@/utils/types";
 const Line = ({ width, backgroundColor, style }: LineProps) => {
   return (
     <View
-      style={[styles.container, { width: `${width}%` }, style]} // Połącz domyślne style z customowymi
+      style={[styles.container, { width: `${width}%` }, style]}
       darkColor="true"
     >
       <View style={[styles.line, {backgroundColor: backgroundColor ? backgroundColor : Colors.light.background}]}></View>
