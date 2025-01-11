@@ -36,10 +36,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "flex-start",
     paddingHorizontal: 20, 
-    marginVertical: 10
+    marginVertical: 20
   },
   modalText:{
-    fontSize: 15,
+    fontSize: 17,
+    textAlign: "justify"
   },
   });
 

@@ -6,7 +6,14 @@ import {
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useState } from "react";
+import {
+  createContext,
+  startTransition,
+  Suspense,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import "react-native-reanimated";
 import { Slot, useRouter, useSegments } from "expo-router";
 import { ClerkProvider, ClerkLoaded, useAuth } from "@clerk/clerk-expo";
@@ -17,8 +24,14 @@ import { enableScreens } from "react-native-screens";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
 import { View, Text } from "react-native";
+import * as SecureStore from "expo-secure-store";
+import { LogBox } from "react-native";
 
 enableScreens();
+
+LogBox.ignoreAllLogs(); 
+console.warn = () => {};
+console.error = () => {};
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 if (!publishableKey) {
@@ -43,11 +56,15 @@ const useOfflineAuth = () => {
   }>(null);
 
   useEffect(() => {
+    let isMounted = true;
+
     const loadOfflineAuth = async () => {
       try {
         const savedAuth = await AsyncStorage.getItem("auth");
-        if (savedAuth) {
-          setOfflineAuth(JSON.parse(savedAuth));
+        if (savedAuth && isMounted) {
+          startTransition(() => {
+            setOfflineAuth(JSON.parse(savedAuth));
+          });
         }
       } catch (error) {
         console.error("Error loading offline auth data:", error);
@@ -57,77 +74,110 @@ const useOfflineAuth = () => {
     if (!isLoaded) {
       loadOfflineAuth();
     }
+
+    return () => {
+      isMounted = false; // Cleanup to avoid state updates after component unmount.
+    };
   }, [isLoaded]);
 
   useEffect(() => {
+    let isMounted = true;
+
     const saveAuth = async () => {
-      if (isLoaded && isSignedIn) {
-        try {
+      try {
+        if (isLoaded && isSignedIn) {
           const token = await getToken();
-          await AsyncStorage.setItem(
-            "auth",
-            JSON.stringify({ userId, isSignedIn, token })
-          );
-        } catch (error) {
-          console.error("Error saving auth data:", error);
+          if (isMounted) {
+            await AsyncStorage.setItem(
+              "auth",
+              JSON.stringify({ userId, isSignedIn, token })
+            );
+          }
+        } else if (isMounted) {
+          await AsyncStorage.removeItem("auth");
         }
-      } else {
-        await AsyncStorage.removeItem("auth");
+      } catch (error) {
+        console.error("Error saving auth data:", error);
       }
     };
 
     saveAuth();
+
+    return () => {
+      isMounted = false; // Cleanup to prevent updates to unmounted components.
+    };
   }, [isLoaded, isSignedIn, userId]);
 
   return { isLoaded, isSignedIn, offlineAuth };
 };
 
+type RedirectContextType = {
+  hasRedirected: boolean;
+  setHasRedirected: (value: boolean) => void;
+};
+
+const RedirectContext = createContext<RedirectContextType | undefined>(
+  undefined
+);
+
+export const RedirectProvider: React.FC<React.PropsWithChildren<{}>> = ({
+  children,
+}) => {
+  const [hasRedirected, setHasRedirected] = useState(false);
+
+  return (
+    <RedirectContext.Provider value={{ hasRedirected, setHasRedirected }}>
+      {children}
+    </RedirectContext.Provider>
+  );
+};
+
+export const useRedirect = () => {
+  const context = useContext(RedirectContext);
+  if (!context) {
+    throw new Error("useRedirect must be used within a RedirectProvider");
+  }
+  return context;
+};
+
 const InitialLayout = () => {
-  const { isLoaded, isSignedIn, offlineAuth } = useOfflineAuth();
+  const { isLoaded, isSignedIn } = useAuth();
   const segments = useSegments();
   const router = useRouter();
-  const [isOffline, setIsOffline] = useState(false);
+  const [isWaiting, setIsWaiting] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener((state) => {
-      setIsOffline(!state.isConnected);
-    });
+    if (!isLoaded || isWaiting) return;
 
-    return () => unsubscribe();
-  }, []);
+    const inTabsGroup = segments[0] === "(auth)";
 
-  useEffect(() => {
-    if (!isLoaded && offlineAuth) {
-      router.replace("/home");
-    } else if (!isLoaded) {
-      return;
-    }
+    console.log("User changed: ", isSignedIn);
 
-    const isAuthRoute = segments[0] === "(auth)";
-    if (isSignedIn && !isAuthRoute) {
+    if (isSignedIn && !inTabsGroup) {
       router.replace("/home");
     } else if (!isSignedIn) {
       router.replace("/");
     }
-  }, [isSignedIn, offlineAuth]);
-
-  if (!isLoaded && !offlineAuth) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Ładowanie danych...</Text>
-      </View>
-    );
-  }
-
-  if (isOffline && offlineAuth) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Jesteś offline. Korzystasz z zapisanych danych.</Text>
-      </View>
-    );
-  }
+  }, [isSignedIn, isWaiting]);
 
   return <Slot />;
+};
+
+const tokenCache = {
+  async getToken(key: string) {
+    try {
+      return SecureStore.getItemAsync(key);
+    } catch (err) {
+      return null;
+    }
+  },
+  async saveToken(key: string, value: string) {
+    try {
+      return SecureStore.setItemAsync(key, value);
+    } catch (err) {
+      return;
+    }
+  },
 };
 
 export default function RootLayout() {
@@ -159,7 +209,9 @@ function RootLayoutNav() {
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
-      setIsOffline(!state.isConnected);
+      startTransition(() => {
+        setIsOffline(!state.isConnected);
+      });
     });
 
     return () => unsubscribe();
@@ -181,19 +233,23 @@ function RootLayoutNav() {
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <ClerkProvider publishableKey={publishableKey}>
-        <ThemeProvider
-          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-        >
-          <ClerkLoaded>
-            <PortalProvider>
-              <PortalHost name="menu" />
-              <InitialLayout />
-            </PortalProvider>
-          </ClerkLoaded>
-        </ThemeProvider>
-      </ClerkProvider>
-    </GestureHandlerRootView>
+    <RedirectProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <ClerkProvider publishableKey={publishableKey}>
+          <ThemeProvider
+            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+          >
+            {/* <Suspense fallback={<Text>Loading App...</Text>}> */}
+              <ClerkLoaded>
+                <PortalProvider>
+                  <PortalHost name="menu" />
+                  <InitialLayout />
+                </PortalProvider>
+              </ClerkLoaded>
+            {/* </Suspense> */}
+          </ThemeProvider>
+        </ClerkProvider>
+      </GestureHandlerRootView>
+    </RedirectProvider>
   );
 }

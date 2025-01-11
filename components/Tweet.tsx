@@ -9,21 +9,18 @@ import { TweetType } from "@/utils/types";
 import Colors from "@/constants/Colors";
 import TweetFooter from "./TweetFooter";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { generateRandomString } from "@/scripts/generateId";
+import CustomImage from "./CustomImage";
+import API_BASE_URL from "@/utils/config";
 
 type TweetProp = {
   tweet: TweetType;
   onDelete: () => void;
 };
 
-const user_id = "be72e28f-41af-4234-a112-0a0299ed7197";
-
 const Tweet = ({ tweet, onDelete }: TweetProp) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const base_url = "https://bce9-178-43-255-119.ngrok-free.app";
-  const web_url = "http://localhost:8000";
-  const API_VALUE = Platform.OS === "web" ? web_url : base_url;
-  const avatarUrl = API_VALUE + "/api" + tweet.user.avatar_url;
-  const imageUrl = API_VALUE + "/api" + tweet.image_url;
+  const imageUrl = tweet.picture_url;
 
   const router = useRouter();
 
@@ -49,26 +46,58 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
     router.push({
       pathname: `../../tweet/[id]`,
       params: {
-        id: tweet.id,
+        post_id: tweet.id,
         post: JSON.stringify(tweet),
       },
     });
   };
+  
+  const deletePost = async () => {
+    try {
+      console.log(tweet.id);
+      
+      const response = await fetch(`${API_BASE_URL}/api/post/${tweet.id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(response);
+      
+      if (!response.ok) {
+        throw new Error("Failed to delete the post");
+      }
+
+      onDelete(); // Informuje rodzica o usunięciu posta
+      setModalVisible(false); // Ukryj modal
+      router.push("/feed"); // Przekieruj na stronę /feed
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  };
+
 
   return (
     <>
       <Pressable style={styles.container} onPress={handlePostPress}>
         <View style={styles.header}>
           <View style={styles.userImageContainer}>
-            <Image
-              source={require("@/assets/images/avatar_default.png")}
-              style={styles.userImage}
-            />
+            {tweet.user_picture_url ? (
+              <CustomImage
+                url={tweet.user_picture_url}
+                style={styles.userImage}
+              />
+            ) : (
+              <Image
+                source={require("@/assets/images/avatar_default.png")}
+                style={styles.userImage}
+              />
+            )}
           </View>
           <View style={styles.userInfo}>
-            <Text style={styles.name}>{tweet.user.name}</Text>
+            <Text style={styles.name}>{tweet.user_name}</Text>
             <Text>•</Text>
-            <Text style={styles.username}>@{tweet.user.login}</Text>
+            <Text style={styles.username}>@{tweet.login}</Text>
           </View>
           <Menu
             style={styles.menu}
@@ -82,7 +111,7 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
           </Menu>
         </View>
 
-        {tweet.image_url && (
+        {tweet.picture_url && (
           <View style={styles.imageWrapper}>
             <Image source={{ uri: imageUrl }} style={styles.image} />
           </View>
@@ -92,13 +121,13 @@ const Tweet = ({ tweet, onDelete }: TweetProp) => {
 
       <ConfirmationModal
         isVisible={modalVisible}
-        onConfirm={() => {}}
+        onConfirm={deletePost}
         onCancel={handleCancelDelete}
         title="Are you sure you want to delete this post?"
-        IconComponent={AntDesign} 
-        iconName="exclamationcircleo" 
-        iconSize={40} 
-        iconColor={Colors.dark.background} 
+        IconComponent={AntDesign}
+        iconName="exclamationcircleo"
+        iconSize={40}
+        iconColor={Colors.dark.background}
         acceptText="Delete"
       />
     </>

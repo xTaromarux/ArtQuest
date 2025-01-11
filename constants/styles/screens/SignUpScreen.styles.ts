@@ -60,6 +60,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     height: "5%",
+    marginBottom: 10
   },
   line: {
     flex: 1,
@@ -76,11 +77,11 @@ const styles = StyleSheet.create({
     width: "100%",
     display: "flex",
     flexDirection: "row",
-    height: "15%",
+    height: 75,
   },
   tintInputRow: {
     width: "100%",
-    height: "40%",
+    height: 220,
   },
   tintInput: {
     flex: 1,
@@ -101,7 +102,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     width: "100%",
-    marginBottom: 10,
     color: Colors.dark.text,
   },
   continueButton: {
@@ -110,7 +110,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: Colors.dark.tintDarkerGreen,
     alignItems: "center",
-    marginTop: 10,
   },
   continueButtonText: {
     color: "#fff",
@@ -130,6 +129,12 @@ const styles = StyleSheet.create({
   link: {
     color: Colors.dark.tintLightGreen,
     fontWeight: "bold",
+  },
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginBottom: 5,
+    marginLeft: 5,
   },
 });
 

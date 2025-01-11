@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.background,
     paddingHorizontal: 15,
     paddingBottom:10,
-    paddingTop: 10,
+    paddingTop: 40,
     borderRadius: 10,
     borderTopEndRadius: 0,
     borderTopStartRadius: 0,
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   infoIconContainer: {
-    paddingTop: 15,
+    paddingTop: 20,
     height: "100%",
     width: 40,
   },
@@ -63,16 +63,20 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "center",
     width: "100%",
+    height: "90%"
   },
   pathItemWrapper: {
-    width: "33.33%", // 3 columns
+    width: "33.33%",
     alignItems: "flex-start",
-    paddingLeft: 20,
+    justifyContent: "center",
+    paddingLeft: 15,
+    height: "22%",
     marginVertical: 10,
   },
   emptyCell: {
-    width: "33.33%", // 3 columns
-    height: 100, // height to match PathItem components
+    width: "33.33%",
+    height: "22%",
+    marginVertical: 10
   },
   pathContainer: {
     paddingHorizontal: 20,
@@ -89,7 +93,7 @@ const styles = StyleSheet.create({
   },
   pathLabel: {
     color: "white",
-    fontSize: 12,
+    fontSize: 16,
     marginTop: 5,
   },
 });

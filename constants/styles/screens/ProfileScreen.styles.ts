@@ -7,16 +7,20 @@ const styles = StyleSheet.create({
   },
   backgroundImage: {
     width: "100%",
-    justifyContent: "flex-end",
-    alignItems: "flex-end"
+    height: 150,
+    paddingTop: 40,
+    justifyContent: "flex-start",
+    alignItems: "flex-end",
   },
 
   contentContainer: {
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
   },
   profileHeader: {
     alignItems: "flex-start",
-    height: 220,
+    height: 180,
+    position: "relative",
+    bottom: 20,
     justifyContent: "flex-end",
     marginBottom: 20,
   },
@@ -33,34 +37,36 @@ const styles = StyleSheet.create({
   avatar: {
     width: 90,
     height: 90,
+    borderWidth: 0,
+    borderRadius: 60,
   },
-  userInfoContainer:{
+  userInfoContainer: {
     display: "flex",
     flexDirection: "row",
-    width: "100%"
+    width: "100%",
   },
-  userContainer:{
+  userContainer: {
     width: "65%",
-    height: "100%"
+    height: "100%",
   },
   userName: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "bold",
     color: "#FFFFFF",
   },
   userHandle: {
-    fontSize: 14,
+    fontSize: 18,
     color: "#A5A5A5",
   },
   joinDate: {
     marginTop: 10,
-    fontSize: 14,
+    fontSize: 16,
     color: "#A5A5A5",
     marginBottom: 10,
   },
-  editProfileContainer:{
+  editProfileContainer: {
     width: "35%",
-    height: "100%"
+    height: "100%",
   },
   editProfileButton: {
     height: 35,
@@ -73,16 +79,22 @@ const styles = StyleSheet.create({
   editProfileButtonText: {
     color: Colors.dark.text,
     fontSize: 15,
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   sectionContainer: {
     marginBottom: 20,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: "bold",
     color: Colors.light.background,
     marginBottom: 10,
+  },
+  noAchievementsText: {
+    fontSize: 16,
+    color: "#888", // Szary kolor dla tekstu
+    textAlign: "center",
+    marginTop: 10,
   },
   statsContainer: {
     flexDirection: "row",
@@ -117,7 +129,7 @@ const styles = StyleSheet.create({
     color: Colors.dark.text,
   },
   statLabel: {
-    fontSize: 12,
+    fontSize: 16,
     color: "#666",
   },
   achievementsContainer: {
@@ -130,12 +142,12 @@ const styles = StyleSheet.create({
     borderRightWidth: 3,
     alignItems: "center",
     justifyContent: "center",
-    borderRightColor: Colors.dark.tintDarkGreen
+    borderRightColor: Colors.dark.tintDarkGreen,
   },
   achievementIcon: {
     width: 120,
     height: 120,
-    margin: 10
+    margin: 10,
   },
   infoIconContainer: {
     borderWidth: 2,
@@ -189,10 +201,10 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "center",
     alignItems: "flex-start",
-    paddingHorizontal: 20, 
-    marginVertical: 10
+    paddingHorizontal: 20,
+    marginVertical: 10,
   },
-  modalText:{
+  modalText: {
     fontSize: 15,
   },
   inputContainer: {
@@ -209,7 +221,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
     color: "#333",
   },
-  inputGroupContainer:{
+  inputGroupContainer: {
     alignItems: "center",
     flexDirection: "row",
   },
@@ -248,22 +260,23 @@ const styles = StyleSheet.create({
     borderColor: Colors.dark.tintDarkerGreen,
     borderWidth: 3,
     alignItems: "center",
-    height: 50,
+    justifyContent: "center",
+    height: 60,
     marginBottom: 10,
     marginTop: 100,
   },
   buttonDelete: {
     width: "100%",
-    padding: 12,
+    justifyContent: "center",
     borderRadius: 10,
-    height: 50,
+    height: 60,
     marginTop: 25,
     backgroundColor: Colors.dark.tintDarkerGreen,
     alignItems: "center",
   },
   buttonTextDark: {
     color: Colors.dark.text,
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
   },
   buttonTextLight: {

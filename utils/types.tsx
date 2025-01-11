@@ -26,14 +26,25 @@ export interface ProgressBarProps {
   color: string; 
 }
 
+export interface CourseRequest {
+  course: Course;
+  difficulty: Difficulty;
+  picture_url  : string;
+  stage : string;
+}
+
 export interface Course {
   id: string;
   title: string;
   description: string;
-  descriptionLongNo1: string;
-  descriptionLongNo2: string;
-  icon: any;
+  long_description: string;
+  short_desscription: string;
+}
+
+export interface Difficulty {
   color: string;
+  experience: number;
+  level: number;
 }
 
 export interface Exercise {
@@ -42,26 +53,52 @@ export interface Exercise {
   next_view_id: string | null;
   previous_view_id: string | null;
   ai_part: boolean;
-  description: string[];
-  picture: string[];
+  descriptions: string[];
+  short_descriptions: string[];
+  picture_urls: Picture[];
   percentage: number;
 }
+
+export type Picture = {
+  picture_id: string;
+  url: string;
+};
 
 export type UserType = {
   id: string;
   login: string;
-  name: string;
-  avatar_url?: string;
+  mail: string;
+  user_name: string;
+  created_date: string;
+  picture_url?: string;
 };
 
 export type TweetType = {
   id: string;
   description: string;
-  user: UserType;
-  createdAt: string;
-  image_url?: string;
-  numberOfComments?: number;
-  numberOfRetweets?: number;
-  numberOfLikes?: number;
-  impressions?: number;
+  date_added: string;
+  date_updated: string;
+  picture_url?: string;
+  reactions?: number;
+  user_picture_url?: string;
+  user_name?: string;
+  login?: string;
+};
+
+export interface Comment {
+  id: string;
+  description: string;
+  reactions: number;
+  user_id: string;
+  post_id: string;
+  date_added: string;
+  date_updated: string;
+  user_name: string;
+  login: string;
+  avatar_url: string;
+}
+
+export type Achievement = {
+  experience: number;
+  picture_id: string;
 };

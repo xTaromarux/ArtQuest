@@ -33,7 +33,8 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignContent: "flex-start",
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingBottom: 10,
+    paddingTop: 25,
     width: "100%",
   },
   courseInfo: {
@@ -53,13 +54,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   continueButton: {
-    backgroundColor: Colors.dark.background,
-    paddingVertical: 10,
+    backgroundColor: Colors.dark.tintDarkerGreen,
+    paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 10,
     width: "100%",
     alignItems: "center",
-    marginTop: 30,
+    marginTop: 65,
   },
   continueButtonText: {
     color: Colors.light.text,
