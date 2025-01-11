@@ -27,7 +27,6 @@ const useFetchViewById = (viewId: string | null, index: number) => {
             },
           }
         );
-        console.log(coursesResponse);
 
         if (!coursesResponse.ok) {
           throw new Error("Failed to fetch courses exercises");

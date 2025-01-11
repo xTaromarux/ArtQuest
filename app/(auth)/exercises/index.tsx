@@ -14,17 +14,16 @@ import ProgressBar from "@/components/ProgressBar";
 import Colors from "@/constants/Colors";
 import { AntDesign, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import styles from "@/constants/styles/screens/ExerciseScreen.styles";
-import { Link, useGlobalSearchParams } from "expo-router";
+import { useGlobalSearchParams } from "expo-router";
 import PathItem from "@/components/PathItem";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Modalize } from "react-native-modalize";
 import stylesModal from "@/constants/styles/components/Modal.style";
-import { Course, CourseRequest } from "@/utils/types";
+import { CourseRequest } from "@/utils/types";
 import { Portal } from "@gorhom/portal";
 import API_BASE_URL from "@/utils/config";
 import useFetchCourseDetails from "@/hooks/useFetchCourseDetails";
 import useFetchCourseExercises from "@/hooks/useFetchCourseExercises";
-import useFetchView from "@/hooks/useFetchView";
 import useFetchUserId from "@/hooks/useFetchUserId";
 
 type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
@@ -45,19 +44,11 @@ const ExerciseScreen: React.FC = () => {
     error: pathError,
   } = useFetchCourseExercises(course?.course.id, newCourse);
 
-  console.log("course");
-  console.log(course);
-
   useEffect(() => {
     const loadNewCourse = async () => {
-      console.log("id ", id);
-      console.log("userId ", userId);
-
       if (!id) {
         return;
       }
-
-      console.log("newUserCourse", id);
 
       const payload = new URLSearchParams({
         course_id: id.toString(),
@@ -84,7 +75,6 @@ const ExerciseScreen: React.FC = () => {
 
       const courseId = coursesData?.course_id;
 
-      console.log("Before setCourse:", newCourse, courseId);
       startTransition(() => {
         setPrevCourse((prev) => (prev === newCourse ? prev : newCourse));
         setCourse((prev) => (prev === courseId ? prev : courseId));
@@ -104,10 +94,7 @@ const ExerciseScreen: React.FC = () => {
       const item = pathItems?.find((i: any) => i.position === index + 1);
 
       if (item) {
-        console.log("count bef " + count);
-        
         count += 2;
-        console.log("count aft " + count);
 
         return (
           <View key={`item-${item.id}`} style={styles.pathItemWrapper}>
@@ -122,7 +109,7 @@ const ExerciseScreen: React.FC = () => {
                 title={item.title}
                 exercise={item}
                 userCourseId={course.user_course_id}
-                index={count} 
+                index={count}
               />
             )}
           </View>

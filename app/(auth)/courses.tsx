@@ -3,9 +3,7 @@ import {
   View,
   Text,
   FlatList,
-  Image,
   Pressable,
-  useWindowDimensions,
   KeyboardAvoidingView,
   Platform,
   Dimensions,
@@ -20,7 +18,7 @@ import styles from "@/constants/styles/screens/CoursesScreen.styles";
 import stylesModal from "@/constants/styles/components/Modal.style";
 import { Portal } from "@gorhom/portal";
 import Feather from "@expo/vector-icons/Feather";
-import { Course, CourseRequest } from "@/utils/types";
+import { CourseRequest } from "@/utils/types";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import Colors from "@/constants/Colors";
 import { router } from "expo-router";
@@ -55,7 +53,6 @@ const CourseListScreen: React.FC = () => {
           throw new Error("Failed to fetch courses");
         }
         const data = await response.json();
-        console.log(data);
         startTransition(() => {
           setCourses(data);
         });
@@ -98,10 +95,7 @@ const CourseListScreen: React.FC = () => {
 
   const handleAccept = () => {
     setModalVisible(false);
-    // setUserCourse(selectedCourse?.course.course_id);
-    console.log("selectedCourse");
-    console.log(selectedCourse);
-    
+
     router.push({
       pathname: `../exercises`,
       params: {

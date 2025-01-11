@@ -1,14 +1,9 @@
-import Colors from "@/constants/Colors";
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text} from "react-native";
 import Modal from "react-native-modal";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-
-interface InformationModalProps {
-  isVisible: boolean;
-  title: string;
-  onCancel: () => void;
-}
+import { InformationModalProps } from "@/utils/types";
+import styles from "@/constants/styles/components/InformationModal.style";
 
 const InformationModal: React.FC<InformationModalProps> = ({
   isVisible,
@@ -38,23 +33,3 @@ const InformationModal: React.FC<InformationModalProps> = ({
 };
 
 export default InformationModal;
-
-const styles = StyleSheet.create({
-  modalContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContent: {
-    width: "80%",
-    padding: 20,
-    backgroundColor: "white",
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  modalText: {
-    fontSize: 18,
-    marginTop: 20,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-});

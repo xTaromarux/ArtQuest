@@ -2,25 +2,18 @@ import React from "react";
 import { View, Text } from "react-native";
 import styles from "@/constants/styles/screens/ProfileScreen.styles";
 import StatItem from "./StatItem";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Statistic, StatisticsSectionProps } from "@/utils/types";
 
-type Statistic = {
-  icon: keyof typeof MaterialCommunityIcons.glyphMap;
-  value: number;
-  label: string;
+const calculateDayStrike = (startStrike: string, endStrike: string): number => {
+  const startDate = new Date(startStrike);
+  const endDate = new Date(endStrike);
+  const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 };
 
-interface StatisticsSectionProps {
-  statistics: {
-    experience: number;
-    level: number;
-    courses: number;
-    start_strike: string;
-    end_strike: string;
-  };
-}
-
-const StatisticsSection: React.FC<StatisticsSectionProps> = ({ statistics }) => {
+const StatisticsSection: React.FC<StatisticsSectionProps> = ({
+  statistics,
+}) => {
   const stats: Statistic[] = [
     {
       icon: "fire",
@@ -47,19 +40,6 @@ const StatisticsSection: React.FC<StatisticsSectionProps> = ({ statistics }) => 
       </View>
     </View>
   );
-};
-
-/**
- * Calculates the day strike from the start and end date.
- * @param startStrike - Start date of the strike.
- * @param endStrike - End date of the strike.
- * @returns Number of days in the streak.
- */
-const calculateDayStrike = (startStrike: string, endStrike: string): number => {
-  const startDate = new Date(startStrike);
-  const endDate = new Date(endStrike);
-  const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
-  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 };
 
 export default StatisticsSection;

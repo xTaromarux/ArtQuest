@@ -5,7 +5,7 @@ const isIOS = Platform.OS === "ios";
 const useKeyboardHeight = () => {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
-  const handleKeyboardDidShow = (e:any) => {
+  const handleKeyboardDidShow = (e: any) => {
     setKeyboardHeight(e.endCoordinates.height);
   };
   const handleKeyboardDidHide = () => {
@@ -13,7 +13,6 @@ const useKeyboardHeight = () => {
   };
 
   useEffect(() => {
-    // keyboardWillShow is not supported on android
     const showEvent = isIOS ? "keyboardWillShow" : "keyboardDidShow";
     const hideEvent = isIOS ? "keyboardWillHide" : "keyboardDidHide";
     Keyboard.addListener(showEvent, handleKeyboardDidShow);

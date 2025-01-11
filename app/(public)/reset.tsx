@@ -44,10 +44,8 @@ const PwReset = () => {
         code,
         password,
       });
-      console.log(result);
       alert("Password reset successfully");
 
-      // Set the user session active, which will log in the user automatically
       await setActive!({ session: result.createdSessionId });
     } catch (err: any) {
       alert(err.errors[0].message);

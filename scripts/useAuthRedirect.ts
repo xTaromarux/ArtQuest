@@ -23,7 +23,6 @@ export const useAuthRedirect = ({
       try {
         const token = await SecureStore.getItemAsync("authToken");
         if (token) {
-          console.log("Token found, setting as valid");
           startTransition(() => {
             setIsTokenValid(true);
           });
@@ -43,14 +42,6 @@ export const useAuthRedirect = ({
   useEffect(() => {
     if (!isLoaded || !isInitialized) return;
     if (segments[0] === undefined || segments[0] === null) return;
-
-    console.log("segments ");
-    console.log(segments);
-    console.log("isSignedIn");
-    console.log(isSignedIn);
-    console.log("isTokenValid");
-    console.log(isTokenValid);
-    console.log("_____________");
 
     const isAuthRoute = segments[1] === "sign-in" || segments[1] === "sign-up";
     const isHomeRoute = segments[1] === "home";

@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { Image } from "expo-image";
 import { Feather } from "@expo/vector-icons";
 import { Exercise } from "@/utils/types";
 import CustomImage from "../CustomImage";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import InformationModal from "../InformationModal";
+import styles from "@/constants/styles/components/Template1.style";
 
 const Template1 = ({
   exercise,
@@ -23,8 +24,6 @@ const Template1 = ({
   };
 
   const handleInfoPress = (index: number) => {
-    console.log("XDDDDDDDDDDDDD");
-
     setModalTitle(descriptions[index] || "No description available");
     toggleModal();
   };
@@ -91,43 +90,5 @@ const Template1 = ({
     </GestureHandlerRootView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: "100%",
-    height: "100%",
-  },
-  row: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 10,
-  },
-  rowSplit: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  textContainer: {
-    width: "80%",
-  },
-  text: {
-    fontSize: 15,
-    width: "100%",
-    fontWeight: "bold",
-  },
-  iconContainer: {
-    width: "100%",
-    justifyContent: "center",
-    alignItems: "flex-end",
-  },
-  image: {
-    width: "40%",
-    height: "80%",
-    resizeMode: "contain",
-    margin: 10,
-  },
-});
 
 export default Template1;

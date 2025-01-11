@@ -13,9 +13,6 @@ const useFetchCreateCourseState = (
     const createCourseState = async () => {
       if (!userCourseId || courseId === prevCourseId) return;
 
-      console.log("Previous course ID:", prevCourseId);
-      console.log("Current course ID:", courseId);
-
       try {
         setLoading(true);
         const data = {

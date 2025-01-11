@@ -1,6 +1,4 @@
 import { useState, useEffect, useCallback, startTransition } from "react";
-import { Platform } from "react-native";
-import Constants from "expo-constants";
 import API_BASE_URL from "@/utils/config";
 
 const useFetch = (endpoint: string) => {

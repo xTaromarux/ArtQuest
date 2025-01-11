@@ -80,9 +80,7 @@ const SignUpScreen: React.FC = () => {
         throw new Error("Failed to create user on backend.");
       }
 
-      console.log("User created successfully on backend.");
       const responseData = await response.json();
-      console.log(responseData);
 
       return responseData;
     } catch (error: any) {
@@ -125,8 +123,6 @@ const SignUpScreen: React.FC = () => {
       });
 
       const userId = signUpResult.id;
-      console.log(signUpResult);
-      console.log(userId);
 
       await signUp.prepareEmailAddressVerification();
     } catch (error: any) {
@@ -156,20 +152,6 @@ const SignUpScreen: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    const handleUrl = (event: { url: string }) => {
-      console.log("Redirected URL:", event.url);
-      // Obsłuż URL, np. wyodrębnij kod autoryzacji lub token
-    };
-
-    const subscription = Linking.addEventListener("url", handleUrl);
-
-    return () => {
-      // Usuń nasłuchiwacz
-      subscription.remove();
-    };
-  }, []);
-
   const handleOAuthSignIn = async (
     provider: "oauth_github" | "oauth_google"
   ) => {
@@ -189,10 +171,6 @@ const SignUpScreen: React.FC = () => {
         )}&scope=user:email`;
       }
 
-      console.log("Redirect URL:", redirectUrl);
-      console.log("Auth URL:", authUrl);
-
-      // Otwórz URL w przeglądarce
       await Linking.openURL(authUrl);
     } catch (error: any) {
       console.error("OAuth Error:", error);
@@ -238,9 +216,6 @@ const SignUpScreen: React.FC = () => {
         throw new Error("Failed to save user's course. Please try again.");
       }
       let userCourseTemo = await response.json();
-
-      console.log(userCourseTemo);
-
       setUserCourse(userCourseTemo.id);
     } catch (error) {
       console.error(error);
@@ -276,7 +251,6 @@ const SignUpScreen: React.FC = () => {
         throw new Error("Failed to save user's stats. Please try again.");
       }
 
-      console.log("User stats created successfully.");
     } catch (error) {
       console.error("Error creating user stats:", error);
     }
@@ -290,24 +264,20 @@ const SignUpScreen: React.FC = () => {
       const response = await signUp.attemptEmailAddressVerification({
         code,
       });
-      console.log(response);
 
       if (response.status === "complete") {
-        console.log("Verification successful!");
         setModalVisible(false);
 
         let user = await createUserOnBackend(login, username, emailAddress!);
-        console.log(user);
 
         if (user?.id) {
-          setLoadingAfterRegistration(true); // Ustaw flagę przed operacjami
+          setLoadingAfterRegistration(true); 
 
           await createUserStats(user.id);
           await createUserCourse(user.id);
 
-          setLoadingAfterRegistration(false); // Flaga po zakończeniu
-          // const completeUrl = Linking.createURL("home");
-          // router.replace(completeUrl);
+          setLoadingAfterRegistration(false); 
+
           await setActive({ session: response.createdSessionId });
         } else {
           throw new Error("User ID is not available.");

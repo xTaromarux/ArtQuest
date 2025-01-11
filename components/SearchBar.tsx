@@ -2,14 +2,13 @@ import React from "react";
 import { View, TextInput } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import styles from "@/constants/styles/components/SearchBar.style";
+import { SearchBarProps } from "@/utils/types";
 
-interface SearchBarProps {
-  value: string;
-  style?: object;
-  onChangeText: (text: string) => void;
-}
-
-const SearchBar: React.FC<SearchBarProps> = ({ value, onChangeText, style }) => {
+const SearchBar: React.FC<SearchBarProps> = ({
+  value,
+  onChangeText,
+  style,
+}) => {
   return (
     <View style={[styles.searchContainer, style]}>
       <TextInput

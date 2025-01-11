@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,19 +6,15 @@ import {
   TextInput,
   Alert,
   Image,
-  KeyboardAvoidingView,
-  Platform,
   Dimensions,
   Pressable,
 } from "react-native";
 import Container from "@/components/Container";
 import styles from "@/constants/styles/screens/NewPostScreen.styles";
-import * as ImagePicker from "expo-image-picker";
 import { Link, useRouter, useGlobalSearchParams } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import API_BASE_URL from "@/utils/config";
-import useFetchUserId from "@/hooks/useFetchUserId";
 
 const EditPost: React.FC = () => {
   const router = useRouter();
@@ -28,7 +24,9 @@ const EditPost: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const height = Dimensions.get("screen").height;
   const [image, setImage] = useState<string | null>(post?.picture_url || null);
-  const [description, setDescription] = useState<string>(post?.description || "");
+  const [description, setDescription] = useState<string>(
+    post?.description || ""
+  );
 
   const handleSubmit = async () => {
     if (!description.trim() || !image) {
@@ -37,10 +35,13 @@ const EditPost: React.FC = () => {
     }
     setLoading(true);
 
-    try {      
-      const response = await fetch(`${API_BASE_URL}/api/post/${post.id}/edit_description?description=${description}`, {
-        method: "PUT", 
-      });
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/post/${post.id}/edit_description?description=${description}`,
+        {
+          method: "PUT",
+        }
+      );
 
       if (!response.ok) {
         const errorText = await response.text();

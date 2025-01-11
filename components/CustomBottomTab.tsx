@@ -1,12 +1,10 @@
 import React from "react";
-import {
-  Pressable,
-  Text,
-  View,
-  useWindowDimensions,
-} from "react-native";
+import { Pressable, Text, View, useWindowDimensions } from "react-native";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import Animated, { useAnimatedStyle, withSpring } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  withSpring,
+} from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BottomTabIcon from "./BottomTabIcon";
 import Line from "./Line";
@@ -38,7 +36,7 @@ const CustomBottomTab = ({
 
   return (
     <>
-      <Line width={90} style={{ position: "absolute", bottom: 90}} />
+      <Line width={90} style={{ position: "absolute", bottom: 90 }} />
       <View
         style={[
           styles.tabBarContainer,

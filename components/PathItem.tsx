@@ -1,5 +1,5 @@
 import React, { startTransition, useEffect, useState } from "react";
-import { View, Text, StyleSheet, Dimensions, Pressable } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, {
   useSharedValue,
@@ -7,16 +7,9 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { router } from "expo-router";
-import { Exercise } from "@/utils/types";
+import { Exercise, PathItemProps } from "@/utils/types";
 import useFetchView from "@/hooks/useFetchView";
-interface PathItemProps {
-  icon: keyof typeof MaterialCommunityIcons.glyphMap;
-  title: string;
-  exercise?: Exercise;
-  userCourseId?: string;
-  onClick?: () => void;
-  index: number;
-}
+import styles from "@/constants/styles/components/PathItem.style";
 
 const PathItem: React.FC<PathItemProps> = ({
   icon,
@@ -44,7 +37,6 @@ const PathItem: React.FC<PathItemProps> = ({
     setExercise();
   }, [exercise]);
 
-  // Animation styles
   const platformTopOfTheTopStyle = useAnimatedStyle(() => ({
     top: withTiming(clicked ? 5 : platformTopOfTheTopPosition.value.top, {
       duration: 500,
@@ -70,7 +62,6 @@ const PathItem: React.FC<PathItemProps> = ({
     while (!exercise || viewLoading) {
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
-    console.log(view);
     if (view && typeof view === "object") {
       const viewTmp: Exercise = {
         id: view.id || "",
@@ -85,10 +76,6 @@ const PathItem: React.FC<PathItemProps> = ({
         picture_urls: Array.isArray(view.picture_urls) ? view.picture_urls : [],
         percentage: view.percentage || 0,
       };
-
-      console.log(exercise);
-      console.log("indexTmp");
-      console.log(indexTmp);
 
       setClicked(true);
       router.push({
@@ -173,99 +160,3 @@ const PathItem: React.FC<PathItemProps> = ({
 };
 
 export default PathItem;
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-  },
-  platformBase: {
-    width: 70,
-    height: 70,
-    backgroundColor: "#3D3D3D",
-    transform: [{ rotateX: "45deg" }, { rotateZ: "0.785398rad" }],
-    borderRadius: 5,
-    position: "relative",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  platformBaseSupportRight: {
-    width: 20,
-    height: 15,
-    transform: [{ rotateZ: "0.785398rad" }],
-    position: "relative",
-    borderRadius: 5,
-    right: 34,
-    bottom: -15,
-    backgroundColor: "#3D3D3D",
-  },
-  platformBaseSupportLeft: {
-    width: 20,
-    height: 15,
-    transform: [{ rotateZ: "0.785398rad" }],
-    position: "relative",
-    borderRadius: 5,
-    left: 23,
-    bottom: 26,
-    backgroundColor: "#3D3D3D",
-  },
-  platformMiddle: {
-    width: 70,
-    height: 70,
-    backgroundColor: "#ADADAD",
-    borderRadius: 5,
-    position: "absolute",
-    top: -11,
-    right: 11,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  platformTop: {
-    width: 56,
-    height: 56,
-    backgroundColor: "#3D3D3D",
-    borderRadius: 5,
-    position: "absolute",
-    top: 5,
-    left: 5,
-  },
-  platformTopSupportRight: {
-    width: 20,
-    height: 15,
-    transform: [{ rotateZ: "0.785398rad" }],
-    position: "relative",
-    borderRadius: 5,
-    right: 7,
-    bottom: -22,
-    backgroundColor: "#3D3D3D",
-  },
-  platformTopSupportLeft: {
-    width: 20,
-    height: 15,
-    transform: [{ rotateZ: "0.785398rad" }],
-    position: "relative",
-    borderRadius: 5,
-    left: 32,
-    bottom: 7,
-    backgroundColor: "#3D3D3D",
-  },
-  platformTopOfTheTop: {
-    width: 55,
-    height: 55,
-    backgroundColor: "#ADADAD",
-    borderRadius: 5,
-    position: "absolute",
-    top: -8,
-    right: 9,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  title: {
-    marginTop: 5,
-    justifyContent: "center",
-    alignItems: "center",
-    textAlign: "center",
-    color: "#FFFFFF",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-});

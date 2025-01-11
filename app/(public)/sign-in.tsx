@@ -14,11 +14,8 @@ import Container from "@/components/Container";
 import { useSignIn, useSignUp } from "@clerk/clerk-expo";
 import { Link, useRouter } from "expo-router";
 import styles from "@/constants/styles/screens/SignInScreen.styles";
-import API_BASE_URL from "@/utils/config";
 import { useRedirect } from "../_layout";
 import { useAuth } from "@clerk/clerk-expo";
-import * as AuthSession from "expo-auth-session";
-import * as SecureStore from "expo-secure-store";
 import * as Linking from "expo-linking";
 
 const SignInScreen: React.FC = () => {
@@ -54,13 +51,10 @@ const SignInScreen: React.FC = () => {
     try {
       setHasRedirected(false);
 
-      console.log("Attempting to sign in");
       const completeSignIn = await signIn.create({
         identifier: emailAddress,
         password,
       });
-
-      console.log("Sign-in result:", completeSignIn);
 
       if (completeSignIn.status === "complete") {
         await setActive({ session: completeSignIn.createdSessionId });

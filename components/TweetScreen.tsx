@@ -23,9 +23,6 @@ export const renderTemplate = (
   if (!TemplateComponent) return <Text>Template not found</Text>;
 
   return (
-    <TemplateComponent
-      exercise={exerciseData}
-      handlePress={handlePress}
-    />
+    <TemplateComponent exercise={exerciseData} handlePress={handlePress} />
   );
 };

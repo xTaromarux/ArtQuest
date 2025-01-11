@@ -6,8 +6,6 @@ import {
   TextInput,
   Alert,
   Image,
-  KeyboardAvoidingView,
-  Platform,
   Dimensions,
   Pressable,
 } from "react-native";
@@ -17,7 +15,6 @@ import * as ImagePicker from "expo-image-picker";
 import { Link, useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import * as FileSystem from "expo-file-system";
 import API_BASE_URL from "@/utils/config";
 import useFetchUserId from "@/hooks/useFetchUserId";
 
