@@ -24,10 +24,10 @@ ArtQuest is an innovative application designed to inspire and develop users' art
 - **API Integration**: Backend support for user management, artwork submissions, and feedback processing.
 
 ## Screenshots
-
-![Application Welcome Screen](./assets/images/screenshot.png)
-![Course List Screen](./assets/images/screenshot1.png)
-![Task View Screen](./assets/images/screenshot2.png)
+<img src="./assets/images/screenshot.png" alt="Application Welcome Screen" width="300" />
+<img src="./assets/images/screenshot1.png" alt="Course List Screen" width="300" />
+<img src="./assets/images/screenshot2.png" alt="Task View Screen" width="300" />
+<img src="./assets/images/screenshot3.png" alt="Exercise Solving View Screen" width="300" />
 
 
 ## Tech Stack
