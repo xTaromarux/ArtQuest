@@ -57,9 +57,8 @@ export default function TweetScreen() {
           exerciseId as string,
           image
         );
-        startTransition(() => {
-          setAiDescription(feedbackMessage);
-        });
+        
+        
         view.short_descriptions[1] = feedbackMessage;
       }
 
@@ -68,7 +67,7 @@ export default function TweetScreen() {
         setStage(next ? stage + 2 : stage - 2);
       });
       view.percentage = stage;
-      console.log("stage after", view.percentage);
+      console.log("stage after", view);
 
       router.push({
         pathname: `../../exercise/[id]`,
@@ -86,7 +85,6 @@ export default function TweetScreen() {
   }, [view]);
 
   const [image, setImage] = useState<string | null>(null);
-  const [aiDescription, setAiDescription] = useState<string>("Error");
 
   const uploadImage = async (
     userId: string,
@@ -139,7 +137,7 @@ export default function TweetScreen() {
 
       console.log("feedbackDetails");
       console.log(feedbackDetails);
-      
+
 
       // Zwróć dane, aby użyć ich w handlePress
       return feedbackDetails.message || "No feedback provided";

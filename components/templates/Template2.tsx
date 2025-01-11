@@ -59,7 +59,7 @@ const Template2 = ({
         <View style={[styles.row, { flex: 1.5 }]}>
           <CustomImage
             url={picture_urls[0].url}
-            style={[styles.image, { width: 200, height: 200 }]}
+            style={[styles.image, { width: 300, height: 300 }]}
           />
         </View>
 
@@ -80,17 +80,17 @@ const Template2 = ({
         <View style={[styles.row, { flex: 1 }]}>
           <CustomImage
             url={picture_urls[1].url}
-            style={[styles.image, { width: 200, height: 150 }]}
+            style={[styles.image, { width: 300, height: 150 }]}
           />
         </View>
 
         {/* Szósty wiersz */}
         <View style={[styles.row, { flex: 0.5 }]}>
           <Pressable
-            onPress={handlePress}
+            onPress={() => handleInfoPress(3)}
             style={[styles.textContainer, { width: "100%" }]}
           >
-            <Text style={styles.text}>{short_descriptions[2]}</Text>
+            <Text style={styles.text}>{short_descriptions[3]}</Text>
             <View style={styles.iconContainer}>
               <Feather name="info" size={20} color="black" />
             </View>

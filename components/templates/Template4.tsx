@@ -34,10 +34,10 @@ const Template4 = ({
         {descriptions[0] && (
           <View style={[styles.row]}>
             <Pressable
-              onPress={() => console.log("Info pressed")}
+              onPress={() => handleInfoPress(0)}
               style={[styles.textContainer, { width: "100%" }]}
             >
-              <Text style={styles.text}>{descriptions[0]}</Text>
+              <Text style={styles.text}>{short_descriptions[0]}</Text>
               <View style={styles.iconContainer}>
                 <Feather name="info" size={20} color="black" />
               </View>
@@ -83,10 +83,10 @@ const Template4 = ({
         {descriptions[1] && (
           <View style={[styles.row]}>
             <Pressable
-              onPress={() => console.log("Info pressed")}
+              onPress={() => handleInfoPress(1)}
               style={[styles.textContainer, { width: "100%" }]}
             >
-              <Text style={styles.text}>{descriptions[1]}</Text>
+              <Text style={styles.text}>{short_descriptions[1]}</Text>
               <View style={styles.iconContainer}>
                 <Feather name="info" size={20} color="black" />
               </View>

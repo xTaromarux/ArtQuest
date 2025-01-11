@@ -83,7 +83,7 @@ const TemplateEnd = ({
                 color="black"
               />
               <Text style={[styles.smallText]}>
-                {(percentage * 100).toFixed(0)}%
+                {(percentage * 10).toFixed(0)}%
               </Text>
             </View>
           </View>

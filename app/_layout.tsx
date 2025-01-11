@@ -25,8 +25,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
 import { View, Text } from "react-native";
 import * as SecureStore from "expo-secure-store";
+import { LogBox } from "react-native";
 
 enableScreens();
+
+LogBox.ignoreAllLogs(); 
+console.warn = () => {};
+console.error = () => {};
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 if (!publishableKey) {
