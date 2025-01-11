@@ -10,7 +10,7 @@ const MainScreen = () => {
       <Container height={600} width={80}>
         <View style={styles.contentContainer}>
           <Image
-            source={require("@/assets/images/logo.png")}
+            source={require("../assets/images/logo.png")}
             style={styles.image}
           />
           <Text style={styles.title}>ArtQuest</Text>

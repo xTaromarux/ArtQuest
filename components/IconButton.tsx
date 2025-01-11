@@ -1,17 +1,21 @@
 import React, { useState } from "react";
-import { TouchableOpacity, Text, StyleSheet } from "react-native";
-import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
+import { TouchableOpacity, Text } from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from "react-native-reanimated";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { IconButtonProps } from "@/utils/types";
+import styles from "@/constants/styles/components/IconButton.style";
 
-interface IconButtonProps {
-  icon: React.ComponentProps<typeof FontAwesome5>["name"];
-  solid: boolean;
-  color: string;
-  text: number;
-  onPress: () => void;
-}
-
-const IconButton: React.FC<IconButtonProps> = ({ icon, solid, color, text, onPress }) => {
+const IconButton: React.FC<IconButtonProps> = ({
+  icon,
+  solid,
+  color,
+  text,
+  onPress,
+}) => {
   const [isSolid, setIsSolid] = useState(solid);
   const scale = useSharedValue(1);
 
@@ -20,11 +24,11 @@ const IconButton: React.FC<IconButtonProps> = ({ icon, solid, color, text, onPre
   }));
 
   const handlePress = () => {
-    scale.value = 1.2; 
-    scale.value = withTiming(1, { duration: 300 }); 
+    scale.value = 1.2;
+    scale.value = withTiming(1, { duration: 300 });
 
-    setIsSolid((prev) => !prev); 
-    onPress(); 
+    setIsSolid((prev) => !prev);
+    onPress();
   };
 
   return (
@@ -36,18 +40,5 @@ const IconButton: React.FC<IconButtonProps> = ({ icon, solid, color, text, onPre
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "column",
-    alignItems: "center",
-    marginHorizontal: 10,
-  },
-  text: {
-    marginLeft: 5,
-    color: "#FFFFFF",
-    fontSize: 14,
-  },
-});
 
 export default IconButton;

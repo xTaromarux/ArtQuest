@@ -3,19 +3,14 @@ import { View, Text } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import styles from "@/constants/styles/screens/ProfileScreen.styles";
 import Colors from "@/constants/Colors";
-
-interface StatItemProps {
-  icon: keyof typeof MaterialCommunityIcons.glyphMap;
-  value: number;
-  label: string;
-}
+import { StatItemProps } from "@/utils/types";
 
 const StatItem: React.FC<StatItemProps> = ({ icon, value, label }) => {
   return (
     <View style={styles.statItem}>
       <MaterialCommunityIcons
         name={icon}
-        size={24}
+        size={30}
         color={Colors.dark.background}
         style={styles.statIcon}
       />

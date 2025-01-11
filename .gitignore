@@ -40,3 +40,9 @@ yarn-error.*
 
 expo-env.d.ts
 # @end expo-cli
+
+/skratch
+
+#mobile builds
+/android
+/ios

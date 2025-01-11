@@ -6,51 +6,60 @@ import {
   TextInput,
   Alert,
   Image,
-  KeyboardAvoidingView,
-  Platform,
   Dimensions,
   Pressable,
 } from "react-native";
 import Container from "@/components/Container";
 import styles from "@/constants/styles/screens/NewPostScreen.styles";
-import * as ImagePicker from "expo-image-picker";
-import { Link } from "expo-router";
+import { Link, useRouter, useGlobalSearchParams } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import API_BASE_URL from "@/utils/config";
 
 const EditPost: React.FC = () => {
+  const router = useRouter();
+  const { post: postParam } = useGlobalSearchParams();
+  const post = postParam ? JSON.parse(postParam as string) : null;
+
   const [loading, setLoading] = useState(false);
   const height = Dimensions.get("screen").height;
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState<string | null>(post?.picture_url || null);
+  const [description, setDescription] = useState<string>(
+    post?.description || ""
+  );
 
-  const pickImage = async () => {
-    const permissionResult =
-      await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    if (permissionResult.granted === false) {
-      Alert.alert("Permission to access gallery is required!");
+  const handleSubmit = async () => {
+    if (!description.trim() || !image) {
+      Alert.alert("Please provide a description and select an image.");
       return;
     }
+    setLoading(true);
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/post/${post.id}/edit_description?description=${description}`,
+        {
+          method: "PUT",
+        }
+      );
 
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Server response:", errorText);
+        throw new Error("Failed to update post. Please try again.");
+      }
+
+      router.push("/feed");
+    } catch (error) {
+      console.error(error);
+      Alert.alert("An error occurred while updating the post.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <KeyboardAvoidingView
-      style={[styles.screen, { height: height }]}
-      behavior={Platform.OS == "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS == "ios" ? 0 : 20}
-      enabled={Platform.OS === "ios" ? true : false}
-    >
+    <View style={[styles.screen, { height: height }]}>
       <Container height={780} width={90}>
         <View style={styles.formContainer}>
           <View style={styles.header}>
@@ -65,7 +74,7 @@ const EditPost: React.FC = () => {
           </View>
 
           <View style={styles.imagePickerContainer}>
-            <Pressable onPress={pickImage} style={styles.imagePickerButton}>
+            <Pressable style={styles.imagePickerButton}>
               {image ? (
                 <Image
                   source={{ uri: image }}
@@ -93,16 +102,22 @@ const EditPost: React.FC = () => {
             multiline
             style={styles.input}
             placeholder="Description"
+            value={description}
+            onChangeText={setDescription}
           />
 
-          <TouchableOpacity style={styles.continueButton} disabled={loading}>
+          <TouchableOpacity
+            style={styles.continueButton}
+            disabled={loading}
+            onPress={handleSubmit}
+          >
             <Text style={styles.continueButtonText}>
               {loading ? "LOADING..." : "SAVE"}
             </Text>
           </TouchableOpacity>
         </View>
       </Container>
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 

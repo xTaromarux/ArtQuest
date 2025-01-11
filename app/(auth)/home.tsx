@@ -1,14 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
-  Image,
-  Pressable,
+  ActivityIndicator,
   ImageBackground,
-  useWindowDimensions,
-  Platform,
+  Pressable,
   KeyboardAvoidingView,
   Dimensions,
+  Platform,
 } from "react-native";
 import Colors from "@/constants/Colors";
 import ProgressBar from "@/components/ProgressBar";
@@ -18,34 +17,88 @@ import Container from "@/components/Container";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Link, router } from "expo-router";
 import styles from "@/constants/styles/screens/HomeScreen.styles";
+import useFetchUserId from "@/hooks/useFetchUserId";
+import useFetchCourseDetails from "@/hooks/useFetchCourseDetails";
+import CustomImage from "@/components/CustomImage";
 
 const HomeScreen: React.FC = () => {
-  const { user } = useUser(); // Pobieramy dane użytkownika
+  const { user } = useUser();
   const height = Dimensions.get("screen").height;
+
+  const { userId, loading: userLoading, error: userError } = useFetchUserId();
+  const { course, loading, error } = useFetchCourseDetails(userId, "", "");
+
+  if (userLoading || loading) {
+    return (
+      <KeyboardAvoidingView
+        style={[
+          styles.container,
+          { height: height, justifyContent: "center", alignItems: "center" },
+        ]}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        enabled={Platform.OS === "ios"}
+      >
+        <ActivityIndicator size="large" color={Colors.dark.tintDarkerGreen} />
+      </KeyboardAvoidingView>
+    );
+  }
+
+  if (userError || error) {
+    return (
+      <KeyboardAvoidingView
+        style={[
+          styles.container,
+          { height: height, justifyContent: "center", alignItems: "center" },
+        ]}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        enabled={Platform.OS === "ios"}
+      >
+        <Text>Error: {userError || error}</Text>
+      </KeyboardAvoidingView>
+    );
+  }
+
+  if (!course) {
+    return (
+      <KeyboardAvoidingView
+        style={[
+          styles.container,
+          { height: height, justifyContent: "center", alignItems: "center" },
+        ]}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        enabled={Platform.OS === "ios"}
+      >
+        <Text>No course found</Text>
+      </KeyboardAvoidingView>
+    );
+  }
 
   return (
     <KeyboardAvoidingView
       style={[styles.container, { height: height }]}
-      behavior={Platform.OS == "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS == "ios" ? 0 : 20}
-      enabled={Platform.OS === "ios" ? true : false}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+      enabled={Platform.OS === "ios"}
     >
       <Text style={styles.greeting}>Hello, {user?.username || "User"}!</Text>
       <Line width={100} style={{ marginVertical: 20 }} />
       <Text style={styles.subtitle}>Pick up where you left off</Text>
 
       <Container
-        height={400}
+        height={470}
         width={100}
         style={{ marginVertical: 30, padding: 0, justifyContent: "flex-start" }}
       >
         <ImageBackground
-          source={require("@/assets/images/background_course_home.png")} // Poprawiona ścieżka obrazu
-          style={[styles.courseImageContainer, { width: `100%` }]}
-          imageStyle={{ resizeMode: "cover", borderRadius: 10 }} // Opcjonalne dopasowanie obrazu
+          source={require("@/assets/images/background_course_home.png")}
+          style={[styles.courseImageContainer, { width: `100%`, height: 200 }]}
+          imageStyle={{ resizeMode: "cover", borderRadius: 10 }}
         >
-          <Image
-            source={require("@/assets/images/shapes.png")} // Ikona kursu
+          <CustomImage
+            url={course.picture_url}
             style={styles.courseImage}
             resizeMode="contain"
           />
@@ -53,9 +106,16 @@ const HomeScreen: React.FC = () => {
         <Line width={90} backgroundColor={Colors.dark.text} />
         <View style={styles.courseContentContainer}>
           <View style={styles.courseInfo}>
-            <Text style={styles.levelText}>Level 1</Text>
-            <Text style={styles.courseTitle}>Basic Shapes</Text>
-            <ProgressBar progress={0.4} color={Colors.dark.tintLighterGreen} />
+            <Text style={styles.levelText}>
+              Level {course.difficulty.level || 1}
+            </Text>
+            <Text style={styles.courseTitle}>
+              {course.course.title || "Course Title"}
+            </Text>
+            <ProgressBar
+              progress={course.stage || 0}
+              color={Colors.dark.tintLighterGreen}
+            />
           </View>
           <Pressable
             onPress={() => {

@@ -8,35 +8,56 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
-  Dimensions,
+  Dimensions
 } from "react-native";
 import Container from "@/components/Container";
-import { useSignIn } from "@clerk/clerk-expo";
-import * as Linking from "expo-linking";
+import { useSignIn, useSignUp } from "@clerk/clerk-expo";
 import { Link, useRouter } from "expo-router";
 import styles from "@/constants/styles/screens/SignInScreen.styles";
+import { useRedirect } from "../_layout";
+import { useAuth } from "@clerk/clerk-expo";
+import * as Linking from "expo-linking";
 
 const SignInScreen: React.FC = () => {
-  const { isLoaded, signIn } = useSignIn();
+  const { signIn, setActive, isLoaded } = useSignIn();
+  const { isLoaded: isLoadedSignUp, signUp, setActive: setActiveSignUp } = useSignUp();
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const height = Dimensions.get("screen").height;
   const router = useRouter();
+  const { setHasRedirected } = useRedirect();
+  const { isSignedIn } = useAuth();
+  const publishableGoogleKey = process.env.GOOGLE_CLIENT_ID!;
+  const publishableGithubKey = process.env.GITHUB_CLIENT_ID!;
+
+  if (!publishableGoogleKey) {
+    throw new Error(
+      "Missing Publishable Key. Please set GOOGLE_CLIENT_ID in your .env"
+    );
+  }
+
+  if (!publishableGithubKey) {
+    throw new Error(
+      "Missing Publishable Key. Please set GITHUB_CLIENT_ID in your .env"
+    );
+  }
 
   const handleSignIn = async () => {
-    if (!isLoaded) return;
-
+    if (!isLoaded) {
+      return;
+    }
     setLoading(true);
     try {
-      const result = await signIn.create({
+      setHasRedirected(false);
+
+      const completeSignIn = await signIn.create({
         identifier: emailAddress,
         password,
       });
 
-      if (result.status === "complete") {
-        Alert.alert("Sukces", "Zalogowano pomyślnie!");
-        router.replace("/home");
+      if (completeSignIn.status === "complete") {
+        await setActive({ session: completeSignIn.createdSessionId });
       } else {
         Alert.alert("Weryfikacja", "Sprawdź swoją skrzynkę e-mail.");
       }
@@ -49,7 +70,7 @@ const SignInScreen: React.FC = () => {
       setLoading(false);
     }
   };
-
+  
   const handleOAuthSignIn = async (
     provider: "oauth_google" | "oauth_github"
   ) => {

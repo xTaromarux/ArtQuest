@@ -3,14 +3,20 @@ import { TouchableOpacity, Text, StyleSheet, Alert } from "react-native";
 import { useAuth } from "@clerk/clerk-expo";
 import Colors from "@/constants/Colors";
 import MaterialIcons from "@expo/vector-icons/build/MaterialIcons";
+import * as SecureStore from "expo-secure-store";
 
-const LogoutButton: React.FC = () => {
+type LogoutButtonProps = {
+  setHasRedirected: (value: boolean) => void;
+};
+
+const LogoutButton: React.FC<LogoutButtonProps> = ({ setHasRedirected }) => {
   const { signOut } = useAuth();
 
   const handleLogout = async () => {
-    try {
+    try {      
+      await SecureStore.deleteItemAsync("authToken"); 
+      setHasRedirected(false); 
       await signOut();
-      Alert.alert("Wylogowano", "Zostałeś pomyślnie wylogowany.");
     } catch (error: any) {
       Alert.alert("Błąd", "Wystąpił problem podczas wylogowywania.");
     }
@@ -28,7 +34,7 @@ const LogoutButton: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  logoutButton:{
+  logoutButton: {
     width: 45,
     height: 45,
     marginTop: 10,
@@ -39,7 +45,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.background,
     borderColor: Colors.dark.background,
     borderWidth: 3,
-    borderRadius: 60
+    borderRadius: 60,
   },
 });
 

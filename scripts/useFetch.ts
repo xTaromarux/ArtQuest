@@ -1,13 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Platform } from 'react-native';
-import Constants from 'expo-constants';
-
-const base_url =  "https://bce9-178-43-255-119.ngrok-free.app";
-const web_url =  "http://localhost:8000";
-const API_VALUE = Platform.OS === 'web' ? web_url : base_url;
+import { useState, useEffect, useCallback, startTransition } from "react";
+import API_BASE_URL from "@/utils/config";
 
 const useFetch = (endpoint: string) => {
-
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -15,13 +9,15 @@ const useFetch = (endpoint: string) => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${API_VALUE}${endpoint}`);
-      
+      const response = await fetch(`${API_BASE_URL}${endpoint}`);
+
       if (!response.ok) {
         throw new Error(`Error: ${response.statusText}`);
       }
       const result = await response.json();
-      setData(result);
+      startTransition(() => {
+        setData(result);
+      });
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -41,16 +37,24 @@ const useDelete = (endpoint: string) => {
   const [error, setError] = useState<string | null>(null);
 
   const deleteData = useCallback(async () => {
-    setLoading(true);
+    startTransition(() => {
+      setLoading(true);
+    });
     try {
-      const response = await fetch(`${API_VALUE}${endpoint}`, { method: 'DELETE' });
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        method: "DELETE",
+      });
       if (!response.ok) {
         throw new Error(`Error: ${response.statusText}`);
       }
     } catch (err: any) {
-      setError(err.message);
+      startTransition(() => {
+        setError(err.message);
+      });
     } finally {
-      setLoading(false);
+      startTransition(() => {
+        setLoading(false);
+      });
     }
   }, [endpoint]);
 
@@ -61,22 +65,25 @@ const usePost = (endpoint: string) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const postData = useCallback(async (data: FormData) => {
-    setLoading(true);
-    try {
-      const response = await fetch(`${API_VALUE}${endpoint}`, {
-        method: 'POST',
-        body: data,
-      });
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
+  const postData = useCallback(
+    async (data: FormData) => {
+      setLoading(true);
+      try {
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+          method: "POST",
+          body: data,
+        });
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [endpoint]);
+    },
+    [endpoint]
+  );
 
   return { loading, error, postData };
 };
@@ -85,22 +92,25 @@ const usePut = (endpoint: string) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const putData = useCallback(async (data: FormData) => {
-    setLoading(true);
-    try {
-      const response = await fetch(`${API_VALUE}${endpoint}`, {
-        method: 'PUT',
-        body: data,
-      });
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
+  const putData = useCallback(
+    async (data: FormData) => {
+      setLoading(true);
+      try {
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+          method: "PUT",
+          body: data,
+        });
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [endpoint]);
+    },
+    [endpoint]
+  );
 
   return { loading, error, putData };
 };

@@ -1,8 +1,10 @@
 {
   "expo": {
     "name": "ArtQuest",
-    "slug": "ArtQuest",
+    "slug": "artquest",
+    "owner": "saek",
     "version": "1.0.0",
+    "platforms": ["ios", "android", "web"],
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "artquest",
@@ -13,24 +15,29 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.saek.ArtQuest"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.saek.ArtQuest",
+      "jsEngine": "hermes"
     },
     "web": {
       "bundler": "metro",
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": [
-      "expo-router"
-    ],
-    "experiments": {
-      "typedRoutes": true
+    "extra": {
+      "eas": {
+        "projectId": "94d837cf-6e6e-41ab-8bfe-d32c895dd6f4"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/94d837cf-6e6e-41ab-8bfe-d32c895dd6f4"
     }
   }
 }

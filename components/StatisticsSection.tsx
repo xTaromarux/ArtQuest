@@ -2,13 +2,27 @@ import React from "react";
 import { View, Text } from "react-native";
 import styles from "@/constants/styles/screens/ProfileScreen.styles";
 import StatItem from "./StatItem";
+import { Statistic, StatisticsSectionProps } from "@/utils/types";
 
-const StatisticsSection: React.FC = () => {
-  const stats = [
-    { icon: "fire", value: 123, label: "Day strike" },
-    { icon: "progress-star", value: 254, label: "Total exp" },
-    { icon: "draw", value: 2, label: "Drawn drawings" },
-    { icon: "book-education-outline", value: 10, label: "Lessons Done" },
+const calculateDayStrike = (startStrike: string, endStrike: string): number => {
+  const startDate = new Date(startStrike);
+  const endDate = new Date(endStrike);
+  const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+};
+
+const StatisticsSection: React.FC<StatisticsSectionProps> = ({
+  statistics,
+}) => {
+  const stats: Statistic[] = [
+    {
+      icon: "fire",
+      value: calculateDayStrike(statistics.start_strike, statistics.end_strike),
+      label: "Day strike",
+    },
+    { icon: "progress-star", value: statistics.experience, label: "Total exp" },
+    { icon: "draw", value: statistics.courses, label: "Courses Done" },
+    { icon: "book-education-outline", value: statistics.level, label: "Level" },
   ];
 
   return (
@@ -18,11 +32,11 @@ const StatisticsSection: React.FC = () => {
         {stats.map((stat, index) => (
           <StatItem
             key={index}
-            icon={stat.icon as any}
+            icon={stat.icon}
             value={stat.value}
             label={stat.label}
           />
-        ))} 
+        ))}
       </View>
     </View>
   );

@@ -1,47 +1,46 @@
-import Colors from "@/constants/Colors";
-import React from "react";
-import { View, Text, TextInput, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import styles from "@/constants/styles/components/LabeledTextInput.style";
+import { LabeledTextInputProps } from "@/utils/types";
 
-interface LabeledTextInputProps {
-    label: string;
-    value: string;
-    onChangeText: (text: string) => void;
-    placeholder?: string;
-    style?: object;
-  }
+const LabeledTextInput: React.FC<LabeledTextInputProps> = ({
+  label,
+  value,
+  onChangeText,
+  placeholder,
+  style,
+  secureTextEntry = false,
+}) => {
+  const [isSecure, setIsSecure] = useState(secureTextEntry);
 
-  const LabeledTextInput: React.FC<LabeledTextInputProps> = ({ label, value, onChangeText, placeholder, style }) => {
-    return (
+  return (
     <View style={[styles.inputContainer, style]}>
       <Text style={styles.label}>{label}</Text>
-      <TextInput
-        style={styles.input}
-        value={value}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-        placeholderTextColor="#999"
-      />
+      <View style={styles.inputWrapper}>
+        <TextInput
+          style={styles.input}
+          value={value}
+          onChangeText={onChangeText}
+          placeholder={placeholder}
+          placeholderTextColor="#999"
+          secureTextEntry={isSecure}
+        />
+        {secureTextEntry && (
+          <TouchableOpacity
+            onPress={() => setIsSecure((prev) => !prev)}
+            style={styles.iconContainer}
+          >
+            <MaterialCommunityIcons
+              name={isSecure ? "eye-off" : "eye"}
+              size={20}
+              color="#999"
+            />
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  inputContainer: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 14,
-    marginBottom: 2,
-    color: "#333",
-  },
-  input: {
-    width: "100%",
-    borderWidth: 3,
-    borderColor: Colors.dark.background,
-    borderRadius: 10,
-    padding: 10,
-    color: "#333",
-  },
-});
 
 export default LabeledTextInput;

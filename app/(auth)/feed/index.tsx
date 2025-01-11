@@ -1,88 +1,140 @@
-import React, { useState, useCallback } from "react";
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  startTransition,
+} from "react";
 import {
   Dimensions,
   KeyboardAvoidingView,
   Platform,
-  View,
   FlatList,
   ActivityIndicator,
-  Text,
   RefreshControl,
+  Text,
+  Pressable,
 } from "react-native";
 import styles from "@/constants/styles/screens/FeedScreen.styles";
 import Tweet from "@/components/Tweet";
 import { Entypo } from "@expo/vector-icons";
-import { Link } from "expo-router";
-import Line from "@/components/Line";
-import { TweetType, UserType } from "@/utils/types";
+import { router } from "expo-router";
 import Colors from "@/constants/Colors";
+import { TweetType } from "@/utils/types";
+import API_BASE_URL from "@/utils/config";
 
 const ExerciseScreen: React.FC = () => {
   const height = Dimensions.get("screen").height;
+
+  const [tweets, setTweets] = useState<TweetType[]>([]);
+  const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Static users
-  const user1: UserType = {
-    id: "1",
-    login: "User1",
-    name: "John Doe",
-    avatar_url:
-      "https://i.pinimg.com/736x/58/94/8d/58948d9dace5f470e60149bffbe17841.jpg",
-  };
-
-  const user2: UserType = {
-    id: "2",
-    login: "User2",
-    name: "Jane Smith",
-    avatar_url:
-      "https://i.pinimg.com/736x/75/9d/0c/759d0c791c0f36599ebe489fc9010c7d.jpg",
-  };
-
-  // Static tweets data
-  const tweets: TweetType[] = [
-    {
-      id: "1",
-      description: "This is a static tweet 1",
-      user: user1,
-      createdAt: new Date().toISOString(),
-      image_url:
-        "https://i.pinimg.com/736x/51/2e/df/512edf4a5517ef22e7bb34de6c8b2c4c.jpg",
-      numberOfComments: 5,
-      numberOfRetweets: 10,
-      numberOfLikes: 20,
-      impressions: 100,
-    },
-    {
-      id: "2",
-      description: "Another tweet example",
-      user: user2,
-      createdAt: new Date().toISOString(),
-      image_url:
-        "https://i.pinimg.com/736x/54/c5/88/54c588122b4e0ecf28badb5fd0b3012b.jpg",
-      numberOfComments: 3,
-      numberOfRetweets: 6,
-      numberOfLikes: 15,
-      impressions: 80,
-    },
-    {
-      id: "3",
-      description: "Another tweet example",
-      user: user2,
-      createdAt: new Date().toISOString(),
-      image_url:
-        "https://i.pinimg.com/736x/54/c5/88/54c588122b4e0ecf28badb5fd0b3012b.jpg",
-      numberOfComments: 3,
-      numberOfRetweets: 6,
-      numberOfLikes: 15,
-      impressions: 80,
-    },
-  ];
-
-  const fetchTweets = useCallback(() => {
-    // Since we're using static data, just use a dummy function to simulate refresh
+  const fetchTweets = useCallback(async () => {
     setRefreshing(true);
-    setTimeout(() => setRefreshing(false), 1000); // Simulates a short loading time
+    setError(null);
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/posts`, {
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+          "User-Agent": "CustomAgent",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        const data = await response.json();
+        setTweets(data);
+      } else {
+        throw new Error("Expected JSON response but got something else.");
+      }
+    } catch (error) {
+      console.error("Error fetching tweets:", error);
+      setError("Failed to load tweets. Please try again.");
+    } finally {
+      setRefreshing(false);
+    }
   }, []);
+
+  useEffect(() => {
+    const loadTweets = async () => {
+      startTransition(() => {
+        setLoading(true);
+      });
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/posts`, {
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+            "User-Agent": "CustomAgent",
+          },
+        });
+        const text = await response.text();
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch tweets: ${response.statusText}`);
+        }
+
+        const data = JSON.parse(text);
+        startTransition(() => {
+          setTweets(data);
+        });
+      } catch (error) {
+        console.error("Error fetching tweets:", error);
+        setError("Failed to load tweets. Please try again.");
+      } finally {
+        startTransition(() => {
+          setLoading(false);
+        });
+      }
+    };
+
+    loadTweets();
+  }, []);
+
+  if (loading) {
+    return (
+      <KeyboardAvoidingView
+        style={[
+          styles.container,
+          { height: height, justifyContent: "center", alignItems: "center" },
+        ]}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        enabled={Platform.OS === "ios"}
+      >
+        <ActivityIndicator size="large" color={Colors.dark.tintDarkerGreen} />
+      </KeyboardAvoidingView>
+    );
+  }
+
+  if (error) {
+    return (
+      <KeyboardAvoidingView
+        style={[
+          styles.container,
+          { height: height, justifyContent: "center", alignItems: "center" },
+        ]}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        enabled={Platform.OS === "ios"}
+      >
+        <Text style={styles.errorText}>{error}</Text>
+        <Text style={styles.retryText} onPress={fetchTweets}>
+          Tap to retry
+        </Text>
+      </KeyboardAvoidingView>
+    );
+  }
+
+  const handleNewPostPress = () => {
+    router.push({
+      pathname: `/new-post`,
+    });
+  };
 
   return (
     <KeyboardAvoidingView
@@ -94,25 +146,16 @@ const ExerciseScreen: React.FC = () => {
       <FlatList
         data={tweets}
         renderItem={({ item }) => <Tweet tweet={item} onDelete={fetchTweets} />}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item, index) => index.toString()}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={fetchTweets} />
         }
         contentContainerStyle={{ paddingBottom: 90 }}
       />
-      <Link
-        href={
-          {
-            pathname: "/new-post",
-            params: { onPostAdded: fetchTweets },
-          } as never
-        }
-        asChild
-      >
-        <View style={styles.floatingButton}>
-          <Entypo name="plus" size={40} color={Colors.dark.text} />
-        </View>
-      </Link>
+
+      <Pressable style={styles.floatingButton} onPress={handleNewPostPress}>
+        <Entypo name="plus" size={40} color={Colors.dark.text} />
+      </Pressable>
     </KeyboardAvoidingView>
   );
 };
