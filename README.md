@@ -26,8 +26,6 @@ ArtQuest is an innovative application designed to inspire and develop users' art
 ## Screenshots
 <img src="./assets/images/screenshot.png" alt="Application Welcome Screen" width="200" />
 <img src="./assets/images/screenshot1.png" alt="Course List Screen" width="200" />
-<img src="./assets/images/screenshot2.png" alt="Task View Screen" width="200" />
-<img src="./assets/images/screenshot3.png" alt="Exercise Solving View Screen" width="200" />
 
 
 ## Tech Stack
