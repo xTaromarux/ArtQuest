@@ -1,0 +1,9 @@
+grpcio
+grpcio-tools
+sqlalchemy
+psycopg2-binary
+prometheus_client
+opentelemetry-api
+opentelemetry-sdk
+sentry-sdk
+sphinx
