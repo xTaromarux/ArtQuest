@@ -1,0 +1,110 @@
+pipeline {
+  agent any
+
+  environment {
+    // Adres rejestru Docker (dostosuj do swojego środowiska)
+    DOCKER_REGISTRY = 'your-docker-registry.example.com'
+    // Adres serwera SonarQube
+    SONAR_HOST_URL = 'http://your-sonarqube-server:9000'
+    // Token autoryzacyjny SonarQube – pobierany z Jenkins Credentials (id: sonar-token)
+    SONAR_AUTH_TOKEN = credentials('sonar-token')
+    // Token Snyk, jeśli używasz (id: snyk-token)
+    SNYK_TOKEN = credentials('snyk-token')
+  }
+
+  stages {
+
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
+    }
+
+    stage('Build Docker Images') {
+      parallel {
+        stage('Build node-service') {
+          steps {
+            dir('backend/node-service') {
+              sh "docker build -t ${DOCKER_REGISTRY}/artquest-node-service:latest ."
+            }
+          }
+        }
+        stage('Build auth-service') {
+          steps {
+            dir('backend/auth-service') {
+              sh "docker build -t ${DOCKER_REGISTRY}/artquest-auth-service:latest ."
+            }
+          }
+        }
+        stage('Build python-grpc') {
+          steps {
+            dir('backend/python-grpc') {
+              sh "docker build -t ${DOCKER_REGISTRY}/artquest-python-grpc:latest ."
+            }
+          }
+        }
+        // Możesz dodać etap budowania obrazu dla frontendu, jeśli to konieczne.
+      }
+    }
+
+    stage('Run Tests') {
+      steps {
+        // Przykładowy etap uruchomienia testów Selenium.
+        dir('ci-cd/selenium/tests') {
+          // Upewnij się, że środowisko ma dostęp do kontenera Selenium (np. przez Docker Compose)
+          sh 'node sampleTest.js'
+        }
+      }
+    }
+
+    stage('SonarQube Analysis') {
+      steps {
+        withSonarQubeEnv('SonarQube') {
+          // Przykładowa komenda sonar-scanner
+          sh """
+            sonar-scanner \
+            -Dsonar.projectKey=ArtQuest \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=${SONAR_HOST_URL} \
+            -Dsonar.login=${SONAR_AUTH_TOKEN}
+          """
+        }
+      }
+    }
+
+    stage('Snyk Scan') {
+      steps {
+        // Przykładowe skanowanie zależności; upewnij się, że masz zainstalowany CLI Snyk
+        sh 'snyk test'
+      }
+    }
+
+    stage('Generate Documentation') {
+      steps {
+        dir('ci-cd/docs') {
+          // Jeśli używasz MkDocs – budowanie dokumentacji
+          sh 'mkdocs build'
+          // Alternatywnie, jeśli korzystasz z Sphinx:
+          // sh 'sphinx-build -b html . _build/html'
+        }
+      }
+    }
+
+    stage('Deploy to Kubernetes') {
+      steps {
+        // Wdrożenie manifestów Kubernetes; upewnij się, że kubectl jest skonfigurowany
+        sh 'kubectl apply -f infrastructure/k8s/'
+      }
+    }
+  }
+
+  post {
+    always {
+      echo 'Pipeline zakończony.'
+      // Opcjonalnie: archiwizacja artefaktów, czyszczenie środowiska, powiadomienia
+    }
+    failure {
+      echo 'Pipeline zakończył się niepowodzeniem.'
+    }
+  }
+}

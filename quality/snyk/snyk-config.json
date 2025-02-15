@@ -1,0 +1,12 @@
+{
+  "version": "v1",
+  "ignore": {
+    "npm:example-package": {
+      "reason": "Podatność nie jest krytyczna w naszym przypadku.",
+      "expires": "2025-12-31T00:00:00.000Z"
+    }
+  },
+  "options": {
+    "severityThreshold": "low"
+  }
+}

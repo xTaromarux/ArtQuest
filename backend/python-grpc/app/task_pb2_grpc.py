@@ -3,6 +3,7 @@
 import grpc
 import warnings
 
+import task_pb2 as task__pb2
 
 GRPC_GENERATED_VERSION = '1.70.0'
 GRPC_VERSION = grpc.__version__
@@ -22,3 +23,121 @@ if _version_not_supported:
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
     )
+
+
+class TaskServiceStub(object):
+    """Definicja usługi TaskService
+    """
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.GetTask = channel.unary_unary(
+                '/task.TaskService/GetTask',
+                request_serializer=task__pb2.TaskRequest.SerializeToString,
+                response_deserializer=task__pb2.TaskResponse.FromString,
+                _registered_method=True)
+        self.CreateTask = channel.unary_unary(
+                '/task.TaskService/CreateTask',
+                request_serializer=task__pb2.CreateTaskRequest.SerializeToString,
+                response_deserializer=task__pb2.TaskResponse.FromString,
+                _registered_method=True)
+
+
+class TaskServiceServicer(object):
+    """Definicja usługi TaskService
+    """
+
+    def GetTask(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def CreateTask(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_TaskServiceServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'GetTask': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetTask,
+                    request_deserializer=task__pb2.TaskRequest.FromString,
+                    response_serializer=task__pb2.TaskResponse.SerializeToString,
+            ),
+            'CreateTask': grpc.unary_unary_rpc_method_handler(
+                    servicer.CreateTask,
+                    request_deserializer=task__pb2.CreateTaskRequest.FromString,
+                    response_serializer=task__pb2.TaskResponse.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'task.TaskService', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+    server.add_registered_method_handlers('task.TaskService', rpc_method_handlers)
+
+
+ # This class is part of an EXPERIMENTAL API.
+class TaskService(object):
+    """Definicja usługi TaskService
+    """
+
+    @staticmethod
+    def GetTask(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/task.TaskService/GetTask',
+            task__pb2.TaskRequest.SerializeToString,
+            task__pb2.TaskResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def CreateTask(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/task.TaskService/CreateTask',
+            task__pb2.CreateTaskRequest.SerializeToString,
+            task__pb2.TaskResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)

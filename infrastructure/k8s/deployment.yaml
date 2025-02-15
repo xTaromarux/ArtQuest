@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-service
+  labels:
+    app: node-service
+  annotations:
+    linkerd.io/inject: "enabled"  # Jeśli używasz Linkerd
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: node-service
+  template:
+    metadata:
+      labels:
+        app: node-service
+    spec:
+      containers:
+        - name: node-service
+          image: your-docker-registry/artquest-node-service:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: "production"

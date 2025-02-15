@@ -1,0 +1,33 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "ArtQuest Dashboard",
+    "timezone": "browser",
+    "schemaVersion": 30,
+    "version": 1,
+    "panels": [
+      {
+        "datasource": null,
+        "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+        "id": 1,
+        "title": "Node Service Requests",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "nodejs_heap_used_bytes", 
+            "legendFormat": "{{job}}",
+            "refId": "A"
+          }
+        ]
+      }
+    ]
+  },
+  "meta": {
+    "type": "db",
+    "canSave": true,
+    "canEdit": true,
+    "canAdmin": true,
+    "canStar": true,
+    "slug": "artquest-dashboard"
+  }
+}

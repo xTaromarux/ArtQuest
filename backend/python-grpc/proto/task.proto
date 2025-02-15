@@ -1,1 +1,27 @@
 syntax = "proto3";
+
+package task;
+
+// Definicja usługi TaskService
+service TaskService {
+  rpc GetTask (TaskRequest) returns (TaskResponse);
+  rpc CreateTask (CreateTaskRequest) returns (TaskResponse);
+}
+
+// Żądanie pobrania zadania (na podstawie id)
+message TaskRequest {
+  int32 id = 1;
+}
+
+// Żądanie utworzenia zadania (tytuł i opis)
+message CreateTaskRequest {
+  string title = 1;
+  string description = 2;
+}
+
+// Odpowiedź zawierająca dane zadania
+message TaskResponse {
+  int32 id = 1;
+  string title = 2;
+  string description = 3;
+}

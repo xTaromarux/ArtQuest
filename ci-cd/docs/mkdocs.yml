@@ -1,0 +1,6 @@
+site_name: ArtQuest CI/CD Documentation
+nav:
+  - Home: index.md
+  - Pipeline: pipeline.md
+theme:
+  name: readthedocs

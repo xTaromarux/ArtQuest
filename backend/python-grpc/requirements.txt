@@ -1,9 +1,10 @@
 grpcio
 grpcio-tools
-sqlalchemy
+SQLAlchemy
 psycopg2-binary
 prometheus_client
 opentelemetry-api
 opentelemetry-sdk
 sentry-sdk
 sphinx
+hupper
