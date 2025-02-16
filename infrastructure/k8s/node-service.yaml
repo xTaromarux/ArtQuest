@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-service
+  labels:
+    app: node-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-service
+  template:
+    metadata:
+      labels:
+        app: node-service
+      annotations:
+        linkerd.io/inject: "enabled"  # opcjonalnie dla service mesh
+    spec:
+      containers:
+      - name: node-service
+        image: yourdockerhubusername/node-service:latest
+        ports:
+        - containerPort: 3000
+        command: ["npm", "run", "dev"]
+        # Jeśli chcesz montować kod źródłowy w trybie deweloperskim, możesz użyć hostPath (opcjonalnie)
+        # volumeMounts:
+        # - name: node-code
+        #   mountPath: /app
+      # volumes:
+      # - name: node-code
+      #   hostPath:
+      #     path: ../backend/node-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-service
+spec:
+  selector:
+    app: node-service
+  ports:
+  - protocol: TCP
+    port: 3000
+    targetPort: 3000

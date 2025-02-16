@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-grpc
+  labels:
+    app: python-grpc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: python-grpc
+  template:
+    metadata:
+      labels:
+        app: python-grpc
+      annotations:
+        linkerd.io/inject: "enabled"
+    spec:
+      containers:
+      - name: python-grpc
+        image: yourdockerhubusername/python-grpc:latest
+        ports:
+        - containerPort: 50051
+        - containerPort: 8000
+        command: ["hupper", "-m", "app.main"]
+        # Opcjonalnie możesz montować kod źródłowy przy pomocy hostPath w trybie developerskim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: python-grpc
+spec:
+  selector:
+    app: python-grpc
+  ports:
+  - protocol: TCP
+    port: 50051
+    targetPort: 50051
+  - protocol: TCP
+    port: 8000
+    targetPort: 8000

@@ -149,8 +149,8 @@ python app/main.py
    * Metryki Prometheus [localhost:8000](http://localhost:8000)
 
 #### Infrastructure
-* PostgreSQL:
-  * Dostępny na porcie: 5432 [postgresql:5432](postgresql://user:password@localhost:5432/artquest)
+* PostgreSQL - PgAdmin:
+  * Dostępny na porcie: 30080 [localhost:30080](http://localhost:30080/)
 * Redis:
   * Dostępny na porcie: 6379
 * RabbitMQ:
