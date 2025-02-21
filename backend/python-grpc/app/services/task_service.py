@@ -1,21 +1,9 @@
 import grpc
-from prometheus_client import Counter
-import sentry_sdk
-from config import SENTRY_DSN
-from repository import get_task, create_task
+from instrumentation import REQUEST_COUNTER, tracer
+from repository.task_repository import get_task, create_task
 import task_pb2
 import task_pb2_grpc
 
-# Inicjalizacja Sentry, jeśli DSN jest podany
-if SENTRY_DSN:
-    sentry_sdk.init(SENTRY_DSN)
-
-# Inicjalizacja licznika Prometheus
-REQUEST_COUNTER = Counter('grpc_requests_total', 'Total number of gRPC requests')
-
-# Import OpenTelemetry – ustawienie tracera
-from opentelemetry import trace
-tracer = trace.get_tracer(__name__)
 
 class TaskService(task_pb2_grpc.TaskServiceServicer):
     def GetTask(self, request, context):

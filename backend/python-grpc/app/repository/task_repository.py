@@ -1,10 +1,5 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from models import Task
-from config import DATABASE_URL
-
-engine = create_engine(DATABASE_URL)
-Session = sessionmaker(bind=engine)
+from app.models import Task
+from app.database import Session
 
 def get_task(task_id: int):
     session = Session()

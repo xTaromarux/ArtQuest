@@ -2,11 +2,10 @@ import grpc
 from concurrent import futures
 import time
 from app import task_pb2_grpc
-from services import TaskService
+from services.tasks_service import TaskService
 from config import GRPC_PORT, PROMETHEUS_PORT
 from prometheus_client import start_http_server
 
-# Konfiguracja OpenTelemetry
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
@@ -23,7 +22,6 @@ def serve():
     server.start()
     print(f"gRPC server running on port {GRPC_PORT}")
 
-    # Uruchomienie endpointu Prometheus na oddzielnym porcie
     start_http_server(PROMETHEUS_PORT)
     print(f"Prometheus metrics available on port {PROMETHEUS_PORT}")
 
