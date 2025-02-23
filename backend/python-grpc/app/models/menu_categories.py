@@ -14,4 +14,4 @@ class MenuCategory(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now(), comment="Timestamp when the category was created")
     updated_at = Column(DateTime(timezone=True), onupdate=func.now(), comment="Timestamp when the category was last updated")
     
-    items = relationship("MenuItem", back_populates="category", cascade="all, delete-orphan", comment="Relationship to menu items in this category")
+    items = relationship("MenuItem", back_populates="category", cascade="all, delete-orphan")

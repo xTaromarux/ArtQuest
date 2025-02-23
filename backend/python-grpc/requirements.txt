@@ -8,3 +8,4 @@ opentelemetry-sdk
 sentry-sdk
 sphinx
 hupper
+alembic

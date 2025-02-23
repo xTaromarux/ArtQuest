@@ -18,15 +18,12 @@ class Order(Base):
     items = relationship(
         "OrderItem", 
         back_populates="order", 
-        cascade="all, delete-orphan", 
-        comment="List of items included in the order")
+        cascade="all, delete-orphan")
     
     user = relationship(
         "User", 
-        back_populates="orders", 
-        comment="User who placed the order")
+        back_populates="orders")
     
     restaurant = relationship(
         "Restaurant", 
-        back_populates="orders", 
-        comment="Restaurant associated with the order")
+        back_populates="orders")

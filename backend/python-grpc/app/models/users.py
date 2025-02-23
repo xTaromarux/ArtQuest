@@ -19,22 +19,15 @@ class User(Base):
     favorite_restaurants = relationship(
         "UserFavoriteRestaurant",
         back_populates="user",
-        cascade="all, delete-orphan",
-        comment="Relationship to the user's favorite restaurants"
-    )
+        cascade="all, delete-orphan")
     favorite_menu_items = relationship(
         "UserFavoriteMenuItem",
         back_populates="user",
-        cascade="all, delete-orphan",
-        comment="Relationship to the user's favorite menu items"
-    )
+        cascade="all, delete-orphan")
     submitted_restaurants = relationship(
         "Restaurant",
-        back_populates="submitted_user",
-        comment="Relationship to restaurants submitted by the user"
-    )
+        back_populates="submitted_user")
     orders = relationship(
         "Order", 
         back_populates="user", 
-        cascade="all, delete-orphan", 
-        comment="Orders placed by the user")
+        cascade="all, delete-orphan")

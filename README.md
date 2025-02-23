@@ -205,7 +205,7 @@ python app/main.py
   * [Zipkin](https://zipkin.io/)
 
 ### Python-grpc
-* Technologie: gRPC, SQLAlchemy, PostgreSQL, Prometheus, OpenTelemetry, Sentry, Sphinx.
+* Technologie: gRPC, SQLAlchemy, PostgreSQL, Prometheus, OpenTelemetry, Sentry, Sphinx, Alembic.
 * Uruchomienie: python app/main.py lub przez Docker Compose.
 * Linki:
   * [gRPC](https://grpc.io/)
@@ -213,6 +213,7 @@ python app/main.py
   * [Prometheus](https://github.com/prometheus/client_python)
   * [OpenTelemetry](https://opentelemetry.io/)
   * [Sphinx](https://www.sphinx-doc.org/en/master/)
+  * [Alembic](https://alembic.sqlalchemy.org/en/latest/)
 
 ### Infrastructure
 * Technologie: Terraform, Kubernetes, Docker Compose.

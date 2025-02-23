@@ -9,7 +9,7 @@ class ApprovalStatus(enum.Enum):
     rejected = "rejected"
 
 class Restaurant(Base):
-    __tablename__ = 'restaurant'
+    __tablename__ = 'restaurants'
     
     id = Column(Integer, primary_key=True, index=True, comment="Unique identifier for the restaurant")
     
@@ -38,22 +38,18 @@ class Restaurant(Base):
     
     menus = relationship(
         "Menu", 
-        back_populates="restaurant", 
-        comment="Relationship to menus")
+        back_populates="restaurant")
     
     favorited_by_users = relationship(
         "UserFavoriteRestaurant", 
         back_populates="restaurant",
-        cascade="all, delete-orphan", 
-        comment="Users who favorited this restaurant")
+        cascade="all, delete-orphan")
     
     submitted_user = relationship(
         "User", 
-        back_populates="submitted_restaurants",
-        comment="User who submitted the restaurant")
+        back_populates="submitted_restaurants")
     
     orders = relationship(
         "Order", 
         back_populates="restaurant", 
-        cascade="all, delete-orphan", 
-        comment="Orders associated with the restaurant")
+        cascade="all, delete-orphan")

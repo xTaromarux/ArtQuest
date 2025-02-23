@@ -19,9 +19,7 @@ class OrderItem(Base):
     
     order = relationship(
         "Order",
-        back_populates="items", 
-        comment="Relationship to the parent order")
+        back_populates="items")
     
     menu_item = relationship(
-        "MenuItem", 
-        comment="Relationship to the ordered menu item")
+        "MenuItem")

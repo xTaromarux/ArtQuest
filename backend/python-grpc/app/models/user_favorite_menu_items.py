@@ -13,5 +13,5 @@ class UserFavoriteMenuItem(Base):
     
     created_at = Column(DateTime(timezone=True), server_default=func.now(), comment="Timestamp when the record was created")
     
-    user = relationship("User", back_populates="favorite_menu_items", comment="Relationship to the User model")
-    menu_item = relationship("MenuItem", back_populates="favorited_by_users", comment="Relationship to the MenuItem model")
+    user = relationship("User", back_populates="favorite_menu_items")
+    menu_item = relationship("MenuItem", back_populates="favorited_by_users")

@@ -2,9 +2,10 @@ import grpc
 from concurrent import futures
 import time
 from app import task_pb2_grpc
-from services.tasks_service import TaskService
+from app.services.task_service import TaskService
 from config import GRPC_PORT, PROMETHEUS_PORT
 from prometheus_client import start_http_server
+from app.auto_migrate import run_migrations  # Import mechanizmu migracji
 
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
@@ -32,4 +33,6 @@ def serve():
         server.stop(0)
 
 if __name__ == '__main__':
-    serve()
+    print("🏗  Wykrywanie i uruchamianie migracji...")
+    run_migrations()  # 🛠️ Najpierw uruchamiamy migracje
+    serve()  # 🚀 Potem uruchamiamy serwer gRPC

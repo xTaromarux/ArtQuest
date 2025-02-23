@@ -1,7 +1,7 @@
 import os
 
 # Łącze do bazy danych PostgreSQL (zmień dane w zależności od środowiska)
-DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://user:password@localhost:5432/artquest')
+DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://user:password@postgres:5432/artquest')
 
 # Port, na którym uruchamiany będzie serwer gRPC
 GRPC_PORT = int(os.getenv('GRPC_PORT', 50051))

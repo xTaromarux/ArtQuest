@@ -15,5 +15,5 @@ class Menu(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now(), comment="Timestamp when the menu was created")
     updated_at = Column(DateTime(timezone=True), onupdate=func.now(), comment="Timestamp when the menu was last updated")
     
-    restaurant = relationship("Restaurant", back_populates="menus", comment="Relationship to the restaurant")
-    items = relationship("MenuItem", back_populates="menu", cascade="all, delete-orphan", comment="Relationship to the menu items")
+    restaurant = relationship("Restaurant", back_populates="menus")
+    items = relationship("MenuItem", back_populates="menu", cascade="all, delete-orphan")

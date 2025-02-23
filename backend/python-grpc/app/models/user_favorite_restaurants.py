@@ -13,5 +13,5 @@ class UserFavoriteRestaurant(Base):
     
     created_at = Column(DateTime(timezone=True), server_default=func.now(), comment="Timestamp when the record was created")
     
-    user = relationship("User", back_populates="favorite_restaurants", comment="Relationship to the User model")
-    restaurant = relationship("Restaurant", back_populates="favorited_by_users", comment="Relationship to the Restaurant model")
+    user = relationship("User", back_populates="favorite_restaurants")
+    restaurant = relationship("Restaurant", back_populates="favorited_by_users")

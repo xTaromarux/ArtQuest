@@ -18,7 +18,6 @@ class MenuItem(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now(), comment="Timestamp when the item was created")
     updated_at = Column(DateTime(timezone=True), onupdate=func.now(), comment="Timestamp when the item was last updated")
     
-    menu = relationship("Menu", back_populates="items", comment="Relationship to the parent menu")
-    category = relationship("MenuCategory", back_populates="items", comment="Relationship to the menu category")
-    favorited_by_users = relationship("UserFavoriteMenuItem", back_populates="menu_item", cascade="all, delete-orphan",
-                                      comment="Relationship to users who favorited this menu item")
+    menu = relationship("Menu", back_populates="items")
+    category = relationship("MenuCategory", back_populates="items")
+    favorited_by_users = relationship("UserFavoriteMenuItem", back_populates="menu_item", cascade="all, delete-orphan")
